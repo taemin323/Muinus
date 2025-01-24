@@ -1,5 +1,6 @@
-package com.hexa.muinus;
+package com.hexa.muinus.store.domain.transaction;
 
+import com.hexa.muinus.store.domain.item.StoreItem;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -35,3 +36,5 @@ public class TransactionDetails {
 
     @Column(name = "sub_total", nullable = false)
     private int subTotal;
+
+}

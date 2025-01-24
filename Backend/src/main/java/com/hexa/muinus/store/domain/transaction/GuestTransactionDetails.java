@@ -1,5 +1,6 @@
-package com.hexa.muinus;
+package com.hexa.muinus.store.domain.transaction;
 
+import com.hexa.muinus.store.domain.item.StoreItem;
 import jakarta.persistence.*;
 import lombok.*;
 
