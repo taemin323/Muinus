@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "transactions")
 @Getter
@@ -35,7 +37,7 @@ public class Transactions {
     @Column(name = "total_amount", nullable = false)
     private int totalAmount;
 
-    @Column(name = "status", nullable = false, columnDefinition = "ENUM('success','failed','refund') DEFAULT 'success'")
+    @Column(name = "status", nullable = false, columnDefinition = "ENUM('SUCCESS', 'FAILED', 'REFUNDED') DEFAULT 'SUCCESS'")
     private String status;
 
     @Column(name = "created_at", nullable = false, updatable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
