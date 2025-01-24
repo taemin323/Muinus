@@ -24,7 +24,7 @@ public class FliItem {
 
     @ManyToOne(fetch = FetchType.LAZY) // ManyToOne 관계 설정
     @JoinColumn(name = "user_no", nullable = false)
-    private User user;
+    private Users users;
 
     @Column(nullable = false, length = 200)
     private String fliItemName;
