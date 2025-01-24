@@ -48,4 +48,12 @@ public class FliItem {
     @Column(columnDefinition = "TIMESTAMP")
     private LocalDateTime expirationDate;
 
+    public enum FliItemStatus {
+        PENDING,
+        APPROVED,
+        REJECTED,
+        SELLING,
+        SOLD
+    }
+
 }
