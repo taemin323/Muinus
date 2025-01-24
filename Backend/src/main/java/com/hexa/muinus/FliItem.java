@@ -39,7 +39,7 @@ public class FliItem {
     private int sectionId;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, columnDefinition = "ENUM('PENDING', 'APPROVED', 'REJECTED', 'SELLING', 'SOLD') DEFAULT 'pending'")
+    @Column(nullable = false, columnDefinition = "ENUM('PENDING', 'APPROVED', 'REJECTED', 'SELLING', 'SOLD') DEFAULT 'PENDING'")
     private FliItemStatus status;
 
     @Column(nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")

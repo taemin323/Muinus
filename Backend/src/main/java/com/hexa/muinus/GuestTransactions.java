@@ -19,6 +19,10 @@ public class GuestTransactions {
     private Integer transactionId;
 
     @ManyToOne(fetch = FetchType.LAZY) // ManyToOne 관계 설정
+    @JoinColumn(name = "store_no", nullable = false)
+    private Store store;
+
+    @ManyToOne(fetch = FetchType.LAZY) // ManyToOne 관계 설정
     @JoinColumn(name = "guest_no", nullable = false)
     private GuestUser guest;
 

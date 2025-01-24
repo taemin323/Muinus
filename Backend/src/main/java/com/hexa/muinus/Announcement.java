@@ -37,7 +37,7 @@ public class Announcement {
     @Column(nullable = false, updatable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime createdAt;
 
-    @Column(nullable = false, updatable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    @Column(nullable = true, updatable = true, columnDefinition = "TIMESTAMP")
     private LocalDateTime updatedAt;
 
 
