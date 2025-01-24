@@ -1,9 +1,10 @@
-package com.hexa.muinus;
+package com.hexa.muinus.store.domain.coupon;
 
+import com.hexa.muinus.store.domain.Store;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "coupon_history")

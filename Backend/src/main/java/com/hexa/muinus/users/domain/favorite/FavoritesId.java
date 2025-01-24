@@ -1,4 +1,4 @@
-package com.hexa.muinus;
+package com.hexa.muinus.users.domain.favorite;
 
 import jakarta.persistence.Embeddable;
 import lombok.*;

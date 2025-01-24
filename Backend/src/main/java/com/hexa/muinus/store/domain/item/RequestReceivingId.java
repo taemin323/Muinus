@@ -1,4 +1,4 @@
-package com.hexa.muinus;
+package com.hexa.muinus.store.domain.item;
 
 import jakarta.persistence.Embeddable;
 import lombok.*;

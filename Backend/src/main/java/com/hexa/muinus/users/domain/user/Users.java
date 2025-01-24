@@ -1,4 +1,4 @@
-package com.hexa.muinus;
+package com.hexa.muinus.users.domain.user;
 
 import jakarta.persistence.*;
 import lombok.Builder;

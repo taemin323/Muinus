@@ -1,4 +1,4 @@
-package com.hexa.muinus;
+package com.hexa.muinus.store.domain.coupon;
 
 import jakarta.persistence.*;
 import lombok.*;

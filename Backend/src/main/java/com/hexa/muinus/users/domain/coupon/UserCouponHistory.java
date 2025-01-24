@@ -1,5 +1,7 @@
-package com.hexa.muinus;
+package com.hexa.muinus.users.domain.coupon;
 
+import com.hexa.muinus.store.domain.coupon.CouponHistory;
+import com.hexa.muinus.users.domain.user.Users;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
