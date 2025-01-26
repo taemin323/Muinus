@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.geo.Point;
 
 import java.time.LocalDateTime;
 
@@ -27,7 +28,7 @@ public class Store {
     private String name;
 
     @Column(nullable = false, columnDefinition = "POINT")
-    private String location; // Use a custom type or a converter for the POINT type.
+    private Point location; // Use a custom type or a converter for the POINT type.
 
     @Column(nullable = false, length = 255)
     private String address;
@@ -59,7 +60,7 @@ public class Store {
     }
 
     @Builder
-    public Store(Integer storeNo, Users user, String name, String location, String address, String storeImageUrl, String registrationNo, String phone, YesNo flimarketYn, String flimarketImageUrl, Byte flimarketSectionCnt, LocalDateTime createdAt) {
+    public Store(Integer storeNo, Users user, String name, Point location, String address, String storeImageUrl, String registrationNo, String phone, YesNo flimarketYn, String flimarketImageUrl, Byte flimarketSectionCnt, LocalDateTime createdAt) {
         this.storeNo = storeNo;
         this.user = user;
         this.name = name;
