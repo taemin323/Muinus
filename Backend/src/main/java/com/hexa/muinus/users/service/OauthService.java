@@ -19,8 +19,7 @@ public class OauthService {
     @Value("${kakao.auth.redirect_url}")
     private String redirectUrl;
 
-    public String requestAccessTokenFromKakao(String authorizationCode) {
-        log.info("requestAccessTokenFromKakao");
+    public String getAccessTokenFromKakao(String authorizationCode) {
 
         // 카카오로 액세스 토큰 받기 위한 객체 생성
         HttpHeaders headers = new HttpHeaders();
@@ -53,5 +52,35 @@ public class OauthService {
             log.error("카카오 액세스 토큰 교환 오류 발생");
         }
         return accessToken;
+    }
+
+    public String getUserKakaoProfile(String accessToken) {
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+
+        // 카카오에 사용자 정보를 요청하기 위해 필요한 설정
+        headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
+        headers.add("Authorization", "Bearer " + accessToken);
+
+        HttpEntity<MultiValueMap<String, String>> userKakaoProfileRequest = new HttpEntity<>(headers);
+
+        // 사용자 정보 요청
+        ResponseEntity<String> responseEntity = restTemplate.exchange(
+                "https://kapi.kakao.com/v2/user/me",
+                HttpMethod.GET,
+                userKakaoProfileRequest,
+                String.class
+        );
+
+        // 카카오로부터 사용자 이메일 수신
+        ObjectMapper objectMapper = new ObjectMapper();
+        String userEmail = "";
+        try {
+            userEmail = objectMapper.readTree(responseEntity.getBody()).get("kakao_account").get("email").asText();
+            log.info("User Email:" + userEmail);
+        } catch (Exception e) {
+            log.error("사용자 이메일 정보 요청 실패");
+        }
+        return userEmail;
     }
 }

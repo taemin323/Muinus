@@ -16,7 +16,7 @@ public class OauthController {
 
     @GetMapping("/api/users/login")
     public ResponseEntity<?> kakaoLogin(@RequestParam("code") String authorizationCode) {
-        oauthService.requestAccessTokenFromKakao(authorizationCode);
+        oauthService.getUserKakaoProfile(oauthService.getAccessTokenFromKakao(authorizationCode));
         return ResponseEntity.ok().build();
     }
 }
