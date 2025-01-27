@@ -22,6 +22,6 @@ public class UserController {
 
     @PostMapping("/api/users/store-owner")
     public ResponseEntity<?> registerStoreOwner(@RequestBody StoreOwnerRegisterRequestDto requestDto) {
-
+        return ResponseEntity.ok(userService.registerStoreOwner(requestDto));
     }
 }
