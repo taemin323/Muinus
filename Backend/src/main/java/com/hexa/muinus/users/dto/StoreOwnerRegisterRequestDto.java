@@ -1,5 +1,6 @@
 package com.hexa.muinus.users.dto;
 
+import com.hexa.muinus.store.domain.Store;
 import lombok.Builder;
 import lombok.Getter;
 import org.springframework.data.geo.Point;
@@ -16,6 +17,8 @@ public class StoreOwnerRegisterRequestDto {
     private final Point location;
     private final String storeName;
     private final String storeAddress;
+    private final String storePhoneNumber;
+    private final String fliMarketImageUrl;
     private final String registrationNumber;
-    private final boolean isFliMarketAllowed;
+    private final Store.YesNo isFliMarketAllowed;
 }
