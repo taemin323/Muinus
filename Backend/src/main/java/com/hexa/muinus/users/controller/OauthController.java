@@ -3,10 +3,7 @@ package com.hexa.muinus.users.controller;
 import com.hexa.muinus.users.service.OauthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -16,7 +13,8 @@ public class OauthController {
 
     @GetMapping("/api/users/login")
     public ResponseEntity<?> kakaoLogin(@RequestParam("code") String authorizationCode) {
-        oauthService.getUserKakaoProfile(oauthService.getAccessTokenFromKakao(authorizationCode));
-        return ResponseEntity.ok().build();
+        String accessToken = oauthService.getAccessTokenFromKakao(authorizationCode);
+        String userEmail = oauthService.getUserKakaoProfile(accessToken);
+        return ResponseEntity.ok(oauthService.findUser(userEmail));
     }
 }

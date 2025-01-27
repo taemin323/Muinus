@@ -1,17 +1,24 @@
 package com.hexa.muinus.users.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hexa.muinus.users.UserRepository;
+import com.hexa.muinus.users.domain.user.Users;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class OauthService {
+
+    private final UserRepository userRepository;
 
     @Value("${kakao.auth.client_id}")
     private String clientId;
@@ -47,7 +54,7 @@ public class OauthService {
         String accessToken = "";
         try {
             accessToken = objectMapper.readTree(responseEntity.getBody()).get("access_token").asText();
-            log.info("Access token:" + accessToken);
+            log.info("Access token: {}", accessToken);
         } catch (Exception e) {
             log.error("카카오 액세스 토큰 교환 오류 발생");
         }
@@ -77,10 +84,15 @@ public class OauthService {
         String userEmail = "";
         try {
             userEmail = objectMapper.readTree(responseEntity.getBody()).get("kakao_account").get("email").asText();
-            log.info("User Email:" + userEmail);
+            log.info("User Email: {}", userEmail);
         } catch (Exception e) {
             log.error("사용자 이메일 정보 요청 실패");
         }
         return userEmail;
+    }
+
+    @Transactional(readOnly = true)
+    public Users findUser(String userEmail) {
+        return userRepository.findByEmail(userEmail);
     }
 }
