@@ -32,6 +32,9 @@ public class Users {
     @Column(nullable = false)
     private Integer point;
 
+    @Column
+    private String refreshToken;
+
     public enum UserType {
         A, U
     }
@@ -44,5 +47,9 @@ public class Users {
         this.telephone = telephone;
         this.userType = userType;
         this.point = point;
+    }
+
+    public void updateRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
     }
 }

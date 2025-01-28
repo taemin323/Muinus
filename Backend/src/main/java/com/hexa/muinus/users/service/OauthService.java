@@ -1,6 +1,7 @@
 package com.hexa.muinus.users.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hexa.muinus.common.jwt.JwtProvider;
 import com.hexa.muinus.users.UserRepository;
 import com.hexa.muinus.users.domain.user.Users;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.server.ResponseStatusException;
 
 @Slf4j
 @Service
@@ -19,16 +21,26 @@ import org.springframework.web.client.RestTemplate;
 public class OauthService {
 
     private final UserRepository userRepository;
+    private final JwtProvider jwtProvider;
 
-    @Value("${kakao.auth.client_id}")
+    @Value("${spring.security.oauth2.client.registration.kakao.client-id}")
     private String clientId;
 
-    @Value("${kakao.auth.redirect_url}")
+    @Value("${spring.security.oauth2.client.registration.kakao.redirect-uri}")
     private String redirectUrl;
 
-    public String getAccessTokenFromKakao(String authorizationCode) {
+    @Value("${spring.security.oauth2.client.provider.kakao.token-uri}")
+    private String tokenUrl;
 
-        // 카카오로 액세스 토큰 받기 위한 객체 생성
+    @Value("${spring.security.oauth2.client.provider.kakao.user-info-uri}")
+    private String profileUrl;
+
+    /**
+     * 카카오로부터 액세스 토큰 발급
+     * @param authorizationCode
+     * @return
+     */
+    public String getAccessTokenFromKakao(String authorizationCode) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
@@ -43,7 +55,7 @@ public class OauthService {
         // 카카오로 액세스 토큰 발급 요청
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<String> responseEntity = restTemplate.exchange(
-                "https://kauth.kakao.com/oauth/token",
+                tokenUrl,
                 HttpMethod.POST,
                 httpEntity,
                 String.class
@@ -60,6 +72,11 @@ public class OauthService {
         return accessToken;
     }
 
+    /**
+     * 카카오로부터 사용자 정보 받아오기
+     * @param accessToken
+     * @return
+     */
     public String getUserKakaoProfile(String accessToken) {
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
@@ -72,7 +89,7 @@ public class OauthService {
 
         // 사용자 정보 요청
         ResponseEntity<String> responseEntity = restTemplate.exchange(
-                "https://kapi.kakao.com/v2/user/me",
+                profileUrl,
                 HttpMethod.GET,
                 userKakaoProfileRequest,
                 String.class
@@ -89,8 +106,19 @@ public class OauthService {
         return userEmail;
     }
 
+    /**
+     * 이메일 정보 조회로 회원가입한 사용자인지 확인
+     * @param userEmail
+     * @return
+     */
     @Transactional(readOnly = true)
     public Users findUser(String userEmail) {
+        Users user = userRepository.findByEmail(userEmail);
+        // 사용자 존재 여부 확인
+        if (user == null) {
+            // 사용자 미존재 시 403 에러 반환
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "등록되지 않은 사용자입니다.");
+        }
         return userRepository.findByEmail(userEmail);
     }
 }

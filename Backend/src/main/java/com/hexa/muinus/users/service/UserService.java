@@ -1,11 +1,12 @@
 package com.hexa.muinus.users.service;
 
-import com.hexa.muinus.store.domain.Store;
+import com.hexa.muinus.common.jwt.JwtProvider;
 import com.hexa.muinus.store.repository.StoreRepository;
 import com.hexa.muinus.users.UserRepository;
 import com.hexa.muinus.users.domain.user.Users;
 import com.hexa.muinus.users.dto.ConsumerRegisterRequestDto;
 import com.hexa.muinus.users.dto.StoreOwnerRegisterRequestDto;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -18,9 +19,10 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final StoreRepository storeRepository;
+    private final JwtProvider jwtProvider;
 
     @Transactional
-    public Users registerConsumer(ConsumerRegisterRequestDto requestDto) {
+    public Users registerConsumer(ConsumerRegisterRequestDto requestDto, HttpServletResponse response) {
         Users user = Users.builder()
                 .userName(requestDto.getUserName())
                 .email(requestDto.getUserEmail())
@@ -28,6 +30,10 @@ public class UserService {
                 .userType(Users.UserType.U)
                 .point(requestDto.getUserPoint())
                 .build();
+
+        // 회원 가입 시 토큰 발급
+        issueTokens(user, response);
+
         return userRepository.save(user);
     }
 
@@ -37,7 +43,7 @@ public class UserService {
      * @return
      */
     @Transactional
-    public int registerStoreOwner(StoreOwnerRegisterRequestDto requestDto) {
+    public int registerStoreOwner(StoreOwnerRegisterRequestDto requestDto, HttpServletResponse response) {
         Users user = Users.builder()
                 .userName(requestDto.getUserName())
                 .email(requestDto.getUserEmail())
@@ -45,6 +51,10 @@ public class UserService {
                 .userType(Users.UserType.U)
                 .point(requestDto.getUserPoint())
                 .build();
+
+        // 회원 가입 시 토큰 발급
+        issueTokens(user, response);
+
         Users savedUser = userRepository.save(user);
 
         return storeRepository.saveStore(
@@ -57,5 +67,15 @@ public class UserService {
                 requestDto.getIsFliMarketAllowed().toString(),
                 requestDto.getFliMarketSectionCount()
                 );
+    }
+
+    /**
+     * 토큰을 발급, users 객체에 refresh token 할당, 쿠키에 토큰 심기
+     */
+    public void issueTokens(Users user, HttpServletResponse response) {
+        String accessToken = jwtProvider.createAccessToken(user);
+        String refreshToken = jwtProvider.createRefreshToken(user);
+        user.updateRefreshToken(refreshToken);
+        jwtProvider.setTokensInCookie(response, accessToken, refreshToken);
     }
 }
