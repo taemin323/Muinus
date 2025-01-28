@@ -1,5 +1,7 @@
-package com.hexa.muinus.common;
+package com.hexa.muinus.common.security;
 
+import com.hexa.muinus.common.jwt.JwtAuthenticationFilter;
+import com.hexa.muinus.common.jwt.JwtProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
