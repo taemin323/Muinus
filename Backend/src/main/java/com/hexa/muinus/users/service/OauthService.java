@@ -54,7 +54,6 @@ public class OauthService {
         String accessToken = "";
         try {
             accessToken = objectMapper.readTree(responseEntity.getBody()).get("access_token").asText();
-            log.info("Access token: {}", accessToken);
         } catch (Exception e) {
             log.error("카카오 액세스 토큰 교환 오류 발생");
         }
@@ -84,7 +83,6 @@ public class OauthService {
         String userEmail = "";
         try {
             userEmail = objectMapper.readTree(responseEntity.getBody()).get("kakao_account").get("email").asText();
-            log.info("User Email: {}", userEmail);
         } catch (Exception e) {
             log.error("사용자 이메일 정보 요청 실패");
         }

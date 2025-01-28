@@ -28,10 +28,14 @@ public class UserService {
                 .userType(Users.UserType.U)
                 .point(requestDto.getUserPoint())
                 .build();
-        log.info("Registering consumer " + user.getUserName());
         return userRepository.save(user);
     }
 
+    /**
+     * 점주 회원가입 시 정보 받아와 Users 테이블에 저장, 또한 Store 테이블에도 저장
+     * @param requestDto
+     * @return
+     */
     @Transactional
     public int registerStoreOwner(StoreOwnerRegisterRequestDto requestDto) {
         Users user = Users.builder()
@@ -46,7 +50,7 @@ public class UserService {
         return storeRepository.saveStore(
                 savedUser.getUserNo(),
                 requestDto.getStoreName(),
-                requestDto.getLocation().getX(),
+                requestDto.getLocation().getX(), // point 타입 -> mysql insert를 위한 추출
                 requestDto.getLocation().getY(),
                 requestDto.getStoreAddress(),
                 requestDto.getRegistrationNumber(),
