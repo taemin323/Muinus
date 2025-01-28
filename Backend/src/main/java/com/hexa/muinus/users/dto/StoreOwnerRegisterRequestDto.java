@@ -21,4 +21,5 @@ public class StoreOwnerRegisterRequestDto {
     private final String fliMarketImageUrl;
     private final String registrationNumber;
     private final Store.YesNo isFliMarketAllowed;
+    private final Byte fliMarketSectionCount;
 }

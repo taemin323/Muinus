@@ -16,7 +16,7 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
-                                .requestMatchers("/api/users/login", "/oauth2/**").permitAll()  // 허용 URL 설정
+                                .requestMatchers("/api/users/**", "/oauth2/**").permitAll()  // 허용 URL 설정
                                 .anyRequest().authenticated()  // 그 외 모든 요청은 인증 필요
                 )
                 .csrf().disable()  // CSRF 보호 비활성화 (API 서버의 경우)
