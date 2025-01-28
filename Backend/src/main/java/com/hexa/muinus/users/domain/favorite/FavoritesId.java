@@ -9,8 +9,7 @@ import java.util.Objects;
 @Embeddable
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
-@Setter
+@Data
 public class FavoritesId implements Serializable {
 
     private static final long serialVersionUID = 1L;

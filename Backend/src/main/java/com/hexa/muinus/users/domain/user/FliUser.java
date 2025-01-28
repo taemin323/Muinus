@@ -6,8 +6,7 @@ import lombok.*;
 
 @Entity
 @Table(name = "fli_user")
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder

@@ -2,15 +2,11 @@ package com.hexa.muinus.store.domain.transaction;
 
 import com.hexa.muinus.store.domain.item.StoreItem;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
 @Table(name = "transaction_details")
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class TransactionDetails {
@@ -25,7 +21,7 @@ public class TransactionDetails {
     private Transactions transaction;
 
     @ManyToOne
-    @JoinColumn(name = "store_item_id", referencedColumnName = "store_prdt_id", nullable = false)
+    @JoinColumn(name = "store_item_id", referencedColumnName = "store_item_id", nullable = false)
     private StoreItem storeItem;
 
     @Column(name = "unit_price", nullable = false)
