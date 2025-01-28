@@ -3,8 +3,7 @@ package com.hexa.muinus.store.domain.coupon;
 import jakarta.persistence.*;
 import lombok.*;
 
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -14,6 +13,7 @@ public class Coupon {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "coupon_id")
     private Integer couponId;
 
     @Column(nullable = false, length = 255)
