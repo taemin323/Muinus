@@ -12,11 +12,6 @@ pipeline {
             steps {
                 script {
                     // Jenkins Credentials에서 값 가져오기
-                    withCredentials([
-                        string(credentialsId: 'DB_URL', variable: 'DB_URL'),
-                        string(credentialsId: 'DB_USER', variable: 'DB_USER'),
-                        string(credentialsId: 'DB_PASSWORD', variable: 'DB_PASSWORD'),
-                    ]) {
                     dir('Backend/src/main/resources') {
                         sh """
                             cat > application.yml <<EOL
@@ -25,16 +20,15 @@ spring:
         name: muinus
 
     datasource:
-        url: ${dbUrl}
-        username: ${dbUser}
-        password: ${dbPassword}
+        url: ${DB_URL}
+        username: ${DB_USER}
+        password: ${DB_PASSWORD}
         driver-class-name: com.mysql.cj.jdbc.Driver
 EOL
                             """
-                        }
-                    }
-                }
-            }
+                 }
+              }
+           }
         }
 
         stage('Build') {
