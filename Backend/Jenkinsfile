@@ -24,9 +24,9 @@ pipeline {
                         name: muinus
 
                       datasource:
-                        url: ${DB_URL}
-                        username: ${DB_USER}
-                        password: ${DB_PASSWORD}
+                        url: ${environment.DB_URL}
+                        username: ${environment.DB_USER}
+                        password: ${environment.DB_PASSWORD}
                         driver-class-name: com.mysql.cj.jdbc.Driver
                     EOL
                     '''
