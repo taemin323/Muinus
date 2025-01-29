@@ -43,7 +43,7 @@ pipeline {
             }
         }
 
-        stage('Publish on SSH') {
+        stage('Deploy') {
             steps {
                 script {
                     sshPublisher(
