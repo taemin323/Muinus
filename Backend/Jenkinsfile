@@ -14,7 +14,7 @@ pipeline {
 
         stage('build') {
             steps {
-                sh 'echo build start && ./gradlew clean bootJar'
+                sh 'chmod +x gradlew && ./gradlew clean bootJar'
             }
         }
 
