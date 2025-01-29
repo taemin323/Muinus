@@ -61,15 +61,19 @@ pipeline {
                                         sshTransfer(
                                             cleanRemote: false,
                                             excludes: '',
-                                            flatten: false,
+                                            sourceFiles: 'Backend/build/libs/*.jar',
+                                            flatten: true,
                                             makeEmptyDirs: false,
                                             noDefaultExcludes: false,
-                                            patternSeparator: '[, ]+',
+//                                             patternSeparator: '[, ]+',
                                             remoteDirectory: '/home/ubuntu/project/deploy/',
                                             remoteDirectorySDF: false,
-                                            sourceFiles: 'Backend/build/libs/*.jar',
-                                            removePrefix: 'Backend/build/libs',
-                                            execCommand: 'sh /home/ubuntu/project/script/init_server.sh',
+                                            execCommand: '''
+                                            ls -la /home/ubuntu/project/deploy/
+                                            echo "Current: "
+                                            pwd
+                                            sh /home/ubuntu/project/script/init_server.sh
+                                            ''',
                                             execTimeout: 120000
                                         )
                                     ],
