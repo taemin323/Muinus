@@ -4,8 +4,19 @@ pipeline {
     stages {
         stage('Gitlab Clone') {
             steps {
-                git branch: 'master', git credentialsId: 'aseongjun99', url: 'https://lab.ssafy.com/s12-webmobile1-sub1/S12P11A506.git'
+                git(
+                    branch: 'master',
+                    credentialsId: 'aseongjun99',
+                    url: 'https://lab.ssafy.com/s12-webmobile1-sub1/S12P11A506.git'
+                )
             }
         }
+
+        stage('build') {
+            steps {
+                sh 'echo build start && ./gradlew clean bootJar'
+            }
+        }
+
     }
 }
