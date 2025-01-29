@@ -9,7 +9,6 @@ import lombok.*;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class StoreItem {
 
     @Id
@@ -33,5 +32,4 @@ public class StoreItem {
 
     @Column(name = "discount_rate", nullable = false)
     private Integer discountRate = 0;
-
 }

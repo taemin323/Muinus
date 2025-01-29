@@ -45,5 +45,4 @@ public class Item {
 
     @Column(name = "item_image_url")
     private String itemImageUrl;
-
 }

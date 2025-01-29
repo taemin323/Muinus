@@ -3,8 +3,7 @@ package com.hexa.muinus.store.domain.coupon;
 import jakarta.persistence.*;
 import lombok.*;
 
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -20,7 +19,7 @@ public class Coupon {
     @Column(nullable = false, length = 255)
     private String name;
 
-    @Column(name = "discount_rate", nullable = false)
+    @Column(nullable = false)
     private int discountRate;
 
     @Column(nullable = true)

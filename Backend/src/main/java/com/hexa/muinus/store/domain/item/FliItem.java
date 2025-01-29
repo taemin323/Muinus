@@ -7,8 +7,7 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -18,7 +17,6 @@ public class FliItem {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "fli_item_id")
     private Integer fliItemId;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -29,7 +27,7 @@ public class FliItem {
     @JoinColumn(name = "user_no", nullable = false)
     private Users users;
 
-    @Column(name = "fli_item_name", nullable = false, length = 200)
+    @Column(nullable = false, length = 200)
     private String fliItemName;
 
     @Column(nullable = false)
@@ -38,17 +36,17 @@ public class FliItem {
     @Column(nullable = false)
     private int quantity;
 
-    @Column(name = "section_id", nullable = false)
+    @Column(nullable = false)
     private int sectionId;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, columnDefinition = "ENUM('PENDING', 'APPROVED', 'REJECTED', 'SELLING', 'SOLD') DEFAULT 'PENDING'")
     private FliItemStatus status;
 
-    @Column(name = "application_date", nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    @Column(nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime applicationDate;
 
-    @Column(name = "expiration_date", columnDefinition = "TIMESTAMP")
+    @Column(columnDefinition = "TIMESTAMP")
     private LocalDateTime expirationDate;
 
     public enum FliItemStatus {
