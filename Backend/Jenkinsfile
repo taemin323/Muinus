@@ -45,7 +45,6 @@ pipeline {
 
         stage('Deploy') {
             steps {
-                dir('Backend') {
                     script {
                         sshPublisher(
                             publishers: [
@@ -61,8 +60,8 @@ pipeline {
                                             patternSeparator: '[, ]+',
                                             remoteDirectory: '/home/ubuntu/project/deploy/',
                                             remoteDirectorySDF: false,
-                                            removePrefix: 'build/libs',
-                                            sourceFiles: 'build/libs/*.jar',
+                                            sourceFiles: 'Backend/build/libs/*.jar',
+                                            removePrefix: 'Backend/build/libs',
                                             execCommand: 'sh /home/ubuntu/project/script/init_server.sh',
                                             execTimeout: 120000
                                         )
@@ -74,7 +73,7 @@ pipeline {
                             ]
                         )
                     }
-                }
+
             }
         }
     }
