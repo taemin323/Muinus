@@ -19,6 +19,9 @@ spring:
     application:
         name: muinus
 
+    server:
+        port: 8989
+
     datasource:
         url: ${DB_URL}
         username: ${DB_USER}
