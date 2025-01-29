@@ -12,24 +12,26 @@ pipeline {
             steps {
                 script {
                     // Jenkins Credentials에서 값 가져오기
-                    def dbUrl = credentials('DB_URL')
-                    def dbUser = credentials('DB_USER')
-                    def dbPassword = credentials('DB_PASSWORD')
-
+                    withCredentials([
+                        string(credentialsId: 'DB_URL', variable: 'DB_URL'),
+                        string(credentialsId: 'DB_USER', variable: 'DB_USER'),
+                        string(credentialsId: 'DB_PASSWORD', variable: 'DB_PASSWORD'),
+                    ]) {
                     dir('Backend/src/main/resources') {
                         sh """
-                        cat > application.yml <<EOL
-                        spring:
-                          application:
-                            name: muinus
+                            cat > application.yml <<EOL
+spring:
+    application:
+        name: muinus
 
-                          datasource:
-                            url: ${dbUrl}
-                            username: ${dbUser}
-                            password: ${dbPassword}
-                            driver-class-name: com.mysql.cj.jdbc.Driver
-                        EOL
-                        """
+    datasource:
+        url: ${dbUrl}
+        username: ${dbUser}
+        password: ${dbPassword}
+        driver-class-name: com.mysql.cj.jdbc.Driver
+EOL
+                            """
+                        }
                     }
                 }
             }
@@ -65,13 +67,9 @@ pipeline {
                                             flatten: true,
                                             makeEmptyDirs: false,
                                             noDefaultExcludes: false,
-//                                             patternSeparator: '[, ]+',
                                             remoteDirectory: 'project/deploy/',
                                             remoteDirectorySDF: false,
                                             execCommand: '''
-                                            ls -la /home/ubuntu/project/deploy/
-                                            echo "Current: "
-                                            pwd
                                             sh /home/ubuntu/project/script/init_server.sh
                                             ''',
                                             execTimeout: 120000
