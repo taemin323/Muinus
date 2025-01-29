@@ -18,6 +18,7 @@ public class GuestTransactions {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "transaction_id")
     private Integer transactionId;
 
     @ManyToOne(fetch = FetchType.LAZY) // ManyToOne 관계 설정
@@ -28,10 +29,10 @@ public class GuestTransactions {
     @JoinColumn(name = "guest_no", nullable = false)
     private GuestUser guest;
 
-    @Column(nullable = false, length = 20)
+    @Column(name = "receipt_code", nullable = false, length = 20)
     private String receiptCode;
 
-    @Column(nullable = false)
+    @Column(name = "total_amount", nullable = false)
     private int totalAmount;
 
     @Enumerated(EnumType.STRING)

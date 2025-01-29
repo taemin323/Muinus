@@ -20,6 +20,7 @@ public class Announcement {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "board_id")
     private Integer boardId;
 
     @ManyToOne(fetch = FetchType.LAZY) // ManyToOne 관계 설정
@@ -32,13 +33,13 @@ public class Announcement {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
 
-    @Column(nullable = true, length = 255)
+    @Column(name = "board_image_url", nullable = true, length = 255)
     private String boardImageUrl;
 
-    @Column(nullable = false, updatable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    @Column(name = "created_at", nullable = false, updatable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime createdAt;
 
-    @Column(nullable = true, updatable = true, columnDefinition = "TIMESTAMP")
+    @Column(name = "updated_at", nullable = true, updatable = true, columnDefinition = "TIMESTAMP")
     private LocalDateTime updatedAt;
 
 
