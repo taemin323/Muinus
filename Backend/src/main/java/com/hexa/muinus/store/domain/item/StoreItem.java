@@ -2,20 +2,20 @@ package com.hexa.muinus.store.domain.item;
 
 import com.hexa.muinus.store.domain.Store;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "store_item")
-@Data
+@Getter
 @NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class StoreItem {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "store_item_id")
-    private Integer storeItemId;
+    @Column(name = "store_prdt_id")
+    private Integer storePrdtId;
 
     @ManyToOne
     @JoinColumn(name = "store_no", nullable = false)
@@ -34,4 +34,14 @@ public class StoreItem {
     @Column(name = "discount_rate", nullable = false)
     private Integer discountRate = 0;
 
+    @Builder
+
+    public StoreItem(Integer storePrdtId, Store store, Item item, Integer quantity, Integer salePrice, Integer discountRate) {
+        this.storePrdtId = storePrdtId;
+        this.store = store;
+        this.item = item;
+        this.quantity = quantity;
+        this.salePrice = salePrice;
+        this.discountRate = discountRate;
+    }
 }

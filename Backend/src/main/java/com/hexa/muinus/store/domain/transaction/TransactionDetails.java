@@ -25,7 +25,7 @@ public class TransactionDetails {
     private Transactions transaction;
 
     @ManyToOne
-    @JoinColumn(name = "store_item_id", referencedColumnName = "store_item_id", nullable = false)
+    @JoinColumn(name = "store_item_id", referencedColumnName = "store_prdt_id", nullable = false)
     private StoreItem storeItem;
 
     @Column(name = "unit_price", nullable = false)

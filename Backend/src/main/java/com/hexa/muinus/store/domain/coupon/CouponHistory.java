@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 @Table(name = "coupon_history")
 @Getter
 @Setter
+@NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class CouponHistory {

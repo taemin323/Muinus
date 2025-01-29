@@ -14,13 +14,12 @@ public class Coupon {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "coupon_id")
     private Integer couponId;
 
     @Column(nullable = false, length = 255)
     private String name;
 
-    @Column(name = "discount_rate", nullable = false)
+    @Column(nullable = false)
     private int discountRate;
 
     @Column(nullable = true)

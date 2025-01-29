@@ -15,7 +15,6 @@ public class GuestTransactionDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "detail_id")
     private Integer detailId;
 
     @ManyToOne(fetch = FetchType.LAZY) // ManyToOne 관계 설정
@@ -26,13 +25,13 @@ public class GuestTransactionDetails {
     @JoinColumn(name = "store_item_id", nullable = false)
     private StoreItem storeItem;
 
-    @Column(name = "unit_price", nullable = false)
+    @Column(nullable = false)
     private int unitPrice;
 
     @Column(nullable = false)
     private int quantity;
 
-    @Column(name = "sub_total", nullable = false)
+    @Column(nullable = false)
     private int subTotal;
 
 }

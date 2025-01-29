@@ -2,16 +2,16 @@ package com.hexa.muinus.store.domain;
 
 import com.hexa.muinus.users.domain.user.Users;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "store")
-@Data
+@Getter
 @NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class Store {
 
     @Id
@@ -26,11 +26,8 @@ public class Store {
     @Column(nullable = false, length = 255)
     private String name;
 
-    @Column(name = "location_x", nullable = false)
-    private double locationX;
-
-    @Column(name = "location_y", nullable = false)
-    private double locationY;
+    @Column(nullable = false, columnDefinition = "POINT")
+    private String location; // Use a custom type or a converter for the POINT type.
 
     @Column(nullable = false, length = 255)
     private String address;
@@ -61,4 +58,19 @@ public class Store {
         Y, N
     }
 
+    @Builder
+    public Store(Integer storeNo, Users user, String name, String location, String address, String storeImageUrl, String registrationNo, String phone, YesNo flimarketYn, String flimarketImageUrl, Byte flimarketSectionCnt, LocalDateTime createdAt) {
+        this.storeNo = storeNo;
+        this.user = user;
+        this.name = name;
+        this.location = location;
+        this.address = address;
+        this.storeImageUrl = storeImageUrl;
+        this.registrationNo = registrationNo;
+        this.phone = phone;
+        this.flimarketYn = flimarketYn;
+        this.flimarketImageUrl = flimarketImageUrl;
+        this.flimarketSectionCnt = flimarketSectionCnt;
+        this.createdAt = createdAt;
+    }
 }
