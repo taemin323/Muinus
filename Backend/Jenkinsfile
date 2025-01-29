@@ -60,7 +60,7 @@ pipeline {
                                         makeEmptyDirs: false,
                                         noDefaultExcludes: false,
                                         patternSeparator: '[, ]+',
-                                        remoteDirectory: '/project/deploy', // EC2 서버에서 파일을 받을 디렉토리
+                                        remoteDirectory: '/home/ubuntu/project/deploy',
                                         remoteDirectorySDF: false,
                                         removePrefix: 'build/libs',
                                         sourceFiles: 'build/libs/*.jar'
