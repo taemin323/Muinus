@@ -1,24 +1,45 @@
 pipeline {
     agent any
 
+    environment {
+        DB_URL = credentials('DB_URL')
+        DB_USER = credentials('DB_USER')
+        DB_PASSWORD = credentials('DB_PASSWORD')
+    }
+
     stages {
-        stage('Gitlab Clone') {
+        stage('Git Clone') {
             steps {
-                git(
-                    branch: 'master',
-                    credentialsId: 'aseongjun99',
-                    url: 'https://lab.ssafy.com/s12-webmobile1-sub1/S12P11A506.git'
-                )
+                git branch: 'master', credentialsId: 'aseongjun99', url: 'https://lab.ssafy.com/s12-webmobile1-sub1/S12P11A506.git'
             }
         }
 
-        stage('build') {
+        stage('Create application.yml') {
+            steps {
+                dir('Backend/src/main/resources') {
+                    sh '''
+                    cat > application.yml <<EOL
+                    spring:
+                      application:
+                        name: muinus
+
+                      datasource:
+                        url: ${DB_URL}
+                        username: ${DB_USER}
+                        password: ${DB_PASSWORD}
+                        driver-class-name: com.mysql.cj.jdbc.Driver
+                    EOL
+                    '''
+                }
+            }
+        }
+
+        stage('Build') {
             steps {
                 dir('Backend') {
                     sh 'chmod +x gradlew && ./gradlew clean bootJar'
                 }
             }
         }
-
     }
 }
