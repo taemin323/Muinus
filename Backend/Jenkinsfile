@@ -63,7 +63,7 @@ pipeline {
                                         remoteDirectory: '/home/ubuntu/project/deploy',
                                         remoteDirectorySDF: false,
                                         removePrefix: 'build/libs',
-                                        sourceFiles: 'build/libs/*.jar'
+                                        sourceFiles: './build/libs/*.jar'
                                     )
                                 ],
                                 usePromotionTimestamp: false,
