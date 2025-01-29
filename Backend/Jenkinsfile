@@ -17,7 +17,7 @@ pipeline {
                     def dbPassword = credentials('DB_PASSWORD')
 
                     dir('Backend/src/main/resources') {
-                        sh '''
+                        sh """
                         cat > application.yml <<EOL
                         spring:
                           application:
@@ -29,7 +29,7 @@ pipeline {
                             password: ${dbPassword}
                             driver-class-name: com.mysql.cj.jdbc.Driver
                         EOL
-                        '''
+                        """
                     }
                 }
             }
@@ -38,7 +38,11 @@ pipeline {
         stage('Build') {
             steps {
                 dir('Backend') {
-                    sh 'chmod +x gradlew && ./gradlew clean bootJar'
+                    sh '''
+                    chmod +x gradlew
+                    ./gradlew clean bootJar
+                    ls -a build/libs
+                    '''
                 }
             }
         }
@@ -46,6 +50,9 @@ pipeline {
         stage('Deploy') {
             steps {
                     script {
+                        sh 'pwd'
+                        sh 'ls -a Backend/build/libs/'
+
                         sshPublisher(
                             publishers: [
                                 sshPublisherDesc(
