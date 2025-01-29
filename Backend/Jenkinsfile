@@ -20,7 +20,7 @@ spring:
         name: muinus
 
     server:
-        port: 8989
+        port: 8000
 
     datasource:
         url: ${DB_URL}
