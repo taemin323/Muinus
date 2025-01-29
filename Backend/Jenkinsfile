@@ -1,12 +1,6 @@
 pipeline {
     agent any
 
-    environment {
-        DB_URL = credentials('DB_URL')
-        DB_USER = credentials('DB_USER')
-        DB_PASSWORD = credentials('DB_PASSWORD')
-    }
-
     stages {
         stage('Git Clone') {
             steps {
@@ -16,20 +10,27 @@ pipeline {
 
         stage('Create application.yml') {
             steps {
-                dir('Backend/src/main/resources') {
-                    sh '''
-                    cat > application.yml <<EOL
-                    spring:
-                      application:
-                        name: muinus
+                script {
+                    // Jenkins Credentials에서 값 가져오기
+                    def dbUrl = credentials('DB_URL')
+                    def dbUser = credentials('DB_USER')
+                    def dbPassword = credentials('DB_PASSWORD')
 
-                      datasource:
-                        url: ${environment.DB_URL}
-                        username: ${environment.DB_USER}
-                        password: ${environment.DB_PASSWORD}
-                        driver-class-name: com.mysql.cj.jdbc.Driver
-                    EOL
-                    '''
+                    dir('Backend/src/main/resources') {
+                        sh '''
+                        cat > application.yml <<EOL
+                        spring:
+                          application:
+                            name: muinus
+
+                          datasource:
+                            url: ${dbUrl}
+                            username: ${dbUser}
+                            password: ${dbPassword}
+                            driver-class-name: com.mysql.cj.jdbc.Driver
+                        EOL
+                        '''
+                    }
                 }
             }
         }
