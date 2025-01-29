@@ -42,5 +42,38 @@ pipeline {
                 }
             }
         }
+
+        stage('Publish on SSH') {
+            steps {
+                script {
+                    sshPublisher(
+                        publishers: [
+                            sshPublisherDesc(
+                                configName: 'muinus-ec2', // 설정한 SSH 서버 이름
+                                transfers: [
+                                    sshTransfer(
+                                        cleanRemote: false,
+                                        excludes: '',
+                                        execCommand: 'sh /home/ubuntu/project/script/init_server.sh',
+                                        execTimeout: 120000,
+                                        flatten: false,
+                                        makeEmptyDirs: false,
+                                        noDefaultExcludes: false,
+                                        patternSeparator: '[, ]+',
+                                        remoteDirectory: '/project/deploy', // EC2 서버에서 파일을 받을 디렉토리
+                                        remoteDirectorySDF: false,
+                                        removePrefix: 'build/libs',
+                                        sourceFiles: 'build/libs/*.jar'
+                                    )
+                                ],
+                                usePromotionTimestamp: false,
+                                useWorkspaceInPromotion: false,
+                                verbose: true
+                            )
+                        ]
+                    )
+                }
+            }
+        }
     }
 }
