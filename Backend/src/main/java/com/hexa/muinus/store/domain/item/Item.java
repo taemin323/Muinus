@@ -1,14 +1,14 @@
 package com.hexa.muinus.store.domain.item;
 
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Table(name = "item")
-@Getter
+@Data
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Item {
 
     @Id
@@ -46,18 +46,4 @@ public class Item {
     @Column(name = "item_image_url")
     private String itemImageUrl;
 
-    @Builder
-    public Item(Integer itemId, String barcode, String itemName, String brand, Integer calories, Integer protein, Integer fat, Integer carbohydrate, Integer sugars, Integer weight, String itemImageUrl) {
-        this.itemId = itemId;
-        this.barcode = barcode;
-        this.itemName = itemName;
-        this.brand = brand;
-        this.calories = calories;
-        this.protein = protein;
-        this.fat = fat;
-        this.carbohydrate = carbohydrate;
-        this.sugars = sugars;
-        this.weight = weight;
-        this.itemImageUrl = itemImageUrl;
-    }
 }

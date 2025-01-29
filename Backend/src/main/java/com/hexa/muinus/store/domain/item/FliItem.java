@@ -18,6 +18,7 @@ public class FliItem {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "fli_item_id")
     private Integer fliItemId;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -28,7 +29,7 @@ public class FliItem {
     @JoinColumn(name = "user_no", nullable = false)
     private Users users;
 
-    @Column(nullable = false, length = 200)
+    @Column(name = "fli_item_name", nullable = false, length = 200)
     private String fliItemName;
 
     @Column(nullable = false)
@@ -37,17 +38,17 @@ public class FliItem {
     @Column(nullable = false)
     private int quantity;
 
-    @Column(nullable = false)
+    @Column(name = "section_id", nullable = false)
     private int sectionId;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, columnDefinition = "ENUM('PENDING', 'APPROVED', 'REJECTED', 'SELLING', 'SOLD') DEFAULT 'PENDING'")
     private FliItemStatus status;
 
-    @Column(nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    @Column(name = "application_date", nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime applicationDate;
 
-    @Column(columnDefinition = "TIMESTAMP")
+    @Column(name = "expiration_date", columnDefinition = "TIMESTAMP")
     private LocalDateTime expirationDate;
 
     public enum FliItemStatus {
