@@ -59,6 +59,9 @@ public interface StoreRepository extends JpaRepository<Store, Integer> {
         WHERE s.storeNo = :storeNo
     """)
     Optional<StoreDTO> findStoreDTOById(@Param("storeNo") int storeNo);
+    // 가게 이름으로 store_no 조회
+    @Query("SELECT s.storeNo FROM Store s WHERE s.name = :storeName")
+    Optional<Integer> findStoreNoByName(@Param("storeName") String storeName);
 
 
 
