@@ -4,8 +4,7 @@ import com.hexa.muinus.store.domain.item.StoreItem;
 import jakarta.persistence.*;
 import lombok.*;
 
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder

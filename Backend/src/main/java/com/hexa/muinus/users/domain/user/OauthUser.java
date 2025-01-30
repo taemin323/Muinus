@@ -5,8 +5,7 @@ import lombok.*;
 
 @Entity
 @Table(name = "oauth_user")
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder

@@ -8,8 +8,7 @@ import java.sql.Timestamp;
 
 @Entity
 @Table(name = "request_receiving")
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
