@@ -1,0 +1,86 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Git Clone') {
+            steps {
+                git branch: 'master', credentialsId: 'aseongjun99', url: 'https://lab.ssafy.com/s12-webmobile1-sub1/S12P11A506.git'
+            }
+        }
+
+        stage('Create application.yml') {
+            steps {
+                script {
+                    // Jenkins Credentials에서 값 가져오기
+                    dir('Backend/src/main/resources') {
+                        sh """
+                            cat > application.yml <<EOL
+spring:
+    application:
+        name: muinus
+
+    server:
+        port: 8000
+
+    datasource:
+        url: ${DB_URL}
+        username: ${DB_USER}
+        password: ${DB_PASSWORD}
+        driver-class-name: com.mysql.cj.jdbc.Driver
+EOL
+                            """
+                 }
+              }
+           }
+        }
+
+        stage('Build') {
+            steps {
+                dir('Backend') {
+                    sh '''
+                    chmod +x gradlew
+                    ./gradlew clean bootJar
+                    ls -a build/libs
+                    '''
+                }
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                    script {
+                        sh 'pwd'
+                        sh 'ls -a Backend/build/libs/'
+
+                        sshPublisher(
+                            publishers: [
+                                sshPublisherDesc(
+                                    configName: 'muinus-ec2',
+                                    transfers: [
+                                        sshTransfer(
+                                            cleanRemote: false,
+                                            excludes: '',
+                                            sourceFiles: 'Backend/build/libs/*.jar',
+                                            flatten: true,
+                                            makeEmptyDirs: false,
+                                            noDefaultExcludes: false,
+                                            remoteDirectory: 'project/deploy/',
+                                            remoteDirectorySDF: false,
+                                            execCommand: '''
+                                            sh /home/ubuntu/project/script/init_server.sh
+                                            ''',
+                                            execTimeout: 120000
+                                        )
+                                    ],
+                                    usePromotionTimestamp: false,
+                                    useWorkspaceInPromotion: false,
+                                    verbose: true
+                                )
+                            ]
+                        )
+                    }
+
+            }
+        }
+    }
+}
