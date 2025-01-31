@@ -1,17 +1,17 @@
-package com.hexa.muinus.store.domain.service;
+package com.hexa.muinus.store.service;
 
 import com.hexa.muinus.common.exception.StoreLocationDuplicateException;
 import com.hexa.muinus.common.exception.StoreNotFoundException;
 import com.hexa.muinus.common.exception.UserNotFoundException;
-import com.hexa.muinus.store.domain.Store;
-import com.hexa.muinus.store.domain.dto.*;
+import com.hexa.muinus.store.domain.store.Store;
 import com.hexa.muinus.store.domain.information.dto.AnnouncementDTO;
 import com.hexa.muinus.store.domain.information.respository.AnnouncementRepository;
 import com.hexa.muinus.store.domain.item.dto.FliItemDTO;
 import com.hexa.muinus.store.domain.item.dto.StoreItemDTO;
 import com.hexa.muinus.store.domain.item.repsitory.FliItemRepository;
 import com.hexa.muinus.store.domain.item.repsitory.StoreItemRespository;
-import com.hexa.muinus.store.domain.repository.StoreRepository;
+import com.hexa.muinus.store.domain.store.repository.StoreRepository;
+import com.hexa.muinus.store.dto.*;
 import com.hexa.muinus.users.domain.user.Users;
 import com.hexa.muinus.users.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor

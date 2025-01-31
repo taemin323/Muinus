@@ -1,8 +1,7 @@
-package com.hexa.muinus.store.domain.dto;
+package com.hexa.muinus.store.dto;
 
 import com.hexa.muinus.common.validator.StoreFlimarketValidator;
-import com.hexa.muinus.store.domain.Store;
-import com.hexa.muinus.users.domain.user.Users;
+import com.hexa.muinus.store.domain.store.Store;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;

@@ -1,6 +1,6 @@
 package com.hexa.muinus.users.dto;
 
-import com.hexa.muinus.store.domain.Store;
+import com.hexa.muinus.store.domain.store.Store;
 import lombok.Builder;
 import lombok.Getter;
 import org.springframework.data.geo.Point;
