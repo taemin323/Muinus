@@ -11,8 +11,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 @RequiredArgsConstructor
@@ -27,10 +29,8 @@ public class UserService {
     public Users registerConsumer(ConsumerRegisterRequestDto requestDto, HttpServletResponse response) {
         // 이미 가입한 회원인지 이메일로 확인
         if (userRepository.findByEmail(requestDto.getUserEmail()) != null) {
-
             log.info("User already exists with email {}", requestDto.getUserEmail());
-            return null;
-            // 에러 처리
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "이미 가입된 이메일입니다.");
         }
 
         Users user = Users.builder()
@@ -54,7 +54,8 @@ public class UserService {
     public int registerStoreOwner(StoreOwnerRegisterRequestDto requestDto, HttpServletResponse response) {
         // 이미 가입한 회원인지 이메일로 확인
         if (userRepository.findByEmail(requestDto.getUserEmail()) != null) {
-            // 에러 처리
+            log.info("User already exists with email {}", requestDto.getUserEmail());
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "이미 가입된 이메일입니다.");
         }
 
         Users user = Users.builder()
@@ -102,12 +103,14 @@ public class UserService {
 
         // RefreshToken 유효한지 확인
         if (refreshToken != null && !refreshToken.isEmpty() && jwtProvider.validateToken(refreshToken)) {
-                // DB에 저장된 refresh 토큰과 일치하는지 확인 후 AccessToken 재발급
-                Users user = userRepository.findByEmail(requestDto.getUserEmail());
-                if (refreshToken.equals(user.getEmail())) {
-                    String accessToken = jwtProvider.createAccessToken(user);
-                    jwtProvider.setAccessTokensInCookie(response, accessToken);
-                }
+            // DB에 저장된 refresh 토큰과 일치하는지 확인 후 AccessToken 재발급
+            Users user = userRepository.findByEmail(requestDto.getUserEmail());
+            if (refreshToken.equals(user.getEmail())) {
+                String accessToken = jwtProvider.createAccessToken(user);
+                jwtProvider.setAccessTokensInCookie(response, accessToken);
+            }
+        } else {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "유효하지 않은 Refresh Token 입니다.");
         }
     }
 }
