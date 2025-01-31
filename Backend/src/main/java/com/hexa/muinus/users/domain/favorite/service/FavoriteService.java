@@ -1,13 +1,13 @@
 package com.hexa.muinus.users.domain.favorite.service;
 
-import com.hexa.muinus.store.domain.Store;
 import com.hexa.muinus.store.domain.store.repository.StoreRepository;
+import com.hexa.muinus.store.domain.store.Store;
 import com.hexa.muinus.users.domain.favorite.Favorites;
 import com.hexa.muinus.users.domain.favorite.FavoritesId;
 import com.hexa.muinus.users.domain.favorite.dto.FavoriteResponseDto;
 import com.hexa.muinus.users.domain.favorite.repository.FavoriteRepository;
 import com.hexa.muinus.users.domain.user.Users;
-import com.hexa.muinus.users.domain.user.repository.UsersRepository;
+import com.hexa.muinus.users.domain.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,11 +20,11 @@ import java.util.stream.Collectors;
 public class FavoriteService {
 
     private final FavoriteRepository favoriteRepository;
-    private final UsersRepository usersRepository;
+    private final UserRepository userRepository;
     private final StoreRepository storeRepository;
 
     public void addFavorite(Integer userNo, Integer storeNo){
-        Users user = usersRepository.findById(userNo)
+        Users user = userRepository.findById(userNo)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
         Store store = storeRepository.findById(storeNo)
                 .orElseThrow(() -> new IllegalArgumentException("Store not found"));

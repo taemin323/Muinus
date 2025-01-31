@@ -1,11 +1,9 @@
 package com.hexa.muinus.users.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hexa.muinus.common.exception.ErrorCode;
-import com.hexa.muinus.common.exception.MuinusException;
 import com.hexa.muinus.common.jwt.JwtProvider;
-import com.hexa.muinus.users.UserRepository;
 import com.hexa.muinus.users.domain.user.Users;
+import com.hexa.muinus.users.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.server.ResponseStatusException;
 
 @Slf4j
 @Service
@@ -118,7 +117,7 @@ public class OauthService {
         // 사용자 존재 여부 확인
         if (user == null) {
             // 사용자 미존재 시 403 에러 반환
-            throw new MuinusException(ErrorCode.UNREGISTERED_USER);
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
         return userRepository.findByEmail(userEmail);
     }

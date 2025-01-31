@@ -1,10 +1,10 @@
-package com.hexa.muinus.store.domain.controller;
+package com.hexa.muinus.store.controller;
 
-import com.hexa.muinus.store.domain.dto.StoreDetailDTO;
-import com.hexa.muinus.store.domain.dto.StoreModifyDTO;
-import com.hexa.muinus.store.domain.dto.StoreRegisterDTO;
-import com.hexa.muinus.store.domain.dto.StoreSearchDTO;
-import com.hexa.muinus.store.domain.service.StoreService;
+import com.hexa.muinus.store.dto.StoreDetailDTO;
+import com.hexa.muinus.store.dto.StoreModifyDTO;
+import com.hexa.muinus.store.dto.StoreRegisterDTO;
+import com.hexa.muinus.store.dto.StoreSearchDTO;
+import com.hexa.muinus.store.service.StoreService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

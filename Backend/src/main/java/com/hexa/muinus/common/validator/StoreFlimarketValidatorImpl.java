@@ -1,8 +1,8 @@
 package com.hexa.muinus.common.validator;
 
-import com.hexa.muinus.store.domain.Store;
-import com.hexa.muinus.store.domain.dto.StoreModifyDTO;
-import com.hexa.muinus.store.domain.dto.StoreRegisterDTO;
+import com.hexa.muinus.store.domain.store.Store;
+import com.hexa.muinus.store.dto.StoreModifyDTO;
+import com.hexa.muinus.store.dto.StoreRegisterDTO;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
