@@ -20,20 +20,20 @@ public class Users {
     @Column(name = "user_name", nullable = false, length = 200)
     private String userName;
 
-    @Column(nullable = false, length = 50)
+    @Column(name = "email", nullable = false, unique = true, length = 50)
     private String email;
 
-    @Column(length = 20)
+    @Column(name = "telephone", length = 20)
     private String telephone;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "user_type", nullable = false, columnDefinition = "ENUM('A', 'U')")
     private UserType userType = UserType.U;
 
-    @Column(nullable = false)
+    @Column(name = "point", nullable = false)
     private Integer point = 0;
 
-    @Column(name = "refresh_token")
+    @Column(name = "refresh_token", length = 255)
     private String refreshToken;
 
     @Enumerated(EnumType.STRING)

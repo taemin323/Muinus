@@ -23,7 +23,7 @@ public class Announcement {
     @Column(name = "board_id")
     private Integer boardId;
 
-    @ManyToOne(fetch = FetchType.LAZY) // ManyToOne 관계 설정
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "store_no", nullable = false)
     private Store store;
 
@@ -33,15 +33,13 @@ public class Announcement {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
 
-    @Column(name = "board_image_url", nullable = true, length = 255)
+    @Column(name = "board_image_url", length = 255)
     private String boardImageUrl;
 
-    @Column(name = "created_at", nullable = false, updatable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    @Column(name = "created_at", nullable = false, updatable = false, insertable = false)
     private LocalDateTime createdAt;
 
-    @Column(name = "updated_at", columnDefinition = "TIMESTAMP")
+    @Column(name = "updated_at", insertable = false, updatable = false)
     private LocalDateTime updatedAt;
-
-
 
 }

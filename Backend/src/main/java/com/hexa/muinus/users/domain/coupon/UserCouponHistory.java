@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class UserCouponHistory {
 
     @EmbeddedId
@@ -21,16 +22,17 @@ public class UserCouponHistory {
 
     @ManyToOne
     @JoinColumns({
-            @JoinColumn(name = "store_no", referencedColumnName = "store_no", insertable = false, updatable = false),
-            @JoinColumn(name = "coupon_id", referencedColumnName = "coupon_id", insertable = false, updatable = false)
+            @JoinColumn(name = "store_no", referencedColumnName = "store_no", insertable = false, updatable = false, nullable = false),
+            @JoinColumn(name = "coupon_id", referencedColumnName = "coupon_id", insertable = false, updatable = false, nullable = false)
     })
     private CouponHistory couponHistory;
 
+    @MapsId("userNo")
     @ManyToOne
-    @JoinColumn(name = "user_no", referencedColumnName = "user_no", insertable = false, updatable = false)
+    @JoinColumn(name = "user_no", referencedColumnName = "user_no", insertable = false, updatable = false, nullable = false)
     private Users user;
 
-    @Column(name = "created_at", nullable = false, updatable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    @Column(name = "created_at", nullable = false, updatable = false,  insertable = false)
     private LocalDateTime createdAt;
 
     @Column(name = "used_at")

@@ -1,5 +1,6 @@
 package com.hexa.muinus.store.service;
 
+import com.hexa.muinus.common.enums.YesNo;
 import com.hexa.muinus.common.exception.StoreLocationDuplicateException;
 import com.hexa.muinus.common.exception.StoreNotFoundException;
 import com.hexa.muinus.common.exception.UserNotFoundException;
@@ -169,7 +170,7 @@ public class StoreService {
         List<StoreItemDTO> storeItems = storeItemRespository.findStoreItemsByStore(storeNo);
 
         // 플리마켓 허용 시 플리마켓 제품 조회
-        List<FliItemDTO> fliItems = store.getFlimarketYn() == Store.YesNo.Y
+        List<FliItemDTO> fliItems = store.getFlimarketYn() == YesNo.Y
                 ? fliItemRepository.findSellingFliItemsByStore(storeNo)
                 : new ArrayList<>();
 

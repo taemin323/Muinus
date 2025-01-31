@@ -6,10 +6,16 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "store_item")
+@Table(
+        name = "store_item",
+        uniqueConstraints = {
+        @UniqueConstraint(name = "unique_store_item", columnNames = {"store_no", "item_id"}),
+    }
+)
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class StoreItem {
 
     @Id

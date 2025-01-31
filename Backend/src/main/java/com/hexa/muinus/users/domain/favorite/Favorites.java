@@ -16,14 +16,14 @@ public class Favorites {
     @EmbeddedId
     private FavoritesId id;
 
-    @MapsId("user")
+    @MapsId("userNo")
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_no", nullable = false)
+    @JoinColumn(name = "user_no", referencedColumnName = "user_no", nullable = false, insertable = false, updatable = false)
     private Users user;
 
-    @MapsId("store")
+    @MapsId("storeNo")
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "store_no", nullable = false)
+    @JoinColumn(name = "store_no", referencedColumnName = "store_no", nullable = false, insertable = false, updatable = false)
     private Store store;
 
 }
