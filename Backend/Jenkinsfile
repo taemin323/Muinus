@@ -27,6 +27,35 @@ spring:
         username: ${DB_USER}
         password: ${DB_PASSWORD}
         driver-class-name: com.mysql.cj.jdbc.Driver
+
+    security:
+        oauth2:
+            client:
+                registration:
+                    kakao:
+                        client-id: ${KAKAO_OAUTH_CLIENT_ID}
+                        redirect-uri: ${KAKAO_OAUTH_REDIRECT_URI}
+                        authorization-grant-type: authorization_code
+                        scope:
+                            - profile_nickname
+                            - account_email
+                        client-name: Kakao
+                        client-authentication-method: POST
+                provider:
+                    kakao:
+                        authorization-uri: https://kauth.kakao.com/oauth/authorize
+                        token-uri: https://kauth.kakao.com/oauth/token
+                        user-info-uri: https://kapi.kakao.com/v2/user/me
+
+    jwt:
+        secretKey: ${JWT_SECRET_KEY}
+
+        access:
+            expiration: ${JWT_ACCESS_EXPIRATION}
+
+        refresh:
+            expiration: ${JWT_REFESH_EXPIRATION}
+
 EOL
                             """
                  }
