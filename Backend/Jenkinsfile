@@ -47,14 +47,14 @@ spring:
                         token-uri: https://kauth.kakao.com/oauth/token
                         user-info-uri: https://kapi.kakao.com/v2/user/me
 
-    jwt:
-        secretKey: ${JWT_SECRET_KEY}
+jwt:
+    secretKey: ${JWT_SECRET_KEY}
 
-        access:
-            expiration: ${JWT_ACCESS_EXPIRATION}
+    access:
+        expiration: ${JWT_ACCESS_EXPIRATION}
 
-        refresh:
-            expiration: ${JWT_REFRESH_EXPIRATION}
+    refresh:
+        expiration: ${JWT_REFRESH_EXPIRATION}
 
 EOL
                             """
