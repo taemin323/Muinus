@@ -5,8 +5,7 @@ import com.hexa.muinus.users.domain.user.Users;
 import jakarta.persistence.*;
 import lombok.*;
 
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
