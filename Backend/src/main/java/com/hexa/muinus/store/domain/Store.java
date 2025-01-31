@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class Store {
 
     @Id
@@ -25,8 +26,11 @@ public class Store {
     @Column(nullable = false, length = 255)
     private String name;
 
-    @Column(nullable = false, columnDefinition = "POINT SRID 4326")
-    private Point location; // Use a custom type or a converter for the POINT type.
+    @Column(name = "location_x", nullable = false)
+    private double locationX;
+
+    @Column(name = "location_y", nullable = false)
+    private double locationY;
 
     @Column(nullable = false, length = 255)
     private String address;

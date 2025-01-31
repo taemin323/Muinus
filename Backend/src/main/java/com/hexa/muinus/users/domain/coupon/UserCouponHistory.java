@@ -7,10 +7,6 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 
-import java.time.LocalDateTime;
-
-import java.time.LocalDateTime;
-
 @Entity
 @Table(name = "user_coupon_history")
 @Data
@@ -38,3 +34,4 @@ public class UserCouponHistory {
     @Column(name = "used_at")
     private LocalDateTime usedAt;
 }
+
