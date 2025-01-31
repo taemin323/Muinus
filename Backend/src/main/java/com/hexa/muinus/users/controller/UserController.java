@@ -1,8 +1,10 @@
 package com.hexa.muinus.users.controller;
 
 import com.hexa.muinus.users.dto.ConsumerRegisterRequestDto;
+import com.hexa.muinus.users.dto.ReissueAccessTokenRequestDto;
 import com.hexa.muinus.users.dto.StoreOwnerRegisterRequestDto;
 import com.hexa.muinus.users.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -24,5 +26,11 @@ public class UserController {
     @PostMapping("/api/users/store-owner")
     public ResponseEntity<?> registerStoreOwner(@RequestBody StoreOwnerRegisterRequestDto requestDto, HttpServletResponse response) {
         return ResponseEntity.ok(userService.registerStoreOwner(requestDto, response));
+    }
+
+    @PostMapping("/api/users/reissue")
+    public ResponseEntity<?> reissueAccessToken(HttpServletRequest request, HttpServletResponse response, @RequestBody ReissueAccessTokenRequestDto requestDto) {
+        userService.reissueAccessToken(request, response, requestDto);
+        return ResponseEntity.ok().build();
     }
 }

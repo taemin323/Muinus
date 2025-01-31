@@ -5,6 +5,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -75,24 +76,40 @@ public class JwtProvider {
         return new UsernamePasswordAuthenticationToken(userEmail, token, null);
     }
 
-    public void setTokensInCookie(HttpServletResponse response, String accessToken, String refreshToken) {
+    public void setAccessTokensInCookie(HttpServletResponse response, String accessToken) {
         // 액세스 토큰 쿠키 설정
         Cookie accessTokenCookie = new Cookie("AccessToken", accessToken);
         accessTokenCookie.setHttpOnly(true);
-        accessTokenCookie.setSecure(true); // HTTPS에서만 전송
-        accessTokenCookie.setPath("/"); // 모든 경로에서 접근 가능
-        accessTokenCookie.setMaxAge((int) (accessTokenExpiration / 1000)); // 유효기간 설정 (초 단위)
-
-        // 리프레시 토큰 쿠키 설정
-        Cookie refreshTokenCookie = new Cookie("RefreshToken", refreshToken);
-        refreshTokenCookie.setHttpOnly(true);
-        refreshTokenCookie.setSecure(true); // HTTPS에서만 전송
-        refreshTokenCookie.setPath("/"); // 모든 경로에서 접근 가능
-        refreshTokenCookie.setMaxAge((int) (refreshTokenExpiration / 1000)); // 유효기간 설정 (초 단위)
+        accessTokenCookie.setSecure(true);
+        accessTokenCookie.setPath("/");
+        accessTokenCookie.setMaxAge((int) (accessTokenExpiration / 1000));
 
         // 쿠키 응답에 추가
         response.addCookie(accessTokenCookie);
+    }
+
+    public void setRefreshTokensInCookie(HttpServletResponse response, String refreshToken) {
+        // 리프레시 토큰 쿠키 설정
+        Cookie refreshTokenCookie = new Cookie("RefreshToken", refreshToken);
+        refreshTokenCookie.setHttpOnly(true);
+        refreshTokenCookie.setSecure(true);
+        refreshTokenCookie.setPath("/api/users/refresh");
+        refreshTokenCookie.setMaxAge((int) (refreshTokenExpiration / 1000));
+
         response.addCookie(refreshTokenCookie);
     }
 
+    /**
+     * 쿠키에서 특정 이름의 값을 가져오는 메서드
+     */
+    public String getCookieValue(HttpServletRequest request, String cookieName) {
+        if (request.getCookies() != null) {
+            for (Cookie cookie : request.getCookies()) {
+                if (cookie.getName().equals(cookieName)) {
+                    return cookie.getValue();
+                }
+            }
+        }
+        return null;
+    }
 }

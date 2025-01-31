@@ -2,7 +2,6 @@ package com.hexa.muinus.common.jwt;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -22,13 +21,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
-
-        String accessToken = getCookieValue(request, "AccessToken");
-
+        log.info("JWT Authentication Filter");
+        String accessToken = jwtProvider.getCookieValue(request, "AccessToken");
+        log.info("JWT Access Token: {}", accessToken);
         if (accessToken != null) {
             try {
                 // JWT 유효성 검사
                 if (jwtProvider.validateToken(accessToken)) {
+                    log.info("JWT Authentication Success");
                     // 유효한 토큰이면 Authentication 객체 생성
                     Authentication authentication = jwtProvider.getAuthentication(accessToken);
                     SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -40,19 +40,5 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
         }
         filterChain.doFilter(request, response);
-    }
-
-    /**
-     * 쿠키에서 특정 이름의 값을 가져오는 메서드
-     */
-    private String getCookieValue(HttpServletRequest request, String cookieName) {
-        if (request.getCookies() != null) {
-            for (Cookie cookie : request.getCookies()) {
-                if (cookie.getName().equals(cookieName)) {
-                    return cookie.getValue();
-                }
-            }
-        }
-        return null;
     }
 }
