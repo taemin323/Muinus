@@ -1,5 +1,6 @@
 package com.hexa.muinus.store.dto;
 
+import com.hexa.muinus.common.enums.YesNo;
 import com.hexa.muinus.store.domain.store.Store;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -20,5 +21,5 @@ public class StoreSearchDTO {
     private int discountRate;
     private int discountPrice;
     private int quantity;
-    private Store.YesNo flimarketYn;
+    private YesNo flimarketYn;
 }

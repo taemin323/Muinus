@@ -1,5 +1,6 @@
 package com.hexa.muinus.users.dto;
 
+import com.hexa.muinus.common.enums.YesNo;
 import com.hexa.muinus.store.domain.store.Store;
 import lombok.Builder;
 import lombok.Getter;
@@ -20,6 +21,6 @@ public class StoreOwnerRegisterRequestDto {
     private final String storePhoneNumber;
     private final String fliMarketImageUrl;
     private final String registrationNumber;
-    private final Store.YesNo isFliMarketAllowed;
+    private final YesNo isFliMarketAllowed;
     private final Byte fliMarketSectionCount;
 }

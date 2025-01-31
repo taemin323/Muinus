@@ -1,5 +1,6 @@
 package com.hexa.muinus.store.dto;
 
+import com.hexa.muinus.common.enums.YesNo;
 import com.hexa.muinus.common.validator.StoreFlimarketValidator;
 import com.hexa.muinus.store.domain.store.Store;
 import com.hexa.muinus.users.domain.user.Users;
@@ -38,7 +39,7 @@ public class StoreRegisterDTO {
     private String phone;
 
     @NotNull
-    private Store.YesNo flimarketYn; // Y 또는 N
+    private YesNo flimarketYn; // Y 또는 N
 
     private String flimarketImageUrl;
 

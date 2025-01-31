@@ -1,5 +1,6 @@
 package com.hexa.muinus.store.domain.item;
 
+import com.hexa.muinus.common.enums.YesNo;
 import com.hexa.muinus.store.domain.store.Store;
 import jakarta.persistence.*;
 import lombok.*;
@@ -32,4 +33,8 @@ public class StoreItem {
 
     @Column(name = "discount_rate", nullable = false)
     private Integer discountRate = 0;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "deleted", nullable = false, columnDefinition = "ENUM('Y', 'N')")
+    private YesNo deleted = YesNo.N;
 }
