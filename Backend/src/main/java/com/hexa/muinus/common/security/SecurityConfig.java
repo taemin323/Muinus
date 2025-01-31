@@ -5,6 +5,7 @@ import com.hexa.muinus.common.jwt.JwtProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
@@ -23,6 +24,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
 //                                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                                .requestMatchers("/").permitAll()
                                 .requestMatchers("/api/users/consumer", "/api/users/store-owner", "/api/users/logout", "/api/users/login", "/api/users/reissue", "/oauth2/**").permitAll() // 회원 관리
                                 .requestMatchers( "/api/store/list**", "/api/store/detail**").permitAll() // 매장 리스트 조회 및 상세 페이지 조회
                                 .requestMatchers("/api/barcode**", "/api/section**").permitAll()  // 키오스크 관련
