@@ -54,7 +54,7 @@ spring:
             expiration: ${JWT_ACCESS_EXPIRATION}
 
         refresh:
-            expiration: ${JWT_REFESH_EXPIRATION}
+            expiration: ${JWT_REFRESH_EXPIRATION}
 
 EOL
                             """
