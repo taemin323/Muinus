@@ -1,11 +1,14 @@
 package com.hexa.muinus.common.exception;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-
-@Getter
-@RequiredArgsConstructor
 public class MuinusException extends RuntimeException {
+    private final int statusCode; // HTTP 상태 코드
 
-    private final ErrorCode errorCode;
+    public MuinusException(String message, int statusCode) {
+        super(message);
+        this.statusCode = statusCode;
+    }
+
+    public int getStatusCode() {
+        return statusCode;
+    }
 }
