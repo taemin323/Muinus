@@ -1,5 +1,6 @@
 package com.hexa.muinus.store.domain.item;
 
+import com.hexa.muinus.common.enums.YesNo;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -45,4 +46,9 @@ public class Item {
 
     @Column(name = "item_image_url")
     private String itemImageUrl;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "deleted", nullable = false, columnDefinition = "ENUM('Y', 'N')")
+    private YesNo deleted = YesNo.N;
+
 }

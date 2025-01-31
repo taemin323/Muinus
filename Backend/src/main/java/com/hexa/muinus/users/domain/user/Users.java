@@ -1,5 +1,6 @@
 package com.hexa.muinus.users.domain.user;
 
+import com.hexa.muinus.common.enums.YesNo;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -30,10 +31,14 @@ public class Users {
     private UserType userType = UserType.U;
 
     @Column(nullable = false)
-    private Integer point;
+    private Integer point = 0;
 
-    @Column
+    @Column(name = "refresh_token")
     private String refreshToken;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "deleted", nullable = false, columnDefinition = "ENUM('Y', 'N')")
+    private YesNo deleted = YesNo.N;
 
     public enum UserType {
         A, U

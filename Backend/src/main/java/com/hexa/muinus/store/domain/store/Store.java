@@ -1,5 +1,6 @@
 package com.hexa.muinus.store.domain.store;
 
+import com.hexa.muinus.common.enums.YesNo;
 import com.hexa.muinus.users.domain.user.Users;
 import jakarta.persistence.*;
 import lombok.*;
@@ -7,7 +8,12 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "store")
+@Table(
+        name = "store",
+        uniqueConstraints = {
+                @UniqueConstraint(name = "unique_location", columnNames = {"location_x", "location_y"})
+        }
+)
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -57,7 +63,8 @@ public class Store {
     @Column(name = "created_at", nullable = false, updatable = false, insertable = false)
     private LocalDateTime createdAt;
 
-    public enum YesNo {
-        Y, N
-    }
+    @Enumerated(EnumType.STRING)
+    @Column(name = "deleted", nullable = false, columnDefinition = "ENUM('Y', 'N')")
+    private YesNo deleted = YesNo.N;
+
 }
