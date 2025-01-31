@@ -31,6 +31,9 @@ public class Users {
     @Column(nullable = false)
     private Integer point;
 
+    @Column
+    private String refreshToken;
+
     public enum UserType {
         A, U
     }

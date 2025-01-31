@@ -25,8 +25,8 @@ public class Store {
     @Column(nullable = false, length = 255)
     private String name;
 
-    @Column(nullable = false, columnDefinition = "POINT")
-    private String location; // Use a custom type or a converter for the POINT type.
+    @Column(nullable = false, columnDefinition = "POINT SRID 4326")
+    private Point location; // Use a custom type or a converter for the POINT type.
 
     @Column(nullable = false, length = 255)
     private String address;
