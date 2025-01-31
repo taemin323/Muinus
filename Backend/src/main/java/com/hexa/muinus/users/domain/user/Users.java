@@ -1,14 +1,13 @@
 package com.hexa.muinus.users.domain.user;
 
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Table(name = "users")
 @NoArgsConstructor
-@Getter
+@AllArgsConstructor
+@Data
 public class Users {
 
     @Id
@@ -32,17 +31,10 @@ public class Users {
     @Column(nullable = false)
     private Integer point;
 
+    @Column
+    private String refreshToken;
+
     public enum UserType {
         A, U
-    }
-
-    @Builder
-    public Users(Integer userNo, String userName, String email, String telephone, UserType userType, Integer point) {
-        this.userNo = userNo;
-        this.userName = userName;
-        this.email = email;
-        this.telephone = telephone;
-        this.userType = userType;
-        this.point = point;
     }
 }

@@ -60,5 +60,4 @@ public class Store {
     public enum YesNo {
         Y, N
     }
-
 }

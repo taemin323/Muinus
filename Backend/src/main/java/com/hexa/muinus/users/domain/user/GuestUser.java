@@ -1,11 +1,11 @@
 package com.hexa.muinus.users.domain.user;
 
 import jakarta.persistence.*;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
-@Getter
-@Setter
+@Data
 @Entity
 @Table(name = "guest_user")
 public class GuestUser {
