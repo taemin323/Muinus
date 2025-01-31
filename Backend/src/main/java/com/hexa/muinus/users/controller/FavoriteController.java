@@ -1,11 +1,9 @@
-package com.hexa.muinus.users.domain.favorite.controller;
+package com.hexa.muinus.users.controller;
 
-import com.hexa.muinus.users.domain.favorite.Favorites;
-import com.hexa.muinus.users.domain.favorite.dto.FavoriteRequestDto;
-import com.hexa.muinus.users.domain.favorite.dto.FavoriteResponseDto;
-import com.hexa.muinus.users.domain.favorite.service.FavoriteService;
+import com.hexa.muinus.users.dto.FavoriteRequestDto;
+import com.hexa.muinus.users.dto.FavoriteResponseDto;
+import com.hexa.muinus.users.service.FavoriteService;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
