@@ -1,7 +1,7 @@
-package com.hexa.muinus.store.domain.item.repsitory;
+package com.hexa.muinus.store.domain.item.repository;
 
 import com.hexa.muinus.store.domain.item.StoreItem;
-import com.hexa.muinus.store.domain.item.dto.StoreItemDTO;
+import com.hexa.muinus.store.dto.StoreItemDTO;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;

@@ -1,8 +1,6 @@
-package com.hexa.muinus.store.domain.information.dto;
+package com.hexa.muinus.store.dto;
 
-import com.hexa.muinus.store.domain.information.Announcement;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 

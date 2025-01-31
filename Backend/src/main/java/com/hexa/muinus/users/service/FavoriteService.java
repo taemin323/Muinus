@@ -1,10 +1,10 @@
-package com.hexa.muinus.users.domain.favorite.service;
+package com.hexa.muinus.users.service;
 
 import com.hexa.muinus.store.domain.store.repository.StoreRepository;
 import com.hexa.muinus.store.domain.store.Store;
 import com.hexa.muinus.users.domain.favorite.Favorites;
 import com.hexa.muinus.users.domain.favorite.FavoritesId;
-import com.hexa.muinus.users.domain.favorite.dto.FavoriteResponseDto;
+import com.hexa.muinus.users.dto.FavoriteResponseDto;
 import com.hexa.muinus.users.domain.favorite.repository.FavoriteRepository;
 import com.hexa.muinus.users.domain.user.Users;
 import com.hexa.muinus.users.domain.user.repository.UserRepository;

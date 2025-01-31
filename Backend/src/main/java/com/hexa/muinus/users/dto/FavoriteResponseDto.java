@@ -1,4 +1,4 @@
-package com.hexa.muinus.users.domain.favorite.dto;
+package com.hexa.muinus.users.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class FavoriteRequestDto {
-    private Integer userNo;
-    private Integer storeNo;
+public class FavoriteResponseDto {
+    private String storeName;
+    private String storeAddress;
 }
