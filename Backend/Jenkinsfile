@@ -98,7 +98,7 @@ EOL
                                             execCommand: '''
                                             sh /home/ubuntu/project/script/init_server.sh
                                             ''',
-                                            execTimeout: 120000
+                                            execTimeout: 0
                                         )
                                     ],
                                     usePromotionTimestamp: false,

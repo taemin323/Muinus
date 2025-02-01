@@ -8,10 +8,10 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-public interface StoreItemRespository extends CrudRepository<StoreItem, Integer> {
+public interface StoreItemRepository extends CrudRepository<StoreItem, Integer> {
 
     @Query("""
-    SELECT new com.hexa.muinus.store.domain.item.dto.StoreItemDTO(
+    SELECT new com.hexa.muinus.store.dto.StoreItemDTO(
         si.storeItemId, i.itemId, i.itemName, i.itemImageUrl, 
         si.quantity, si.salePrice, si.discountRate, (si.salePrice * (100 - si.discountRate) / 100)
     )

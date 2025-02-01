@@ -3,13 +3,13 @@ package com.hexa.muinus.store.service;
 import com.hexa.muinus.common.exception.StoreLocationDuplicateException;
 import com.hexa.muinus.common.exception.StoreNotFoundException;
 import com.hexa.muinus.common.exception.UserNotFoundException;
+import com.hexa.muinus.store.domain.item.repository.StoreItemRepository;
 import com.hexa.muinus.store.domain.store.Store;
 import com.hexa.muinus.store.dto.AnnouncementDTO;
 import com.hexa.muinus.store.domain.information.respository.AnnouncementRepository;
 import com.hexa.muinus.store.dto.FliItemDTO;
 import com.hexa.muinus.store.dto.StoreItemDTO;
 import com.hexa.muinus.store.domain.item.repository.FliItemRepository;
-import com.hexa.muinus.store.domain.item.repository.StoreItemRespository;
 import com.hexa.muinus.store.domain.store.repository.StoreRepository;
 import com.hexa.muinus.store.dto.*;
 import com.hexa.muinus.users.domain.user.Users;
@@ -29,7 +29,7 @@ public class StoreService {
     private final StoreRepository storeRepository;
     private final UserRepository userRepository;
     private final AnnouncementRepository announcementRepository;
-    private final StoreItemRespository storeItemRespository;
+    private final StoreItemRepository storeItemRepository;
     private final FliItemRepository fliItemRepository;
 
 
@@ -166,7 +166,7 @@ public class StoreService {
         List<AnnouncementDTO> announcements = announcementRepository.findAnnouncementsByStore(storeNo);
 
         // 판매 제품 조회
-        List<StoreItemDTO> storeItems = storeItemRespository.findStoreItemsByStore(storeNo);
+        List<StoreItemDTO> storeItems = storeItemRepository.findStoreItemsByStore(storeNo);
 
         // 플리마켓 허용 시 플리마켓 제품 조회
         List<FliItemDTO> fliItems = store.getFlimarketYn() == Store.YesNo.Y

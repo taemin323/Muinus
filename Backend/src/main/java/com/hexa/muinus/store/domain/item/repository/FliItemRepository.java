@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface FliItemRepository extends CrudRepository<FliItem, Integer> {
     @Query("""
-    SELECT new com.hexa.muinus.store.domain.item.dto.FliItemDTO(
+    SELECT new com.hexa.muinus.store.dto.FliItemDTO(
         fi.fliItemId, u.userNo, fi.fliItemName, fi.price, fi.quantity
     )
     FROM FliItem fi

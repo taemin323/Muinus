@@ -11,7 +11,7 @@ import java.util.List;
 public interface AnnouncementRepository extends JpaRepository<Announcement, Integer> {
 
     @Query("""
-    SELECT new com.hexa.muinus.store.domain.information.dto.AnnouncementDTO(
+    SELECT new com.hexa.muinus.store.dto.AnnouncementDTO(
         a.boardId, a.title, a.content, a.boardImageUrl, a.createdAt, a.updatedAt)
     FROM Announcement a WHERE a.store.storeNo = :storeNo
 """)
