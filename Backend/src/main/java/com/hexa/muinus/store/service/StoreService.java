@@ -4,12 +4,12 @@ import com.hexa.muinus.common.exception.StoreLocationDuplicateException;
 import com.hexa.muinus.common.exception.StoreNotFoundException;
 import com.hexa.muinus.common.exception.UserNotFoundException;
 import com.hexa.muinus.store.domain.information.Announcement;
+import com.hexa.muinus.store.domain.item.repository.StoreItemRepository;
 import com.hexa.muinus.store.domain.store.Store;
 import com.hexa.muinus.store.dto.AnnouncementDTO;
 import com.hexa.muinus.store.domain.information.respository.AnnouncementRepository;
 import com.hexa.muinus.store.dto.StoreItemDTO;
 import com.hexa.muinus.store.domain.item.repository.FliItemRepository;
-import com.hexa.muinus.store.domain.item.repository.StoreItemRepository;
 import com.hexa.muinus.store.domain.store.repository.StoreRepository;
 import com.hexa.muinus.store.dto.*;
 import com.hexa.muinus.users.domain.user.Users;
@@ -19,7 +19,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -29,7 +28,7 @@ public class StoreService {
     private final StoreRepository storeRepository;
     private final UserRepository userRepository;
     private final AnnouncementRepository announcementRepository;
-    private final StoreItemRepository storeItemRespository;
+    private final StoreItemRepository storeItemRepository;
     private final FliItemRepository fliItemRepository;
 
 
@@ -84,6 +83,20 @@ public class StoreService {
         log.info("Store {} has been disabled successfully (deleted={})", store.getStoreNo(), store.getDeleted());
     }
 
+//    /**
+//     * 매장 폐업 - row 삭제 하지 않고 deleted 컬럼 사용 시
+//     * - 다른 테이블 FK 무결성 및 집계 고려하여 close : update로 사용
+//     * - Entity 영속성 사용해서 Transaction 종료 시 Update 되도록 작성
+//     *
+//     * @param storeNo
+//     */
+//    @Transactional
+//    public void closeStore(int storeNo) {
+//        log.info("Closing store with No: {}", storeNo);
+//        Store store = storeRepository.findById(storeNo)
+//            .orElseThrow(() -> new StoreNotFoundException(storeNo));
+//        //store.setDeleted("Y");
+//    }
 
 
     /**
@@ -132,6 +145,7 @@ public class StoreService {
         if (stores.isEmpty()) {
             log.warn("No stores found for itemId: {} and radius: {}", itemId, radius);
         }
+
         return stores;
     }
 
@@ -153,7 +167,7 @@ public class StoreService {
         List<AnnouncementDTO> announcements = announcementRepository.findAnnouncementsByStore(storeNo);
 
         // 판매 제품 조회
-        List<StoreItemDTO> storeItems = storeItemRespository.findStoreItemsByStore(storeNo);
+        List<StoreItemDTO> storeItems = storeItemRepository.findStoreItemsByStore(storeNo);
 
         return new StoreDetailDTO(store, announcements, storeItems);
     }

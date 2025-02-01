@@ -23,7 +23,7 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
-//                                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                                 .requestMatchers("/").permitAll()
                                 .requestMatchers("/api/users/consumer", "/api/users/store-owner", "/api/users/logout", "/api/users/login", "/api/users/reissue", "/oauth2/**").permitAll() // 회원 관리
                                 .requestMatchers( "/api/store/list**", "/api/store/detail**").permitAll() // 매장 리스트 조회 및 상세 페이지 조회
