@@ -1,6 +1,5 @@
 package com.hexa.muinus.store.domain.store.repository;
 
-import com.hexa.muinus.store.domain.information.Announcement;
 import com.hexa.muinus.store.domain.store.Store;
 import com.hexa.muinus.store.dto.StoreDTO;
 import com.hexa.muinus.users.domain.user.Users;
