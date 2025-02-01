@@ -21,7 +21,7 @@ public class GuestTransactions {
     @Column(name = "transaction_id")
     private Integer transactionId;
 
-    @Column(name = "receipt_code", nullable = false, length = 20, unique = true)
+    @Column(name = "receipt_code", nullable = false, length = 50, unique = true)
     private String receiptCode;
 
     @ManyToOne(fetch = FetchType.LAZY)
