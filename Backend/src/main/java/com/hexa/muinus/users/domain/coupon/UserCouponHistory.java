@@ -1,4 +1,4 @@
-package com.hexa.muinus.users.domain.coupon;
+package com.hexa.muinus.coupon.entity;
 
 import com.hexa.muinus.store.domain.coupon.CouponHistory;
 import com.hexa.muinus.users.domain.user.Users;
@@ -38,5 +38,6 @@ public class UserCouponHistory {
 
     @Column(name = "used_at")
     private LocalDateTime usedAt;
+
 }
 

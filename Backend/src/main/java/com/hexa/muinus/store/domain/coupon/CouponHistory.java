@@ -1,4 +1,4 @@
-package com.hexa.muinus.store.domain.coupon;
+package com.hexa.muinus.coupon.entity;
 
 import com.hexa.muinus.store.domain.store.Store;
 import jakarta.persistence.*;
