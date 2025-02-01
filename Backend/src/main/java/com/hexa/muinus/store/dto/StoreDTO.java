@@ -1,5 +1,6 @@
 package com.hexa.muinus.store.dto;
 
+import com.hexa.muinus.common.enums.YesNo;
 import com.hexa.muinus.store.domain.store.Store;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,5 +18,5 @@ public class StoreDTO {
     private String address;
     private String storeImageUrl;
     private String phone;
-    private Store.YesNo flimarketYn;
+    private YesNo flimarketYn;
 }

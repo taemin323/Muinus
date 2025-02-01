@@ -1,11 +1,14 @@
 package com.hexa.muinus.store.dto;
 
+import com.hexa.muinus.common.enums.YesNo;
 import com.hexa.muinus.common.validator.StoreFlimarketValidator;
 import com.hexa.muinus.store.domain.store.Store;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.math.BigDecimal;
 
 @Data
 @NoArgsConstructor
@@ -23,10 +26,10 @@ public class StoreModifyDTO {
     private String name;
 
     @NotNull
-    private double locationX;
+    private BigDecimal locationX;
 
     @NotNull
-    private double locationY;
+    private BigDecimal locationY;
 
     @NotNull
     private String address;
@@ -40,11 +43,11 @@ public class StoreModifyDTO {
     private String phone;
 
     @NotNull
-    private Store.YesNo flimarketYn; // Y 또는 N
+    private YesNo flimarketYn; // Y 또는 N
 
     private String flimarketImageUrl;
 
-    private Byte flimarketSectionCnt;
+    private Integer flimarketSectionCnt;
 
     public void updateEntity(Store store) {
         store.setName(this.name);

@@ -7,7 +7,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-// 어노테이션 정의
 @Constraint(validatedBy = StoreFlimarketValidatorImpl.class)
 @Target({ ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)

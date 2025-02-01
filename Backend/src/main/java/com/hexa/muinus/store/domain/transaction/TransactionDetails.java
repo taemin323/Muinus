@@ -5,10 +5,14 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "transaction_details")
+@Table(
+        name = "transaction_details",
+        uniqueConstraints = {@UniqueConstraint(name = "unique_transaction_details", columnNames = {"transaction_id", "store_item_id"})}
+)
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class TransactionDetails {
 
     @Id
@@ -16,11 +20,11 @@ public class TransactionDetails {
     @Column(name = "detail_id")
     private int detailId;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "transaction_id", referencedColumnName = "transaction_id", nullable = false)
     private Transactions transaction;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "store_item_id", referencedColumnName = "store_item_id", nullable = false)
     private StoreItem storeItem;
 

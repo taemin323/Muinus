@@ -9,12 +9,13 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
 public interface StoreRepository extends JpaRepository<Store, Integer> {
 
-    Optional<Store> findByLocationXAndLocationY(double locationX, double locationY);
+    Optional<Store> findByLocationXAndLocationY(BigDecimal locationX, BigDecimal locationY);
     Optional<Store> findByUserAndStoreNo(Users user, Integer storeNo);
 
     @Query(value = """

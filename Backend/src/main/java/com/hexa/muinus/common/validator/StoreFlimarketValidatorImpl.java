@@ -1,5 +1,6 @@
 package com.hexa.muinus.common.validator;
 
+import com.hexa.muinus.common.enums.YesNo;
 import com.hexa.muinus.store.domain.store.Store;
 import com.hexa.muinus.store.dto.StoreModifyDTO;
 import com.hexa.muinus.store.dto.StoreRegisterDTO;
@@ -25,7 +26,7 @@ public class StoreFlimarketValidatorImpl implements ConstraintValidator<StoreFli
     private boolean validateFlimarketFields(StoreRegisterDTO registerDTO, ConstraintValidatorContext context) {
         // 플리마켓이 "Y"일 때
         // flimarketImageUrl flimarketSectionCnt도 필수
-        if (registerDTO.getFlimarketYn() == Store.YesNo.Y) {
+        if (registerDTO.getFlimarketYn() == YesNo.Y) {
             boolean imageValid = registerDTO.getFlimarketImageUrl() != null;
             boolean sectionValid = registerDTO.getFlimarketSectionCnt() != null;
 
@@ -52,7 +53,7 @@ public class StoreFlimarketValidatorImpl implements ConstraintValidator<StoreFli
     private boolean validateFlimarketFields(StoreModifyDTO modifyDTO, ConstraintValidatorContext context) {
         // 플리마켓이 "Y"일 때
         // flimarketImageUrl flimarketSectionCnt도 필수
-        if (modifyDTO.getFlimarketYn() == Store.YesNo.Y) {
+        if (modifyDTO.getFlimarketYn() == YesNo.Y) {
             boolean imageValid = modifyDTO.getFlimarketImageUrl() != null;
             boolean sectionValid = modifyDTO.getFlimarketSectionCnt() != null;
 

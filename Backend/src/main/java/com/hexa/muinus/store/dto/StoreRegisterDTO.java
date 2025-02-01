@@ -1,12 +1,16 @@
 package com.hexa.muinus.store.dto;
 
+import com.hexa.muinus.common.enums.YesNo;
 import com.hexa.muinus.common.validator.StoreFlimarketValidator;
 import com.hexa.muinus.store.domain.store.Store;
 import com.hexa.muinus.users.domain.user.Users;
+import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.math.BigDecimal;
 
 @Data
 @NoArgsConstructor
@@ -21,10 +25,10 @@ public class StoreRegisterDTO {
     private String name;
 
     @NotNull
-    private double locationX;
+    private BigDecimal locationX;
 
     @NotNull
-    private double locationY;
+    private BigDecimal locationY;
 
     @NotNull
     private String address;
@@ -38,11 +42,11 @@ public class StoreRegisterDTO {
     private String phone;
 
     @NotNull
-    private Store.YesNo flimarketYn; // Y 또는 N
+    private YesNo flimarketYn;
 
     private String flimarketImageUrl;
 
-    private Byte flimarketSectionCnt;
+    private Integer flimarketSectionCnt;
 
 
 
