@@ -8,6 +8,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -24,10 +26,10 @@ public class StoreModifyDTO {
     private String name;
 
     @NotNull
-    private double locationX;
+    private BigDecimal locationX;
 
     @NotNull
-    private double locationY;
+    private BigDecimal locationY;
 
     @NotNull
     private String address;
@@ -45,7 +47,7 @@ public class StoreModifyDTO {
 
     private String flimarketImageUrl;
 
-    private Byte flimarketSectionCnt;
+    private Integer flimarketSectionCnt;
 
     public void updateEntity(Store store) {
         store.setName(this.name);

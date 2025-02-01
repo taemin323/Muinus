@@ -15,6 +15,9 @@ import java.time.LocalDate;
 public class DailySales {
 
     @EmbeddedId
+    @AttributeOverrides({
+            @AttributeOverride(name = "saleDate", column = @Column(name = "sale_date", nullable = false))
+    })
     private DailySalesId id;
 
     @MapsId("storeNo")
@@ -26,10 +29,6 @@ public class DailySales {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "item_id", referencedColumnName = "item_id", nullable = false, insertable = false, updatable = false)
     private Item item;
-
-    @MapsId("saleDate")
-    @Column(name = "sale_date", nullable = false)
-    private LocalDate saleDate;
 
     @Column(name = "total_quantity", nullable = false)
     private int totalQuantity = 0;

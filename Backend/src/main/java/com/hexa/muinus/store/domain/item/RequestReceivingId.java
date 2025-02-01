@@ -8,8 +8,7 @@ import java.io.Serializable;
 @Embeddable
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
-@Setter
+@Data
 public class RequestReceivingId implements Serializable {
     private Integer storeNo;
     private Integer itemId;

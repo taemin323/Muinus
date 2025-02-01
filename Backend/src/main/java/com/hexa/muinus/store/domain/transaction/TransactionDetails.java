@@ -7,9 +7,7 @@ import lombok.*;
 @Entity
 @Table(
         name = "transaction_details",
-        uniqueConstraints = {
-            @UniqueConstraint(name = "unique_transaction_details",columnNames = {"transaction_id", "store_item_id"})
-        }
+        uniqueConstraints = {@UniqueConstraint(name = "unique_transaction_details", columnNames = {"transaction_id", "store_item_id"})}
 )
 @Data
 @NoArgsConstructor

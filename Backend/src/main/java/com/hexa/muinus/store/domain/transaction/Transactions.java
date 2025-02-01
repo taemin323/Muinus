@@ -25,11 +25,11 @@ public class Transactions {
     private String receiptCode;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "store_no", referencedColumnName = "store_no", nullable = false)
+    @JoinColumn(name = "store_no", nullable = false)
     private Store store;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_no", referencedColumnName = "user_no", nullable = false)
+    @JoinColumn(name = "user_no", nullable = false)
     private Users user;
 
     @Column(name = "total_amount", nullable = false)

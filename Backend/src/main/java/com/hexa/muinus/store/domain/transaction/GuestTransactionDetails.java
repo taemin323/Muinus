@@ -11,9 +11,7 @@ import lombok.*;
 @Entity
 @Table(
         name = "guest_transaction_details",
-        uniqueConstraints = {
-            @UniqueConstraint(name = "unique_guest_transaction_details",columnNames = {"transaction_id", "store_item_id"})
-        }
+        uniqueConstraints = {@UniqueConstraint(name = "unique_guest_transaction_details", columnNames = {"transaction_id", "store_item_id"})}
 )
 public class GuestTransactionDetails {
 

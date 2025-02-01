@@ -39,7 +39,7 @@ public class Store {
     @Column(name = "location_y", nullable = false, precision = 10, scale = 7)
     private BigDecimal locationY;
 
-    @Column(name = "address", nullable = false, length = 255)
+    @Column(name = "address", nullable = false, length = 255, unique = true)
     private String address;
 
     @Column(name = "store_image_url", length = 255)
@@ -58,8 +58,8 @@ public class Store {
     @Column(name = "flimarket_image_url", length = 255)
     private String flimarketImageUrl;
 
-    @Column(name = "flimarket_section_cnt", nullable = false)
-    private Byte flimarketSectionCnt = 0;
+    @Column(name = "flimarket_section_cnt", nullable = false, columnDefinition = "TINYINT UNSIGNED")
+    private Integer flimarketSectionCnt = 0;
 
     @Column(name = "created_at", nullable = false, updatable = false, insertable = false)
     private LocalDateTime createdAt;

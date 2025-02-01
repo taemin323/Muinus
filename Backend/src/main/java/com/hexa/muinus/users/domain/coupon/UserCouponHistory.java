@@ -20,7 +20,8 @@ public class UserCouponHistory {
     @EmbeddedId
     private UserCouponHistoryId id;
 
-    @ManyToOne
+    @MapsId("couponHistoryId")
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumns({
             @JoinColumn(name = "store_no", referencedColumnName = "store_no", insertable = false, updatable = false, nullable = false),
             @JoinColumn(name = "coupon_id", referencedColumnName = "coupon_id", insertable = false, updatable = false, nullable = false)
@@ -28,7 +29,7 @@ public class UserCouponHistory {
     private CouponHistory couponHistory;
 
     @MapsId("userNo")
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_no", referencedColumnName = "user_no", insertable = false, updatable = false, nullable = false)
     private Users user;
 

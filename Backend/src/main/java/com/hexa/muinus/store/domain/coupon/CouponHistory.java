@@ -36,11 +36,6 @@ public class CouponHistory {
     @Column(name = "created_at", nullable = false, updatable = false, insertable = false)
     private LocalDateTime createdAt;
 
-    public CouponHistory(CouponHistoryId id, int count, LocalDateTime expirationDate, LocalDateTime createdAt) {
-        this.id = id;
-        this.count = count;
-        this.expirationDate = expirationDate;
-        this.createdAt = createdAt;
-    }
+
 }
 

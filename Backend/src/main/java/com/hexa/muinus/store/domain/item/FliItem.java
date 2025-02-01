@@ -37,7 +37,7 @@ public class FliItem {
     @Column(name = "quantity", nullable = false)
     private Integer quantity = 1;
 
-    @Column(name = "section_id", nullable = false)
+    @Column(name = "section_id", nullable = false, columnDefinition = "TINYINT UNSIGNED")
     private Integer sectionId;
 
     @Enumerated(EnumType.STRING)

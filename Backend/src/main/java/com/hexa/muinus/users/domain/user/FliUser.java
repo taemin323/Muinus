@@ -13,6 +13,9 @@ import lombok.*;
 public class FliUser {
 
     @Id
+    @Column(name = "user_no")
+    private Integer userNo;
+
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_no", referencedColumnName = "user_no", insertable = false, updatable = false)
     @MapsId
