@@ -71,6 +71,8 @@ public class StoreService {
 
     /**
      * 매장 삭제
+     * - `deleted` 컬럼 값 "Y"-> "N" 으로 변경
+     * - 해당 매장 비활성화
      * @param storeNo
      */
     @Transactional
@@ -79,32 +81,10 @@ public class StoreService {
         Store store = storeRepository.findById(storeNo)
                 .orElseThrow(() -> new StoreNotFoundException(storeNo));
 
-        delete(store);
+        store.disableStore();
+        log.info("Store {} has been disabled successfully (deleted={})", store.getStoreNo(), store.getDeleted());
     }
 
-    /**
-     * Delete Store
-     * @param store
-     */
-    private void delete(Store store) {
-        storeRepository.delete(store);
-        log.info("Store deleted successfully with No: {}", store.getStoreNo());
-    }
-
-//    /**
-//     * 매장 폐업 - row 삭제 하지 않고 deleted 컬럼 사용 시
-//     * - 다른 테이블 FK 무결성 및 집계 고려하여 close : update로 사용
-//     * - Entity 영속성 사용해서 Transaction 종료 시 Update 되도록 작성
-//     *
-//     * @param storeNo
-//     */
-//    @Transactional
-//    public void closeStore(int storeNo) {
-//        log.info("Closing store with No: {}", storeNo);
-//        Store store = storeRepository.findById(storeNo)
-//            .orElseThrow(() -> new StoreNotFoundException(storeNo));
-//        //store.setDeleted("Y");
-//    }
 
 
     /**
@@ -123,7 +103,8 @@ public class StoreService {
         Store store = storeRepository.findByUserAndStoreNo(user, storeModifyDTO.getStoreNo())
                 .orElseThrow(() -> new StoreNotFoundException(storeModifyDTO.getUserNo(), storeModifyDTO.getStoreNo()));
 
-        storeModifyDTO.updateEntity(store);
+        store.updateStoreInfo(storeModifyDTO);
+        log.info("Store {} has been updated successfully ({})", store.getStoreNo(), store);
     }
 
     /**
@@ -139,12 +120,6 @@ public class StoreService {
 
         if (stores.isEmpty()) {
             log.warn("No stores found for itemId: {}", itemId);
-// 할인가 십의자리 까지 반올림
-//        } else {
-//            stores.forEach(store -> {
-//                int roundedPrice = (int) (Math.round(store.getDiscountPrice() / 10.0) * 10);
-//                store.setDiscountPrice(roundedPrice);
-//            });
         }
 
         return stores;

@@ -1,6 +1,7 @@
 package com.hexa.muinus.store.domain.store;
 
 import com.hexa.muinus.common.enums.YesNo;
+import com.hexa.muinus.store.dto.StoreModifyDTO;
 import com.hexa.muinus.users.domain.user.Users;
 import jakarta.persistence.*;
 import lombok.*;
@@ -67,5 +68,32 @@ public class Store {
     @Enumerated(EnumType.STRING)
     @Column(name = "deleted", nullable = false, columnDefinition = "ENUM('Y', 'N')")
     private YesNo deleted = YesNo.N;
+
+    /**
+     * 폐점처리 - `deleted` 컬럼값 "N"으로 변경
+     */
+    public void disableStore() {
+        this.deleted = YesNo.Y;
+    }
+
+    /**
+     * 매장 정보 수정
+     * @param dto
+     */
+    public void updateStoreInfo(StoreModifyDTO dto){
+        this.name = dto.getName();
+        this.storeImageUrl = dto.getStoreImageUrl(); // null이면 기존 이미지 삭제, 있으면 변공
+        this.phone = dto.getPhone();
+
+        this.flimarketYn = dto.getFlimarketYn();
+
+        if (this.flimarketYn == YesNo.Y) { // 플리마켓 허용
+            this.flimarketImageUrl = dto.getFlimarketImageUrl();
+            this.flimarketSectionCnt = dto.getFlimarketSectionCnt() != null ? dto.getFlimarketSectionCnt() : 0;
+        } else { // 플리마켓이 비허용 필드 초기화
+            this.flimarketImageUrl = null;
+            this.flimarketSectionCnt = 0;
+        }
+    }
 
 }
