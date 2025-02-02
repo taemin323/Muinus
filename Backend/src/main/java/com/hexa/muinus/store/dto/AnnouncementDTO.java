@@ -16,4 +16,5 @@ public class AnnouncementDTO {
     private String boardImageUrl;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+
 }

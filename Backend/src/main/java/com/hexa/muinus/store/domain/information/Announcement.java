@@ -1,6 +1,8 @@
 package com.hexa.muinus.store.domain.information;
 
 import com.hexa.muinus.store.domain.store.Store;
+import com.hexa.muinus.store.dto.AnnouncementModifyDTO;
+import com.hexa.muinus.store.dto.AnnouncementWriteDTO;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -41,5 +43,12 @@ public class Announcement {
 
     @Column(name = "updated_at", insertable = false, updatable = false)
     private LocalDateTime updatedAt;
+
+
+    public void updateAnnouncement(AnnouncementModifyDTO dto) {
+        this.title = dto.getTitle();
+        this.content = dto.getContent();
+        this.boardImageUrl = dto.getBoardImageUrl(); // null이면 기존 이미지 삭제, 있으면 변공
+    }
 
 }

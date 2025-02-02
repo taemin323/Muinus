@@ -1,9 +1,6 @@
 package com.hexa.muinus.store.controller;
 
-import com.hexa.muinus.store.dto.StoreDetailDTO;
-import com.hexa.muinus.store.dto.StoreModifyDTO;
-import com.hexa.muinus.store.dto.StoreRegisterDTO;
-import com.hexa.muinus.store.dto.StoreSearchDTO;
+import com.hexa.muinus.store.dto.*;
 import com.hexa.muinus.store.service.StoreService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -25,8 +22,10 @@ public class StoreController {
     /**
      * 매장 등록
      *
-     * @param storeRegisterDTO
+     * @param storeRegisterDTO 등록할 매장 정보
      * @return
+     * - 성공 : 200(OK)
+     * - 실패 : Exception
      */
     @PostMapping("/register")
     public ResponseEntity<Void> registerStore(@Valid @RequestBody StoreRegisterDTO storeRegisterDTO){
@@ -37,8 +36,10 @@ public class StoreController {
 
     /**
      * 매장 비활성화 (폐업 / 삭제)
-     * @param storeNo
+     * @param storeNo 매장 번호
      * @return
+     * - 성공 : 200(OK)
+     * - 실패 : Exception
      */
     @PutMapping("/delete")
     public ResponseEntity<Void> closeStore(@RequestParam("storeNo") int storeNo){
@@ -49,8 +50,10 @@ public class StoreController {
 
     /**
      * 매장 정보 수정
-     * @param storeModifyDTO
+     * @param storeModifyDTO 매장 수정할 정보
      * @return
+     * - 성공 : 200(OK)
+     * - 실패 : Exception
      */
     @PutMapping("/update")
     public ResponseEntity<Void> modifyStore(@Valid @RequestBody StoreModifyDTO storeModifyDTO){
@@ -61,26 +64,61 @@ public class StoreController {
 
     /**
      * 제품으로 매장리스트 조회
-     * @param itemId
+     * @param itemId 제품 번호
      * @return List<StoreSearchDTO>
      * - 해당 제품이 등록이 된 매장 정보s 반환
      */
     @GetMapping("/list")
     public ResponseEntity<List<StoreSearchDTO>> searchStores(
             @RequestParam("itemId") int itemId,
-            @RequestParam("x") Double x,
-            @RequestParam("y") Double y,
+            @RequestParam("x") BigDecimal x,
+            @RequestParam("y") BigDecimal y,
             @RequestParam(required = false, defaultValue = "1000") int radius){
         log.info("StoreController > searchStores itemId:{}, x:{}, y:{}, radius:{}", itemId, x, y, radius);
         List<StoreSearchDTO> stores = storeService.searchStore(itemId, x, y, radius);
         return ResponseEntity.ok().body(stores);
     }
 
+    /**
+     * 매장 상세 정보 조회
+     * @param storeNo 조회할 매장 정보
+     * @return StoreDetailDTO
+     * - 매장 기본 정보
+     * - 매장 공지사항s
+     * - 매장에서 판매하는 제품 정보s
+     */
     @GetMapping("/detail")
     public ResponseEntity<StoreDetailDTO> getStoreDetail(@RequestParam("storeNo") int storeNo){
         log.info("StoreController > getStoreDetail: {}", storeNo);
         StoreDetailDTO store = storeService.getStoreDetail(storeNo);
         return ResponseEntity.ok().body(store);
+    }
+
+    /**
+     * 매장 공지 사항 작성
+     * @param announcementWriteDTO 작성한 공지 사항
+     * @return
+     * - 성공 : 200(OK)
+     * - 실패 : Exception
+     */
+    @PostMapping("/board")
+    public ResponseEntity<Void> writeAnnouncement(@Valid @RequestBody AnnouncementWriteDTO announcementWriteDTO){
+        log.info("StoreController > writeAnnouncement: {}", announcementWriteDTO);
+        storeService.writeAnnouncement(announcementWriteDTO);
+        return ResponseEntity.ok().build();
+    }
+
+    /**
+     * 매장 공지 사항 수정
+     * @param announcementModifyDTO 수정한 공지 사항 데이터
+     * - 성공 : 200(OK)
+     * - 실패 : Exception
+     */
+    @PutMapping("/board")
+    public ResponseEntity<Void> modifyAnnouncement(@Valid @RequestBody AnnouncementModifyDTO announcementModifyDTO){
+        log.info("StoreController > modifyAnnouncement: {}", announcementModifyDTO);
+        storeService.modifyAnnouncement(announcementModifyDTO);
+        return ResponseEntity.ok().build();
     }
 
 }

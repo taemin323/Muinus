@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface AnnouncementRepository extends JpaRepository<Announcement, Integer> {
 
@@ -16,6 +17,18 @@ public interface AnnouncementRepository extends JpaRepository<Announcement, Inte
     FROM Announcement a WHERE a.store.storeNo = :storeNo
 """)
     List<AnnouncementDTO> findAnnouncementsByStore(@Param("storeNo") int storeNo);
+
+    @Query(value = """
+        SELECT a FROM Announcement a 
+        JOIN a.store s 
+        JOIN s.user u 
+        WHERE u.userNo = :userNo 
+        AND s.storeNo = :storeNo
+        AND a.boardId = :boardId
+    """)
+    Optional<Announcement> findAnnouncementByUserNoAndStoreNoAndBoardId(@Param("userNo") Integer userNo,
+                                                                        @Param("storeNo") Integer storeNo,
+                                                                        @Param("boardId") Integer boardId);
 
 
 }

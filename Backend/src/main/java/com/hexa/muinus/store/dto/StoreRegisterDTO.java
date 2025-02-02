@@ -4,8 +4,7 @@ import com.hexa.muinus.common.enums.YesNo;
 import com.hexa.muinus.common.validator.StoreFlimarketValidator;
 import com.hexa.muinus.store.domain.store.Store;
 import com.hexa.muinus.users.domain.user.Users;
-import jakarta.validation.constraints.DecimalMax;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,30 +17,30 @@ import java.math.BigDecimal;
 @StoreFlimarketValidator
 public class StoreRegisterDTO {
 
-    @NotNull
+    @Positive(message = "유효한 userNo를 입력해주세요.")
     private Integer userNo;
 
-    @NotNull
+    @NotBlank(message = "매장 이름을 입력해주세요.")
     private String name;
 
-    @NotNull
-    private Double locationX;
+    @Digits(integer = 3, fraction = 7, message = "경도는 정수 3자리, 소수점 7자리 이내입니다.")
+    private BigDecimal locationX;
 
-    @NotNull
-    private Double locationY;
+    @Digits(integer = 3, fraction = 7, message = "위도는 정수 3자리, 소수점 7자리 이내입니다.")
+    private BigDecimal locationY;
 
-    @NotNull
+    @NotBlank(message = "주소를 입력해주세요.")
     private String address;
 
     private String storeImageUrl;
 
-    @NotNull
+    @NotBlank(message = "사업자등록번호를 입력해주세요.")
     private String registrationNo;
 
-    @NotNull
+    @NotBlank(message = "번호를 입력해주세요.")
     private String phone;
 
-    @NotNull
+    @NotBlank(message = "플리마켓 허용 여부를 선택해주세요.")
     private YesNo flimarketYn;
 
     private String flimarketImageUrl;
@@ -60,7 +59,7 @@ public class StoreRegisterDTO {
      */
     public Store toEntity(Users user) {
         return Store.builder()
-                .user(user) // Users 주입
+                .user(user)
                 .name(this.name)
                 .locationX(locationX)
                 .locationY(locationY)
