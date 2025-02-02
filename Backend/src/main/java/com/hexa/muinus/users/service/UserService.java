@@ -1,11 +1,9 @@
 package com.hexa.muinus.users.service;
 
-import com.hexa.muinus.common.exception.ErrorCode;
-import com.hexa.muinus.common.exception.MuinusException;
 import com.hexa.muinus.common.jwt.JwtProvider;
-import com.hexa.muinus.store.repository.StoreRepository;
-import com.hexa.muinus.users.UserRepository;
+import com.hexa.muinus.store.domain.store.repository.StoreRepository;
 import com.hexa.muinus.users.domain.user.Users;
+import com.hexa.muinus.users.domain.user.repository.UserRepository;
 import com.hexa.muinus.users.dto.ConsumerRegisterRequestDto;
 import com.hexa.muinus.users.dto.ReissueAccessTokenRequestDto;
 import com.hexa.muinus.users.dto.StoreOwnerRegisterRequestDto;
@@ -13,8 +11,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 @RequiredArgsConstructor
@@ -30,7 +30,7 @@ public class UserService {
         // 이미 가입한 회원인지 이메일로 확인
         if (userRepository.findByEmail(requestDto.getUserEmail()) != null) {
             log.info("User already exists with email {}", requestDto.getUserEmail());
-            throw new MuinusException(ErrorCode.DUPLICATE_EMAIL);
+            throw new ResponseStatusException(HttpStatus.CONFLICT);
         }
 
         Users user = Users.builder()
@@ -55,7 +55,7 @@ public class UserService {
         // 이미 가입한 회원인지 이메일로 확인
         if (userRepository.findByEmail(requestDto.getUserEmail()) != null) {
             log.info("User already exists with email {}", requestDto.getUserEmail());
-            throw new MuinusException(ErrorCode.DUPLICATE_EMAIL);
+            throw new ResponseStatusException(HttpStatus.CONFLICT);
         }
 
         Users user = Users.builder()
@@ -110,7 +110,7 @@ public class UserService {
                 jwtProvider.setAccessTokensInCookie(response, accessToken);
             }
         } else {
-            throw new MuinusException(ErrorCode.INVALID_REFRESH_TOKEN);
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
         }
     }
 }
