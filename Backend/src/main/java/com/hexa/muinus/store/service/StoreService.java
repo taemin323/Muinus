@@ -204,4 +204,21 @@ public class StoreService {
         announcement.updateAnnouncement(dto);
         log.info("Announcement {} has been updated successfully", announcement);
     }
+
+    /**
+     * 플리마켓 상태 수정
+     * - 플리마켓 비허용 -> 허용
+     * - 플리마켓 사진, 섹션 개수 수정
+     * @param dto 플리마켓 정보
+     */
+    @Transactional
+    public void modifyFlimarketState(FlimarketModifyDTO dto){
+        log.info("Modifying flimarket state {}", dto);
+
+        Store store = storeRepository.findByUser_UserNoAndStoreNo(dto.getUserNo(), dto.getStoreNo())
+                .orElseThrow(() -> new StoreNotFoundException(dto.getUserNo(), dto.getStoreNo()));
+
+        store.modifyFlimarketState(dto);
+        log.info("Flimarket state {} has been modified successfully", store);
+    }
 }

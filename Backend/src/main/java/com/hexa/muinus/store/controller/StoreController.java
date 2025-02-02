@@ -121,4 +121,16 @@ public class StoreController {
         return ResponseEntity.ok().build();
     }
 
+    /**
+     * 플리마켓 설정 변경
+     * @param flimarketModifyDTO 플리마켓 데이터
+     * @return
+     */
+    @PutMapping("/section_regist")
+    public ResponseEntity<Void> modifyflimarketState(FlimarketModifyDTO flimarketModifyDTO) {
+        log.info("StoreController > modifyflimarketState: {}", flimarketModifyDTO);
+        storeService.modifyFlimarketState(flimarketModifyDTO);
+        return ResponseEntity.ok().build();
+    }
+
 }

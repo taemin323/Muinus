@@ -1,6 +1,7 @@
 package com.hexa.muinus.store.domain.store;
 
 import com.hexa.muinus.common.enums.YesNo;
+import com.hexa.muinus.store.dto.FlimarketModifyDTO;
 import com.hexa.muinus.store.dto.StoreModifyDTO;
 import com.hexa.muinus.users.domain.user.Users;
 import jakarta.persistence.*;
@@ -95,5 +96,12 @@ public class Store {
             this.flimarketSectionCnt = 0;
         }
     }
+
+    public void modifyFlimarketState(FlimarketModifyDTO dto){
+        this.flimarketYn = YesNo.Y;
+        this.flimarketImageUrl = dto.getFlimarketImageUrl();
+        this.flimarketSectionCnt = dto.getFlimarketSectionCnt();
+    }
+
 
 }
