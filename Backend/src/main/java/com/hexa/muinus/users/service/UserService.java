@@ -56,7 +56,7 @@ public class UserService {
 
         Users savedUser = userRepository.save(user);
         // 신규 매장 생성
-        Store store = Store.createStore(savedUser, requestDto);
+        Store store = Store.create(savedUser, requestDto);
 
         return storeRepository.save(store);
     }
@@ -84,6 +84,7 @@ public class UserService {
     /**
      * 이메일 중복 검사
      */
+    @Transactional(readOnly = true)
     public void isEmailDuplicated(String email) {
         if (userRepository.existsByEmail(email)) {
             log.info("User already exists with email {}", email);
@@ -91,6 +92,7 @@ public class UserService {
         }
     }
 
+    @Transactional
     public Users findUserByEmail(String email) {
         return userRepository.findByEmail(email);
     }
