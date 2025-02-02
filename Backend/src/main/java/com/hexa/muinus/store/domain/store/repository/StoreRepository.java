@@ -25,6 +25,7 @@ public interface StoreRepository extends JpaRepository<Store, Integer> {
         JOIN store_item si ON s.store_no = si.store_no
         JOIN item i ON si.item_id = i.item_id
         WHERE SQRT(POW((s.location_y - :y) * 111, 2) + POW((s.location_x - :x) * 111 * COS(RADIANS(:x)), 2)) * 1000 <= :radius
+        AND si.quantity > 0
         ORDER BY POW((s.location_y - :y) * 111, 2) + POW((s.location_x - :x) * 111 * COS(RADIANS(:x)), 2)
     """, nativeQuery = true)
     List<StoreSearchProjection> findStoresByItemIdAndRadius(@Param("itemId") Integer itemId,
