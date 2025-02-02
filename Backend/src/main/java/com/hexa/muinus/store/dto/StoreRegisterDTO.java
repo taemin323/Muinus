@@ -25,10 +25,10 @@ public class StoreRegisterDTO {
     private String name;
 
     @NotNull
-    private BigDecimal locationX;
+    private Double locationX;
 
     @NotNull
-    private BigDecimal locationY;
+    private Double locationY;
 
     @NotNull
     private String address;

@@ -34,11 +34,11 @@ public class Store {
     @Column(name = "name", nullable = false, length = 255)
     private String name;
 
-    @Column(name = "location_x", nullable = false, precision = 10, scale = 7)
-    private BigDecimal locationX;
+    @Column(name = "location_x", nullable = false)
+    private Double locationX;
 
-    @Column(name = "location_y", nullable = false, precision = 10, scale = 7)
-    private BigDecimal locationY;
+    @Column(name = "location_y", nullable = false)
+    private Double locationY;
 
     @Column(name = "address", nullable = false, length = 255, unique = true)
     private String address;

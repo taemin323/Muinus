@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
@@ -30,35 +31,21 @@ public class StoreController {
     @PostMapping("/register")
     public ResponseEntity<Void> registerStore(@Valid @RequestBody StoreRegisterDTO storeRegisterDTO){
         log.info("StoreController > registerStore: {}", storeRegisterDTO);
-
         storeService.registerStore(storeRegisterDTO);
         return ResponseEntity.ok().build();
     }
 
     /**
-     * 매장 비활성화 - 진짜 row 삭제
+     * 매장 비활성화 (폐업 / 삭제)
      * @param storeNo
      * @return
      */
-    @DeleteMapping("/delete")
+    @PutMapping("/delete")
     public ResponseEntity<Void> closeStore(@RequestParam("storeNo") int storeNo){
         log.info("StoreController > closeStore: {}", storeNo);
         storeService.closeStore(storeNo);
         return ResponseEntity.ok().build();
     }
-
-    /**
-     * 매장 비활성화 - 운영팀에서 , 비활성화 컬럼 사용 시
-     *
-     * @param storeNo
-     * @return
-     */
-//    @PutMapping("/delete")
-//    public ResponseEntity<Void> closeStore(@RequestParam("storeNo") int storeNo){
-//        log.info("StoreController > closeStore - storeNo: {}", storeNo);
-//        storeService.closeStore(storeNo);
-//        return ResponseEntity.ok().build();
-//    }
 
     /**
      * 매장 정보 수정
@@ -79,9 +66,13 @@ public class StoreController {
      * - 해당 제품이 등록이 된 매장 정보s 반환
      */
     @GetMapping("/list")
-    public ResponseEntity<List<StoreSearchDTO>> searchStores(@RequestParam("itemId") int itemId){
-        log.info("StoreController > searchStores: {}", itemId);
-        List<StoreSearchDTO> stores = storeService.searchStore(itemId);
+    public ResponseEntity<List<StoreSearchDTO>> searchStores(
+            @RequestParam("itemId") int itemId,
+            @RequestParam("x") Double x,
+            @RequestParam("y") Double y,
+            @RequestParam(required = false, defaultValue = "1000") int radius){
+        log.info("StoreController > searchStores itemId:{}, x:{}, y:{}, radius:{}", itemId, x, y, radius);
+        List<StoreSearchDTO> stores = storeService.searchStore(itemId, x, y, radius);
         return ResponseEntity.ok().body(stores);
     }
 

@@ -20,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -108,20 +109,34 @@ public class StoreService {
     }
 
     /**
-     * 제품으로 매장 조회 (단순 전체 조회 - 정렬되어 있지 않음)
+     * 해당 제품을 판매하는 내 주변 매장 조회
      * @param itemId
      * @return
      */
     @Transactional(readOnly = true)
-    public List<StoreSearchDTO> searchStore(int itemId) {
-        log.info("Searching store with itemId: {}", itemId);
+    public List<StoreSearchDTO> searchStore(int itemId, Double x, Double y, int radius) {
+        log.info("Searching store with itemId: {} and radius: {}", itemId, radius);
 
-        List<StoreSearchDTO> stores = storeRepository.findStoresByItemId(itemId);
+        List<StoreSearchDTO> stores = storeRepository.findStoresByItemIdAndRadius(itemId, x, y, radius).stream()
+                .map(projection -> new StoreSearchDTO(
+                        projection.getStoreNo(),
+                        projection.getName(),
+                        projection.getLocationX(),
+                        projection.getLocationY(),
+                        projection.getAddress(),
+                        projection.getPhone(),
+                        projection.getItemName(),
+                        projection.getSalePrice(),
+                        projection.getDiscountRate(),
+                        projection.getQuantity(),
+                        projection.getFlimarketYn(),
+                        projection.getDistance()
+                ))
+                .toList();
 
         if (stores.isEmpty()) {
-            log.warn("No stores found for itemId: {}", itemId);
+            log.warn("No stores found for itemId: {} and radius: {}", itemId, radius);
         }
-
         return stores;
     }
 
