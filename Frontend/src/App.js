@@ -3,6 +3,8 @@ import React from "react";
 import { useEffect } from "react";
 import { Route, Routes } from "react-router-dom";
 import MainPage from "./pages/MainPage";
+import Kiosk from "./pages/Kiosk"
+import KioskMainScreen from "./pages/Kiosk/main";
 import KakaoLoginHandler from "./components/KakaoLoginHandler";
 
 function App() {
@@ -20,6 +22,8 @@ function App() {
 
     <Routes>
       <Route path="/" element={<MainPage/>}/>
+      <Route path="/kiosk" element={<Kiosk/>}/>
+      <Route path="/kmain" element={<KioskMainScreen/>}/>
       {/* <Route path="/callback" component={KakaoLoginHandler}/> */}
     </Routes>
 

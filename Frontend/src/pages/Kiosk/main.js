@@ -3,7 +3,7 @@ import logoimage from "./images/kiosk_logo.png";
 import kmainnavbar from "./images/kmainNavbar.png"
 import CartPage from "../../components/Kiosk/Cartpage";
 
-function kioskmainscreen() {
+function KioskMainScreen() {
     return (
         <div className="Kiosk">
             {/* Header Section */}
@@ -19,4 +19,4 @@ function kioskmainscreen() {
         </div>)
             }
 
-export default kioskmainscreen
+export default KioskMainScreen
