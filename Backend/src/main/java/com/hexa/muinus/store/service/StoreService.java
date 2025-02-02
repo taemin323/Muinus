@@ -206,6 +206,23 @@ public class StoreService {
     }
 
     /**
+     * 공지 사항 삭제
+     * @param dto 삭제할 공지 사항 정보
+     */
+    @Transactional
+    public void deleteAnnouncement(AnnouncementDeleteDTO dto) {
+        log.info("Deleting announcement {}", dto);
+
+        // 게시글 유효성 검사
+        Announcement announcement = announcementRepository.findAnnouncementByUserNoAndStoreNoAndBoardId(dto.getUserNo(), dto.getStoreNo(), dto.getBoardId())
+                .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 게시글입니다."));
+
+        announcementRepository.delete(announcement);
+        log.info("Announcement {} has been deleted successfully", announcement);
+    }
+
+
+    /**
      * 플리마켓 상태 수정
      * - 플리마켓 비허용 -> 허용
      * - 플리마켓 사진, 섹션 개수 수정

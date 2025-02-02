@@ -3,6 +3,7 @@ package com.hexa.muinus.store.controller;
 import com.hexa.muinus.store.dto.*;
 import com.hexa.muinus.store.service.StoreService;
 import jakarta.validation.Valid;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -118,6 +119,19 @@ public class StoreController {
     public ResponseEntity<Void> modifyAnnouncement(@Valid @RequestBody AnnouncementModifyDTO announcementModifyDTO){
         log.info("StoreController > modifyAnnouncement: {}", announcementModifyDTO);
         storeService.modifyAnnouncement(announcementModifyDTO);
+        return ResponseEntity.ok().build();
+    }
+
+    /**
+     * 공지사항 삭제
+     * @param announcementDeleteDTO 삭제할 공지사항 정보
+     * @return
+     * - 성공 : 200(OK)
+     * - 실패 : Exception
+     */
+    @DeleteMapping("/board")
+    public ResponseEntity<Void> deleteAnnouncement(@Valid @RequestBody AnnouncementDeleteDTO announcementDeleteDTO){
+        log.info("StoreController > deleteAnnouncement: {}", announcementDeleteDTO);
         return ResponseEntity.ok().build();
     }
 
