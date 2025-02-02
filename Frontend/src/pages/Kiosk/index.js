@@ -5,7 +5,7 @@ import barcodeimage from "./images/barcode_icon.png"
 import description from "./images/Frame 1.png"
 
 
-function kiosk() {
+function Kiosk() {
     return (
         <div className="Kiosk">
             {/* Header Section */}
@@ -37,4 +37,4 @@ function kiosk() {
     );
 }
 
-export default kiosk;
+export default Kiosk;
