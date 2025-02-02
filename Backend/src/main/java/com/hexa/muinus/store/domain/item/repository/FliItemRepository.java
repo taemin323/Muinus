@@ -23,4 +23,6 @@ public interface FliItemRepository extends CrudRepository<FliItem, Integer> {
     List<FliItemDTO> findSellingFliItemsByStore(@Param("storeNo") int storeNo);
 
     Optional<FliItem> findByStoreAndSectionId(Store store, Integer sectionId);
+
+    Optional<FliItem> findByStoreAndFliItemId(Store store, Integer itemId);
 }

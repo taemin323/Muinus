@@ -69,7 +69,7 @@ public class Store {
     @Column(name = "deleted", nullable = false, columnDefinition = "ENUM('Y', 'N')")
     private YesNo deleted = YesNo.N;
 
-    public static Store createStore(Users user, StoreOwnerRegisterRequestDto requestDto) {
+    public static Store create(Users user, StoreOwnerRegisterRequestDto requestDto) {
         return Store.builder()
                 .user(user)
                 .name(requestDto.getStoreName())
