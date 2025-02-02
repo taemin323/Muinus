@@ -142,6 +142,7 @@ public class StoreService {
 
     /**
      * 매장 상세 정보 조회
+     * 플리마켓 아이템은 공개하지 않음
      * @param storeNo
      * @return
      */
@@ -159,11 +160,6 @@ public class StoreService {
         // 판매 제품 조회
         List<StoreItemDTO> storeItems = storeItemRespository.findStoreItemsByStore(storeNo);
 
-        // 플리마켓 허용 시 플리마켓 제품 조회
-        List<FliItemDTO> fliItems = store.getFlimarketYn() == YesNo.Y
-                ? fliItemRepository.findSellingFliItemsByStore(storeNo)
-                : new ArrayList<>();
-
-        return new StoreDetailDTO(store, announcements, storeItems, fliItems);
+        return new StoreDetailDTO(store, announcements, storeItems);
     }
 }

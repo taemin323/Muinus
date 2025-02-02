@@ -13,5 +13,4 @@ public class StoreDetailDTO {
     private StoreDTO store;
     private List<AnnouncementDTO> announcements;
     private List<StoreItemDTO> storeItems;
-    private List<FliItemDTO> fliItems;
 }
