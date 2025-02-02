@@ -4,21 +4,20 @@ import com.hexa.muinus.common.enums.YesNo;
 import com.hexa.muinus.common.exception.StoreLocationDuplicateException;
 import com.hexa.muinus.common.exception.StoreNotFoundException;
 import com.hexa.muinus.common.exception.UserNotFoundException;
+import com.hexa.muinus.store.domain.information.respository.AnnouncementRepository;
+import com.hexa.muinus.store.domain.item.repository.FliItemRepository;
 import com.hexa.muinus.store.domain.item.repository.StoreItemRepository;
 import com.hexa.muinus.store.domain.store.Store;
-import com.hexa.muinus.store.dto.AnnouncementDTO;
-import com.hexa.muinus.store.domain.information.respository.AnnouncementRepository;
-import com.hexa.muinus.store.dto.FliItemDTO;
-import com.hexa.muinus.store.dto.StoreItemDTO;
-import com.hexa.muinus.store.domain.item.repository.FliItemRepository;
 import com.hexa.muinus.store.domain.store.repository.StoreRepository;
 import com.hexa.muinus.store.dto.*;
 import com.hexa.muinus.users.domain.user.Users;
 import com.hexa.muinus.users.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -175,5 +174,11 @@ public class StoreService {
                 : new ArrayList<>();
 
         return new StoreDetailDTO(store, announcements, storeItems, fliItems);
+    }
+
+    @Transactional(readOnly = true)
+    public Store findStoreByStoreNo(int storeNo) {
+        return storeRepository.findById(storeNo)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "존재하지 않는 매장입니다."));
     }
 }
