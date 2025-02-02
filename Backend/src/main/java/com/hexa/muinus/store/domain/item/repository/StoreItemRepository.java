@@ -8,7 +8,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-public interface StoreItemRespository extends CrudRepository<StoreItem, Integer> {
+public interface StoreItemRepository extends CrudRepository<StoreItem, Integer> {
 
     @Query("""
     SELECT new com.hexa.muinus.store.dto.StoreItemDTO(
