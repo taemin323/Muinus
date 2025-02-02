@@ -29,21 +29,13 @@ public class UserService {
     @Transactional
     public Users registerConsumer(ConsumerRegisterRequestDto requestDto, HttpServletResponse response) {
         // 이미 가입한 회원인지 이메일로 확인
-        if (userRepository.findByEmail(requestDto.getUserEmail()) != null) {
-            log.info("User already exists with email {}", requestDto.getUserEmail());
-            throw new ResponseStatusException(HttpStatus.CONFLICT);
-        }
+        isEmailDuplicated(requestDto.getUserEmail());
 
-        Users user = Users.builder()
-                .userName(requestDto.getUserName())
-                .email(requestDto.getUserEmail())
-                .telephone(requestDto.getUserTelephone())
-                .userType(Users.UserType.U)
-                .point(requestDto.getUserPoint())
-                .build();
+        // 신규 사용자(소비자) 생성
+        Users user = Users.createConsumer(requestDto);
 
         // 회원 가입 시 토큰 발급
-        issueTokens(user, response);
+        jwtProvider.issueTokens(user, response);
 
         return userRepository.save(user);
     }
@@ -54,48 +46,19 @@ public class UserService {
     @Transactional
     public Store registerStoreOwner(StoreOwnerRegisterRequestDto requestDto, HttpServletResponse response) {
         // 이미 가입한 회원인지 이메일로 확인
-        if (userRepository.findByEmail(requestDto.getUserEmail()) != null) {
-            log.info("User already exists with email {}", requestDto.getUserEmail());
-            throw new ResponseStatusException(HttpStatus.CONFLICT);
-        }
+        isEmailDuplicated(requestDto.getUserEmail());
 
-        Users user = Users.builder()
-                .userName(requestDto.getUserName())
-                .email(requestDto.getUserEmail())
-                .telephone(requestDto.getUserTelephone())
-                .userType(Users.UserType.U)
-                .point(requestDto.getUserPoint())
-                .build();
+        // 신규 사용자(점주) 생성
+        Users user = Users.createStoreOwner(requestDto);
 
         // 회원 가입 시 토큰 발급
-        issueTokens(user, response);
+        jwtProvider.issueTokens(user, response);
 
         Users savedUser = userRepository.save(user);
-        Store store = Store.builder()
-                .user(savedUser)
-                .name(requestDto.getStoreName())
-                .locationX(requestDto.getLocationX())
-                .locationY(requestDto.getLocationY())
-                .address(requestDto.getStoreAddress())
-                .storeImageUrl(requestDto.getStoreImageUrl())
-                .registrationNo(requestDto.getRegistrationNumber())
-                .phone(requestDto.getPhone())
-                .flimarketYn(requestDto.getIsFliMarketAllowed())
-                .flimarketSectionCnt(requestDto.getFliMarketSectionCount())
-                .build();
+        // 신규 매장 생성
+        Store store = Store.createStore(savedUser, requestDto);
 
         return storeRepository.save(store);
-    }
-
-    /**
-     * 토큰을 발급, users 객체에 refresh token 할당, 쿠키에 토큰 심기
-     */
-    public void issueTokens(Users user, HttpServletResponse response) {
-        String accessToken = jwtProvider.createAccessToken(user);
-        String refreshToken = jwtProvider.createRefreshToken(user);
-        user.updateRefreshToken(refreshToken);
-        jwtProvider.setAccessTokensInCookie(response, accessToken);
-        jwtProvider.setRefreshTokensInCookie(response, refreshToken);
     }
 
     /**
@@ -108,7 +71,7 @@ public class UserService {
         // RefreshToken 유효한지 확인
         if (refreshToken != null && !refreshToken.isEmpty() && jwtProvider.validateToken(refreshToken)) {
             // DB에 저장된 refresh 토큰과 일치하는지 확인 후 AccessToken 재발급
-            Users user = userRepository.findByEmail(requestDto.getUserEmail());
+            Users user = findUserByEmail(requestDto.getUserEmail());
             if (refreshToken.equals(user.getEmail())) {
                 String accessToken = jwtProvider.createAccessToken(user);
                 jwtProvider.setAccessTokensInCookie(response, accessToken);
@@ -116,5 +79,19 @@ public class UserService {
         } else {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
         }
+    }
+
+    /**
+     * 이메일 중복 검사
+     */
+    public void isEmailDuplicated(String email) {
+        if (userRepository.existsByEmail(email)) {
+            log.info("User already exists with email {}", email);
+            throw new ResponseStatusException(HttpStatus.CONFLICT);
+        }
+    }
+
+    public Users findUserByEmail(String email) {
+        return userRepository.findByEmail(email);
     }
 }

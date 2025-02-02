@@ -2,6 +2,7 @@ package com.hexa.muinus.store.domain.store;
 
 import com.hexa.muinus.common.enums.YesNo;
 import com.hexa.muinus.users.domain.user.Users;
+import com.hexa.muinus.users.dto.StoreOwnerRegisterRequestDto;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -68,4 +69,18 @@ public class Store {
     @Column(name = "deleted", nullable = false, columnDefinition = "ENUM('Y', 'N')")
     private YesNo deleted = YesNo.N;
 
+    public static Store createStore(Users user, StoreOwnerRegisterRequestDto requestDto) {
+        return Store.builder()
+                .user(user)
+                .name(requestDto.getStoreName())
+                .locationX(requestDto.getLocationX())
+                .locationY(requestDto.getLocationY())
+                .address(requestDto.getStoreAddress())
+                .storeImageUrl(requestDto.getStoreImageUrl())
+                .registrationNo(requestDto.getRegistrationNumber())
+                .phone(requestDto.getPhone())
+                .flimarketYn(requestDto.getIsFliMarketAllowed())
+                .flimarketSectionCnt(requestDto.getFliMarketSectionCount())
+                .build();
+    }
 }

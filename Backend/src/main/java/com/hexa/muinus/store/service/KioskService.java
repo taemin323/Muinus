@@ -26,6 +26,7 @@ import com.hexa.muinus.users.domain.user.GuestUser;
 import com.hexa.muinus.users.domain.user.Users;
 import com.hexa.muinus.users.domain.user.repository.GuestUserRepository;
 import com.hexa.muinus.users.domain.user.repository.UserRepository;
+import com.hexa.muinus.users.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -47,9 +48,9 @@ public class KioskService {
     private final GuestTransactionsRepository guestTransactionsRepository;
     private final StoreRepository storeRepository;
     private final GuestTransactionDetailsRepository guestTransactionDetailsRepository;
-    private final UserRepository userRepository;
     private final TransactionsRepository transactionsRepository;
     private final TransactionDetailsRepository transactionDetailsRepository;
+    private final UserService userService;
 
     @Transactional(readOnly = true)
     public ScanBarcodeResponseDTO scanBarcode(Integer storeNo, String barcode) {
@@ -83,11 +84,9 @@ public class KioskService {
     @Transactional
     public PaymentResponseDTO payForItems(PaymentRequestDTO requestDTO, HttpServletRequest request) {
         String receiptCode = UUID.randomUUID().toString();
-        Integer storeNo = requestDTO.getStoreNo();
-        Integer totalAmount = requestDTO.getTotalAmount();
         String userEmail = jwtProvider.getUserEmailFromAccessToken(request);
 
-        Store store = storeRepository.findById(storeNo)
+        Store store = storeRepository.findById(requestDTO.getStoreNo())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "존재하지 않는 매장입니다."));
 
         StoreItem storeItem = storeItemRepository.findByStore(store)
@@ -96,12 +95,12 @@ public class KioskService {
         // transactions 테이블에 receipt_code, store_no, user_no, totalAmount, status 저장
         // transaction_detail 테이블 -> transaction_id, store_item_id, unit_price, quantity, sub_total
         if (userEmail != null) {
-            Users user = userRepository.findByEmail(userEmail);
+            Users user = userService.findUserByEmail(userEmail);
             Transactions transactions = Transactions.builder()
                     .receiptCode(receiptCode)
                     .store(store)
                     .user(user)
-                    .totalAmount(totalAmount)
+                    .totalAmount(requestDTO.getTotalAmount())
                     .status(TxnStatus.SUCCESS)
                     .build();
             transactionsRepository.save(transactions);
@@ -146,7 +145,7 @@ public class KioskService {
                     .receiptCode(receiptCode)
                     .store(store)
                     .guest(guestUser)
-                    .totalAmount(totalAmount)
+                    .totalAmount(requestDTO.getTotalAmount())
                     .status(TxnStatus.SUCCESS)
                     .build();
             guestTransactionsRepository.save(guestTransactions);
