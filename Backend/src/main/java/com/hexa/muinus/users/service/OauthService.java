@@ -20,8 +20,7 @@ import org.springframework.web.server.ResponseStatusException;
 @RequiredArgsConstructor
 public class OauthService {
 
-    private final UserRepository userRepository;
-    private final JwtProvider jwtProvider;
+    private final UserService userService;
 
     @Value("${spring.security.oauth2.client.registration.kakao.client-id}")
     private String clientId;
@@ -113,12 +112,12 @@ public class OauthService {
      */
     @Transactional(readOnly = true)
     public Users findUser(String userEmail) {
-        Users user = userRepository.findByEmail(userEmail);
+        Users user = userService.findUserByEmail(userEmail);
         // 사용자 존재 여부 확인
         if (user == null) {
             // 사용자 미존재 시 403 에러 반환
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
-        return userRepository.findByEmail(userEmail);
+        return userService.findUserByEmail(userEmail);
     }
 }

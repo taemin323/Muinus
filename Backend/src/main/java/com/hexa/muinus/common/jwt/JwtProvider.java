@@ -128,4 +128,15 @@ public class JwtProvider {
                 .getBody()
                 .getSubject();
     }
+
+    /**
+     * 토큰을 발급, users 객체에 refresh token 할당, 쿠키에 토큰 심기
+     */
+    public void issueTokens(Users user, HttpServletResponse response) {
+        String accessToken = createAccessToken(user);
+        String refreshToken = createRefreshToken(user);
+        user.updateRefreshToken(refreshToken);
+        setAccessTokensInCookie(response, accessToken);
+        setRefreshTokensInCookie(response, refreshToken);
+    }
 }

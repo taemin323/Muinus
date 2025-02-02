@@ -4,6 +4,7 @@ import com.hexa.muinus.common.enums.YesNo;
 import com.hexa.muinus.store.dto.FlimarketModifyDTO;
 import com.hexa.muinus.store.dto.StoreModifyDTO;
 import com.hexa.muinus.users.domain.user.Users;
+import com.hexa.muinus.users.dto.StoreOwnerRegisterRequestDto;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -70,6 +71,20 @@ public class Store {
     @Column(name = "deleted", nullable = false, columnDefinition = "ENUM('Y', 'N')")
     private YesNo deleted = YesNo.N;
 
+    public static Store createStore(Users user, StoreOwnerRegisterRequestDto requestDto) {
+        return Store.builder()
+                .user(user)
+                .name(requestDto.getStoreName())
+                .locationX(requestDto.getLocationX())
+                .locationY(requestDto.getLocationY())
+                .address(requestDto.getStoreAddress())
+                .storeImageUrl(requestDto.getStoreImageUrl())
+                .registrationNo(requestDto.getRegistrationNumber())
+                .phone(requestDto.getPhone())
+                .flimarketYn(requestDto.getIsFliMarketAllowed())
+                .flimarketSectionCnt(requestDto.getFliMarketSectionCount())
+                .build();
+    }
     /**
      * 폐점처리 - `deleted` 컬럼값 "N"으로 변경
      */

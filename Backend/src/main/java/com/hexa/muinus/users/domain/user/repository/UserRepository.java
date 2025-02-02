@@ -10,7 +10,5 @@ public interface UserRepository extends JpaRepository<Users, Integer> {
 
     Users findByEmail(String email);
 
-    @Modifying
-    @Query(value = "UPDATE users SET refresh_token = :refreshToken WHERE email = :email", nativeQuery = true)
-    int updateRefreshTokenByEmail(@Param("email") String email, @Param("refreshToken") String refreshToken);
+    boolean existsByEmail(String email);
 }
