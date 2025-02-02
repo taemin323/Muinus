@@ -1,6 +1,7 @@
 package com.hexa.muinus.store.domain.transaction;
 
 import com.hexa.muinus.store.domain.item.StoreItem;
+import com.hexa.muinus.store.dto.kiosk.PaymentRequestDTO;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -37,5 +38,14 @@ public class GuestTransactionDetails {
     @Column(name = "sub_total", nullable = false)
     private int subTotal;
 
+    public static GuestTransactionDetails create(GuestTransactions guestTransactions, StoreItem storeItem, PaymentRequestDTO requestDTO, int index) {
+        return GuestTransactionDetails.builder()
+                .transactions(guestTransactions)
+                .storeItem(storeItem)
+                .unitPrice(requestDTO.getItemsForPayment().get(index).getPrice())
+                .quantity(requestDTO.getItemsForPayment().get(index).getQuantity())
+                .subTotal(requestDTO.getItemsForPayment().get(index).getSubtotal())
+                .build();
+    }
 }
 
