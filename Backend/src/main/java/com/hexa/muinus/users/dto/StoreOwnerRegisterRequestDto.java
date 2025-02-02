@@ -5,6 +5,8 @@ import com.hexa.muinus.store.domain.store.Store;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.math.BigDecimal;
+
 @Getter
 @Builder
 public class StoreOwnerRegisterRequestDto {
@@ -14,8 +16,8 @@ public class StoreOwnerRegisterRequestDto {
     private final String userTelephone;
     private final String userType;
     private final Integer userPoint;
-    private final Double locationX;
-    private final Double locationY;
+    private final BigDecimal locationX;
+    private final BigDecimal locationY;
     private final String storeName;
     private final String storeAddress;
     private final String storeImageUrl;
@@ -24,5 +26,5 @@ public class StoreOwnerRegisterRequestDto {
     private final String fliMarketImageUrl;
     private final String registrationNumber;
     private final YesNo isFliMarketAllowed;
-    private final Byte fliMarketSectionCount;
+    private final Integer fliMarketSectionCount;
 }

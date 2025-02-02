@@ -1,5 +1,6 @@
 package com.hexa.muinus.store.service;
 
+import com.hexa.muinus.common.enums.TxnStatus;
 import com.hexa.muinus.common.jwt.JwtProvider;
 import com.hexa.muinus.store.domain.item.FliItem;
 import com.hexa.muinus.store.domain.item.Item;
@@ -101,7 +102,7 @@ public class KioskService {
                     .store(store)
                     .user(user)
                     .totalAmount(totalAmount)
-                    .status(GuestTransactions.Status.SUCCESS)
+                    .status(TxnStatus.SUCCESS)
                     .build();
             transactionsRepository.save(transactions);
 
@@ -146,7 +147,7 @@ public class KioskService {
                     .store(store)
                     .guest(guestUser)
                     .totalAmount(totalAmount)
-                    .status(GuestTransactions.Status.SUCCESS)
+                    .status(TxnStatus.SUCCESS)
                     .build();
             guestTransactionsRepository.save(guestTransactions);
 

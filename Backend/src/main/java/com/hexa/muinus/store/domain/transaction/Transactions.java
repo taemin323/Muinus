@@ -3,7 +3,6 @@ package com.hexa.muinus.store.domain.transaction;
 import com.hexa.muinus.common.enums.TxnStatus;
 import com.hexa.muinus.store.domain.store.Store;
 import com.hexa.muinus.users.domain.user.Users;
-import com.hexa.muinus.store.domain.transaction.GuestTransactions.Status;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -14,6 +13,7 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class Transactions {
 
     @Id
