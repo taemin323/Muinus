@@ -22,11 +22,40 @@ spring:
     server:
         port: 8000
 
-    datasource:
-        url: ${DB_URL}
+    batch:
+        jdbc:
+            initialize-schema: always
+        job:
+            enabled: false
+
+    # 배치 DB
+    datasource-meta:
+        jdbc-url: ${BATCH_DB_URL}
         username: ${DB_USER}
         password: ${DB_PASSWORD}
         driver-class-name: com.mysql.cj.jdbc.Driver
+
+    datasource-data:
+        jdbc-url: ${DB_URL}
+        username: ${DB_USER}
+        password: ${DB_PASSWORD}
+        driver-class-name: com.mysql.cj.jdbc.Driver
+
+    jpa:
+        hibernate:
+            ddl-auto: validate
+        show-sql:true
+        database-platform: org.hibernate.dialect.MySQL8Dialect
+
+    elasticsearch:
+        rest:
+            uris: http://elasticsearch:9200
+            username: your_username  # 필요 시 설정
+            password: your_password  # 필요 시 설정
+    data:
+        elasticsearch:
+            repositories:
+                enabled: true
 
     security:
         oauth2:

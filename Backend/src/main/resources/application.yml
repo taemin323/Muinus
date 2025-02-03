@@ -2,8 +2,22 @@ spring:
   application:
     name: muinus
 
-  datasource:
-    url: jdbc:mysql://localhost:3306/hexa?useSSL=false&characterEncoding=UTF-8&serverTimezone=UTC
+  batch:
+    jdbc:
+      initialize-schema: always
+    job:
+      enabled: false
+
+    # 배치 DB
+  datasource-meta:
+    jdbc-url: jdbc:mysql://localhost:3306/hexa_batch?useSSL=false&characterEncoding=UTF-8&serverTimezone=UTC
+    username: ssafy
+    password: ssafy
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  # 운영 DB
+  datasource-data:
+    jdbc-url: jdbc:mysql://localhost:3306/hexa?useSSL=false&characterEncoding=UTF-8&serverTimezone=UTC
     username: ssafy
     password: ssafy
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -14,15 +28,15 @@ spring:
     show-sql: true
     database-platform: org.hibernate.dialect.MySQL8Dialect
 
-#  elasticsearch:
-#    rest:
-#      uris: http://elasticsearch:9200
-#      username: your_username  # 필요 시 설정
-#      password: your_password  # 필요 시 설정
-#  data:
-#    elasticsearch:
-#      repositories:
-#        enabled: true
+  elasticsearch:
+    rest:
+      uris: http://elasticsearch:9200
+      username: your_username  # 필요 시 설정
+      password: your_password  # 필요 시 설정
+  data:
+    elasticsearch:
+      repositories:
+        enabled: true
 
   security:
     oauth2:
