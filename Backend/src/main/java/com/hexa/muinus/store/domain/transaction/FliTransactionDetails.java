@@ -1,6 +1,7 @@
 package com.hexa.muinus.store.domain.transaction;
 
 import com.hexa.muinus.store.domain.item.FliItem;
+import com.hexa.muinus.store.dto.kiosk.PaymentRequestDTO;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -40,4 +41,13 @@ public class FliTransactionDetails {
     @Column(name = "sub_total", nullable = false)
     private int subTotal;
 
+    public static FliTransactionDetails create(Transactions transaction, FliItem fliItem, PaymentRequestDTO requestDTO, int index) {
+        return FliTransactionDetails.builder()
+                .transaction(transaction)
+                .fliItem(fliItem)
+                .unitPrice(requestDTO.getFliItemsForPayment().get(index).getPrice())
+                .quantity(requestDTO.getFliItemsForPayment().get(index).getQuantity())
+                .subTotal(requestDTO.getFliItemsForPayment().get(index).getSubtotal())
+                .build();
+    }
 }
