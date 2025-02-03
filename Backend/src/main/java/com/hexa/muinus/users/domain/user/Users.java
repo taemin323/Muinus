@@ -1,6 +1,8 @@
 package com.hexa.muinus.users.domain.user;
 
 import com.hexa.muinus.common.enums.YesNo;
+import com.hexa.muinus.users.dto.ConsumerRegisterRequestDto;
+import com.hexa.muinus.users.dto.StoreOwnerRegisterRequestDto;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -42,6 +44,28 @@ public class Users {
 
     public enum UserType {
         A, U
+    }
+
+    public static Users createConsumer(ConsumerRegisterRequestDto requestDto) {
+        return Users.builder()
+                .userName(requestDto.getUserName())
+                .email(requestDto.getUserEmail())
+                .telephone(requestDto.getUserTelephone())
+                .userType(UserType.U)
+                .point(requestDto.getUserPoint())
+                .deleted(YesNo.N)
+                .build();
+    }
+
+    public static Users createStoreOwner(StoreOwnerRegisterRequestDto requestDto) {
+        return Users.builder()
+                .userName(requestDto.getUserName())
+                .email(requestDto.getUserEmail())
+                .telephone(requestDto.getUserTelephone())
+                .userType(Users.UserType.A)
+                .point(requestDto.getUserPoint())
+                .deleted(YesNo.N)
+                .build();
     }
 
     public void updateRefreshToken(String refreshToken) {
