@@ -28,6 +28,9 @@ public class Users {
     @Column(name = "telephone", length = 20)
     private String telephone;
 
+    @Column(name = "birth", nullable = false, columnDefinition = "DATE")
+    private String birth;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "user_type", nullable = false, columnDefinition = "ENUM('A', 'U')")
     private UserType userType = UserType.U;
@@ -51,6 +54,7 @@ public class Users {
                 .userName(requestDto.getUserName())
                 .email(requestDto.getUserEmail())
                 .telephone(requestDto.getUserTelephone())
+                .birth(requestDto.getUserBirth())
                 .userType(UserType.U)
                 .point(requestDto.getUserPoint())
                 .deleted(YesNo.N)
@@ -62,6 +66,7 @@ public class Users {
                 .userName(requestDto.getUserName())
                 .email(requestDto.getUserEmail())
                 .telephone(requestDto.getUserTelephone())
+                .birth(requestDto.getUserBirth())
                 .userType(Users.UserType.A)
                 .point(requestDto.getUserPoint())
                 .deleted(YesNo.N)
