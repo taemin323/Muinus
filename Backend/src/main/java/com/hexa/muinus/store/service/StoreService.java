@@ -16,6 +16,7 @@ import com.hexa.muinus.users.domain.user.Users;
 import com.hexa.muinus.users.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
@@ -250,6 +251,12 @@ public class StoreService {
 
         store.modifyFlimarketState(dto);
         log.info("Flimarket state {} has been modified successfully", store);
+    }
+
+    @Transactional(readOnly = true)
+    public Store findStoreByStoreNo(int storeNo) {
+        return storeRepository.findById(storeNo)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "존재하지 않는 매장입니다."));
     }
 
     @Transactional(readOnly = true)

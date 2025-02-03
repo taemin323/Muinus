@@ -119,5 +119,4 @@ public class Store {
         this.flimarketSectionCnt = dto.getFlimarketSectionCnt();
     }
 
-
 }

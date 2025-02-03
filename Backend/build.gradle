@@ -23,7 +23,7 @@ repositories {
     mavenCentral()
 }
 
-jar {
+bootJar {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
@@ -44,6 +44,7 @@ dependencies {
 
     implementation 'org.springframework.boot:spring-boot-starter-validation'
 
+    // 배치
     implementation 'org.springframework.batch:spring-batch-core:5.0.6'
     implementation 'org.springframework.boot:spring-boot-starter-batch'
     implementation 'org.springframework.boot:spring-boot-starter-jdbc'
