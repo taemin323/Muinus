@@ -15,8 +15,8 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class CouponRequestDto {
 
-    @NotNull(message = "가게 이름은 필수 입력 항목입니다.")
-    private String storeName;
+    @NotNull
+    private Integer storeNo;
 
     @NotNull(message = "쿠폰 ID는 필수 입력 항목입니다.")
     private Integer couponId;

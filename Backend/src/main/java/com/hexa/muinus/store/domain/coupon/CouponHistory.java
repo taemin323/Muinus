@@ -10,8 +10,6 @@ import java.time.LocalDateTime;
 @Table(name = "coupon_history")
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class CouponHistory {
 
     @EmbeddedId
@@ -36,7 +34,8 @@ public class CouponHistory {
     @Column(name = "created_at", nullable = false, updatable = false, insertable = false)
     private LocalDateTime createdAt;
 
-    public CouponHistory(CouponHistoryId id, int count, LocalDateTime expirationDate, LocalDateTime createdAt) {
+    @Builder
+    public CouponHistory(CouponHistoryId id, Store store, Coupon coupon, int count, LocalDateTime expirationDate, LocalDateTime createdAt) {
         this.id = id;
         this.store = store;
         this.coupon = coupon;
@@ -44,6 +43,5 @@ public class CouponHistory {
         this.expirationDate = expirationDate;
         this.createdAt = createdAt;
     }
-
 }
 

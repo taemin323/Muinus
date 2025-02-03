@@ -4,6 +4,7 @@ import com.google.zxing.WriterException;
 import com.hexa.muinus.common.util.BarCodeGenerator;
 import com.hexa.muinus.store.domain.coupon.repository.CouponHistoryRepository;
 import com.hexa.muinus.store.domain.coupon.repository.CouponRepository;
+import com.hexa.muinus.store.domain.store.Store;
 import com.hexa.muinus.users.domain.coupon.repository.UserCouponHistoryRepository;
 import com.hexa.muinus.store.domain.coupon.Coupon;
 import com.hexa.muinus.store.domain.coupon.CouponHistory;
@@ -34,23 +35,33 @@ public class CouponService {
     private final UserCouponHistoryRepository userCouponHistoryRepository;
     private final StoreRepository storeRepository;
     private final UserRepository userRepository;
+    private final StoreService storeService;
 
 
     @Transactional
     public void createCoupon(CouponRequestDto couponRequestDto) {
         // 가게 이름을 통해 가게 번호 조회
-        Integer storeNo = storeRepository.findStoreNoByName(couponRequestDto.getStoreName())
-                .orElseThrow(() -> new IllegalArgumentException("해당 가게가 존재하지 않습니다. storeName: "+couponRequestDto.getStoreName()));
+        Store store = storeService.findStoreByStoreNo(couponRequestDto.getStoreNo());
 
         // 쿠폰이 존재하는지 확인
         Coupon coupon = couponRepository.findById(couponRequestDto.getCouponId())
                 .orElseThrow(() -> new IllegalArgumentException("해당 쿠폰이 존재하지 않습니다. couponId: "+couponRequestDto.getCouponId()));
 
         // 복합 키 생성
-        CouponHistoryId couponHistoryId = new CouponHistoryId(storeNo, couponRequestDto.getCouponId());
+        CouponHistoryId couponHistoryId = CouponHistoryId.builder()
+                .storeNo(store.getStoreNo())
+                .couponId(coupon.getCouponId())
+                .build();
 
         // 쿠폰 발급 내역 생성
-        CouponHistory couponHistory = new CouponHistory(couponHistoryId, couponRequestDto.getCount(), couponRequestDto.getExpirationDate(), LocalDateTime.now());
+        CouponHistory couponHistory = CouponHistory.builder()
+                .id(couponHistoryId)
+                .store(store)
+                .coupon(coupon)
+                .count(couponRequestDto.getCount())
+                .expirationDate(couponRequestDto.getExpirationDate())
+                .createdAt(LocalDateTime.now())
+                .build();
         couponHistoryRepository.save(couponHistory);
     }
 
