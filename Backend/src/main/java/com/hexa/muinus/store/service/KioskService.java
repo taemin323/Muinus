@@ -19,11 +19,13 @@ import com.hexa.muinus.users.service.GuestUserService;
 import com.hexa.muinus.users.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class KioskService {
@@ -93,7 +95,7 @@ public class KioskService {
     protected void processPaymentForUser(String userEmail, String receiptCode, Store store, PaymentRequestDTO requestDTO) {
         Users user = userService.findUserByEmail(userEmail);
         Transactions transactions = Transactions.create(receiptCode, store, user, requestDTO);
-        transactionsService.save(transactions);
+        transactions = transactionsService.save(transactions);
 
         for (int i=0;i<requestDTO.getItemsForPayment().size();i++) {
             Item item = itemService.getItem(requestDTO.getItemsForPayment().get(i).getItemId());
@@ -129,7 +131,7 @@ public class KioskService {
         guestUserService.save(guestUser);
 
         GuestTransactions guestTransactions = GuestTransactions.create(receiptCode, store, guestUser, requestDTO);
-        guestTransactionsService.save(guestTransactions);
+        guestTransactions = guestTransactionsService.save(guestTransactions);
 
         // 비회원 결제 후 일반 판매 상품 결제 기록 저장
         for (int i=0;i<requestDTO.getItemsForPayment().size();i++) {

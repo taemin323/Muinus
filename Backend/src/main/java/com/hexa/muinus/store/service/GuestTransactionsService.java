@@ -13,7 +13,7 @@ public class GuestTransactionsService {
     private final GuestTransactionsRepository guestTransactionsRepository;
 
     @Transactional
-    public void save(GuestTransactions guestTransactions) {
-        guestTransactionsRepository.save(guestTransactions);
+    public GuestTransactions save(GuestTransactions guestTransactions) {
+        return guestTransactionsRepository.save(guestTransactions);
     }
 }
