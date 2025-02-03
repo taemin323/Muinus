@@ -1,13 +1,9 @@
 /* 전체 SearchBar 스타일 */
 .search-bar {
-    position: absolute; /* 절대 위치로 설정 */
-    top: 20%; /* 화면 높이의 40% 위치에 배치 */
-    left: 50%; /* 화면의 중앙에 배치 */
-    transform: translateX(-50%); /* 정확한 중앙 배치를 위해 X축으로 -50% 이동 */
-    width: 80%; /* 화면 너비의 90%로 설정 */
     max-width: 400px; /* 최대 너비 설정 */
     display: flex;
     justify-content: center;
+    align-items: center;
     padding: 10px 20px;
     background-color: #fff;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
