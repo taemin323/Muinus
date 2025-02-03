@@ -1,7 +1,6 @@
 package com.hexa.muinus.users.dto;
 
 import com.hexa.muinus.common.enums.YesNo;
-import com.hexa.muinus.store.domain.store.Store;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -15,6 +14,7 @@ public class StoreOwnerRegisterRequestDto {
     private final String userEmail;
     private final String userTelephone;
     private final String userType;
+    private final String userBirth;
     private final Integer userPoint;
     private final BigDecimal locationX;
     private final BigDecimal locationY;
