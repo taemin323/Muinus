@@ -10,6 +10,7 @@ import java.io.Serializable;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class CouponHistoryId  implements Serializable {
 
     @Column(name = "store_no")
