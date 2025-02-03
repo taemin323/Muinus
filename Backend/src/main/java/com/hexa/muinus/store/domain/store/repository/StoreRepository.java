@@ -12,6 +12,10 @@ import org.springframework.data.repository.query.Param;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
+import java.util.Optional;
 
 public interface StoreRepository extends JpaRepository<Store, Integer> {
 
@@ -41,4 +45,7 @@ public interface StoreRepository extends JpaRepository<Store, Integer> {
         WHERE s.storeNo = :storeNo
     """)
     Optional<StoreDTO> findStoreDTOById(@Param("storeNo") int storeNo);
+    // 가게 이름으로 store_no 조회
+    @Query("SELECT s.storeNo FROM Store s WHERE s.name = :storeName")
+    Optional<Integer> findStoreNoByName(@Param("storeName") String storeName);
 }

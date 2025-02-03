@@ -38,5 +38,6 @@ public class UserCouponHistory {
 
     @Column(name = "used_at")
     private LocalDateTime usedAt;
+
 }
 
