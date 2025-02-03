@@ -4,6 +4,7 @@ import com.hexa.muinus.store.domain.item.Item;
 import com.hexa.muinus.store.domain.item.StoreItem;
 import com.hexa.muinus.store.domain.item.repository.StoreItemRepository;
 import com.hexa.muinus.store.domain.store.Store;
+import com.hexa.muinus.store.domain.transaction.DailySales;
 import com.hexa.muinus.store.domain.transaction.TransactionDetails;
 import org.springframework.batch.item.database.JdbcCursorItemReader;
 import org.springframework.jdbc.core.RowMapper;
@@ -14,33 +15,43 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 @Component
-public class DailySalesItemReader extends JdbcCursorItemReader<TransactionDetails> {
+public class DailySalesItemReader extends JdbcCursorItemReader<DailySales> {
 
     private final StoreItemRepository storeItemRepository;
+
+    private final static String query
+            = "SELECT tt.store_no, tt.item_id, SUM(tt.quantity) AS total_quantity, SUM(tt.sub_total) AS total_amount "
+            + "FROM ((  SELECT  si.store_no, si.item_id, IFNULL(td.quantity, 0) AS quantity , IFNULL(td.sub_total, 0) AS sub_total "
+            + "         FROM transaction_details td "
+            + "         JOIN transactions t ON td.transaction_id = t.transaction_id "
+            + "         AND t.created_at >= CURDATE() - INTERVAL 1 DAY "
+            + "         AND tt.created_at < CURDATE() "
+            + "         RIGHT JOIN store_item si ON td.store_item_id = si.store_item_id "
+            + "         JOIN item i ON si.item_id = i.item_id "
+            + "     ) UNION "
+            + "     (   SELECT  si.store_no, si.item_id, IFNULL(td.quantity, 0) AS quantity , IFNULL(td.sub_total, 0) AS sub_total "
+            + "         FROM guest_transaction_details td "
+            + "         JOIN guest_transactions t ON td.transaction_id = t.transaction_id "
+            + "         AND t.created_at >= CURDATE() - INTERVAL 1 DAY "
+            + "         AND tt.created_at < CURDATE() "
+            + "         RIGHT JOIN store_item si ON td.store_item_id = si.store_item_id "
+            + "         JOIN item i ON si.item_id = i.item_id "
+            + "         )) tt"
+            + "         GROUP BY tt.store_no, tt.item_id "
+            + "         ORDER BY tt.store_no, tt.item_id "
+            ;
+
 
     public DailySalesItemReader(DataSource dataSource, StoreItemRepository storeItemRepository) {
         this.storeItemRepository = storeItemRepository;
 
         setDataSource(dataSource);
-        // UNION으로 두 테이블의 데이터를 합침
-        setSql("SELECT td.detail_id, td.transaction_id, td.store_item_id, td.quantity, td.unit_price " +
-                "FROM transaction_details td " +
-                "JOIN transactions t ON td.transaction_id = t.transaction_id " +
-                "WHERE t.status = 'SUCCESS' " +
-                "AND t.created_at >= CURDATE() - INTERVAL 1 DAY " +
-                "AND t.created_at <= CURDATE() " +
-                "UNION " +
-                "SELECT gtd.detail_id, gtd.transaction_id, gtd.store_item_id, gtd.quantity, gtd.unit_price " +
-                "FROM guest_transaction_details gtd " +
-                "JOIN guest_transactions gt ON gtd.transaction_id = gt.transaction_id " +
-                "WHERE gt.status = 'SUCCESS' " +
-                "AND gt.created_at >= CURDATE() - INTERVAL 1 DAY " +
-                "AND gt.created_at <= CURDATE()");
+        setSql(query);
 
         // RowMapper 설정
-        setRowMapper(new RowMapper<TransactionDetails>() {
+        setRowMapper(new RowMapper<DailySales>() {
             @Override
-            public TransactionDetails mapRow(ResultSet rs, int rowNum) throws SQLException {
+            public DailySales mapRow(ResultSet rs, int rowNum) throws SQLException {
                 // store_item_id로 StoreItem 객체 찾기
                 StoreItem storeItem = storeItemRepository.findById(rs.getInt("store_item_id")).orElse(null);
 
@@ -48,12 +59,8 @@ public class DailySalesItemReader extends JdbcCursorItemReader<TransactionDetail
                 Store store = storeItem != null ? storeItem.getStore() : null;
                 Item item = storeItem != null ? storeItem.getItem() : null;
 
-                return TransactionDetails.builder()
-                        .detailId(rs.getInt("detail_id"))
-                        .storeItem(storeItem)
-                        .quantity(rs.getInt("quantity"))
-                        .unitPrice(rs.getInt("unit_price"))
-                        .subTotal(rs.getInt("quantity") * rs.getInt("unit_price"))
+                return DailySales.builder()
+                        .item()
                         .build();
             }
         });
