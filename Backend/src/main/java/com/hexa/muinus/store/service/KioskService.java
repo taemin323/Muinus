@@ -5,10 +5,7 @@ import com.hexa.muinus.store.domain.item.FliItem;
 import com.hexa.muinus.store.domain.item.Item;
 import com.hexa.muinus.store.domain.item.StoreItem;
 import com.hexa.muinus.store.domain.store.Store;
-import com.hexa.muinus.store.domain.transaction.GuestTransactionDetails;
-import com.hexa.muinus.store.domain.transaction.GuestTransactions;
-import com.hexa.muinus.store.domain.transaction.TransactionDetails;
-import com.hexa.muinus.store.domain.transaction.Transactions;
+import com.hexa.muinus.store.domain.transaction.*;
 import com.hexa.muinus.store.dto.kiosk.PaymentRequestDTO;
 import com.hexa.muinus.store.dto.kiosk.PaymentResponseDTO;
 import com.hexa.muinus.store.dto.kiosk.PutFliItemResponseDTO;
@@ -41,6 +38,9 @@ public class KioskService {
     private final GuestTransactionDetailsService guestTransactionDetailsService;
     private final TransactionDetailsService transactionDetailsService;
     private final TransactionsService transactionsService;
+    private final FliGuestTransactionDetailsService fliGuestTransactionDetailsService;
+    private final FliTransactionDetailsService fliTransactionDetailsService;
+
 
     @Transactional(readOnly = true)
     public ScanBarcodeResponseDTO scanBarcode(Integer storeNo, String barcode) {
@@ -104,22 +104,11 @@ public class KioskService {
             transactionDetailsService.save(transactionDetails);
         }
 
-        /**
-         * 플리마켓 상품 결제 시 결제 내역을 어떻게 저장할 것인지?
-         * 현재 transaction_deatils 테이블에 store_item_id는 있지만 fli_item_id가 없어서 둘이 구분 불가
-         */
-//            for (int i=0;i<requestDTO.getFliItemsForPayment().size();i++) {
-//                FliItem fliItem = fliItemService.findFliItemByStoreAndFliItemId(store, requestDTO.getFliItemsForPayment().get(i).getFliItemId());
-//                TransactionDetails transactionDetails = TransactionDetails.builder()
-//                        .transaction(transactions)
-//                        .storeItem(fliItem)
-//                        .unitPrice(requestDTO.getFliItemsForPayment().get(i).getPrice())
-//                        .quantity(requestDTO.getFliItemsForPayment().get(i).getQuantity())
-//                        .subTotal(requestDTO.getFliItemsForPayment().get(i).getSubtotal())
-//                        .build();
-//
-//                transactionDetailsRepository.save(transactionDetails);
-//            }
+        for (int i=0;i<requestDTO.getFliItemsForPayment().size();i++) {
+            FliItem fliItem = fliItemService.findFliItemByStoreAndFliItemId(store, requestDTO.getFliItemsForPayment().get(i).getFliItemId());
+            FliTransactionDetails fliTransactionDetails = FliTransactionDetails.create(transactions, fliItem, requestDTO, i);
+            fliTransactionDetailsService.save(fliTransactionDetails);
+        }
     }
 
     // guest 테이블에 guest_name 저장
@@ -141,19 +130,10 @@ public class KioskService {
             guestTransactionDetailsService.save(guestTransactionDetails);
         }
 
-        /**
-         * guest_transaction_details 또한 transaction_details랑 같은 문제
-         */
-//            for (int i=0;i<requestDTO.getFliItemsForPayment().size();i++) {
-//                FliItem fliitem = fliItemService.findFliItemByStoreAndFliItemId(store, requestDTO.getFliItemsForPayment().get(i).getFliItemId());
-//                GuestTransactionDetails guestTransactionDetails = GuestTransactionDetails.builder()
-//                        .transactions(guestTransactions)
-//                        .storeItem(storeItem)
-//                        .unitPrice(requestDTO.getFliItemsForPayment().get(i).getPrice())
-//                        .quantity(requestDTO.getFliItemsForPayment().get(i).getQuantity())
-//                        .subTotal(requestDTO.getFliItemsForPayment().get(i).getSubtotal())
-//                        .build();
-//                guestTransactionDetailsRepository.save(guestTransactionDetails);
-//            }
+        for (int i=0;i<requestDTO.getFliItemsForPayment().size();i++) {
+            FliItem fliitem = fliItemService.findFliItemByStoreAndFliItemId(store, requestDTO.getFliItemsForPayment().get(i).getFliItemId());
+            FliGuestTransactionDetails fliGuestTransactionDetails = FliGuestTransactionDetails.create(guestTransactions, fliitem, requestDTO, i);
+            fliGuestTransactionDetailsService.save(fliGuestTransactionDetails);
+        }
     }
 }
