@@ -1,5 +1,6 @@
 package com.hexa.muinus.users.controller;
 
+import com.hexa.muinus.common.jwt.JwtProvider;
 import com.hexa.muinus.users.domain.user.Users;
 import com.hexa.muinus.users.service.OauthService;
 import com.hexa.muinus.users.service.UserService;
@@ -15,14 +16,14 @@ import org.springframework.web.bind.annotation.RestController;
 public class OauthController {
 
     private final OauthService oauthService;
-    private final UserService userService;
+    private final JwtProvider jwtProvider;
 
     @GetMapping("/api/users/login")
     public ResponseEntity<?> kakaoLogin(@RequestParam("code") String authorizationCode, HttpServletResponse response) {
         String accessToken = oauthService.getAccessTokenFromKakao(authorizationCode);
         String userEmail = oauthService.getUserKakaoProfile(accessToken);
         Users user = oauthService.findUser(userEmail);
-        userService.issueTokens(user, response);
+        jwtProvider.issueTokens(user, response);
         return ResponseEntity.ok().build();
     }
 }

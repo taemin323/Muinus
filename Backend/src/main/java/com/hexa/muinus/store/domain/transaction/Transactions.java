@@ -2,6 +2,7 @@ package com.hexa.muinus.store.domain.transaction;
 
 import com.hexa.muinus.common.enums.TxnStatus;
 import com.hexa.muinus.store.domain.store.Store;
+import com.hexa.muinus.store.dto.kiosk.PaymentRequestDTO;
 import com.hexa.muinus.users.domain.user.Users;
 import jakarta.persistence.*;
 import lombok.*;
@@ -21,7 +22,7 @@ public class Transactions {
     @Column(name = "transaction_id")
     private Integer transactionId;
 
-    @Column(name = "receipt_code", nullable = false, length = 20, unique = true)
+    @Column(name = "receipt_code", nullable = false, length = 50, unique = true)
     private String receiptCode;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -42,4 +43,13 @@ public class Transactions {
     @Column(name = "created_at", nullable = false, updatable = false, insertable = false)
     private LocalDateTime createdAt;
 
+    public static Transactions create(String receiptCode, Store store, Users user, PaymentRequestDTO requestDTO) {
+        return Transactions.builder()
+                .receiptCode(receiptCode)
+                .store(store)
+                .user(user)
+                .totalAmount(requestDTO.getTotalAmount())
+                .status(TxnStatus.SUCCESS)
+                .build();
+    }
 }

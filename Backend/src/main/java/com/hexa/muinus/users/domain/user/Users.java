@@ -1,6 +1,8 @@
 package com.hexa.muinus.users.domain.user;
 
 import com.hexa.muinus.common.enums.YesNo;
+import com.hexa.muinus.users.dto.ConsumerRegisterRequestDto;
+import com.hexa.muinus.users.dto.StoreOwnerRegisterRequestDto;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -26,6 +28,9 @@ public class Users {
     @Column(name = "telephone", length = 20)
     private String telephone;
 
+    @Column(name = "birth", nullable = false, columnDefinition = "DATE")
+    private String birth;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "user_type", nullable = false, columnDefinition = "ENUM('A', 'U')")
     private UserType userType = UserType.U;
@@ -42,6 +47,30 @@ public class Users {
 
     public enum UserType {
         A, U
+    }
+
+    public static Users createConsumer(ConsumerRegisterRequestDto requestDto) {
+        return Users.builder()
+                .userName(requestDto.getUserName())
+                .email(requestDto.getUserEmail())
+                .telephone(requestDto.getUserTelephone())
+                .birth(requestDto.getUserBirth())
+                .userType(UserType.U)
+                .point(requestDto.getUserPoint())
+                .deleted(YesNo.N)
+                .build();
+    }
+
+    public static Users createStoreOwner(StoreOwnerRegisterRequestDto requestDto) {
+        return Users.builder()
+                .userName(requestDto.getUserName())
+                .email(requestDto.getUserEmail())
+                .telephone(requestDto.getUserTelephone())
+                .birth(requestDto.getUserBirth())
+                .userType(Users.UserType.A)
+                .point(requestDto.getUserPoint())
+                .deleted(YesNo.N)
+                .build();
     }
 
     public void updateRefreshToken(String refreshToken) {

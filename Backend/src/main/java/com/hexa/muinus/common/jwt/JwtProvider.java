@@ -112,4 +112,31 @@ public class JwtProvider {
         }
         return null;
     }
+
+    /**
+     * Access Token으로부터 user email 추출
+     */
+    public String getUserEmailFromAccessToken(HttpServletRequest request) {
+        String accessToken = getCookieValue(request, "AccessToken");
+        if (accessToken == null) {
+            return null;
+        }
+        return Jwts.parserBuilder()
+                .setSigningKey(secretKey)
+                .build()
+                .parseClaimsJws(accessToken)
+                .getBody()
+                .getSubject();
+    }
+
+    /**
+     * 토큰을 발급, users 객체에 refresh token 할당, 쿠키에 토큰 심기
+     */
+    public void issueTokens(Users user, HttpServletResponse response) {
+        String accessToken = createAccessToken(user);
+        String refreshToken = createRefreshToken(user);
+        user.updateRefreshToken(refreshToken);
+        setAccessTokensInCookie(response, accessToken);
+        setRefreshTokensInCookie(response, refreshToken);
+    }
 }

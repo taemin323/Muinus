@@ -10,6 +10,7 @@ public class ConsumerRegisterRequestDto {
     private final String userName;
     private final String userEmail;
     private final String userTelephone;
+    private final String userBirth;
     private final String userType;
     private final Integer userPoint;
 }

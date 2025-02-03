@@ -1,6 +1,7 @@
 package com.hexa.muinus.users.service;
 
 import com.hexa.muinus.common.jwt.JwtProvider;
+import com.hexa.muinus.store.domain.store.Store;
 import com.hexa.muinus.store.domain.store.repository.StoreRepository;
 import com.hexa.muinus.users.domain.user.Users;
 import com.hexa.muinus.users.domain.user.repository.UserRepository;
@@ -28,21 +29,13 @@ public class UserService {
     @Transactional
     public Users registerConsumer(ConsumerRegisterRequestDto requestDto, HttpServletResponse response) {
         // 이미 가입한 회원인지 이메일로 확인
-        if (userRepository.findByEmail(requestDto.getUserEmail()) != null) {
-            log.info("User already exists with email {}", requestDto.getUserEmail());
-            throw new ResponseStatusException(HttpStatus.CONFLICT);
-        }
+        isEmailDuplicated(requestDto.getUserEmail());
 
-        Users user = Users.builder()
-                .userName(requestDto.getUserName())
-                .email(requestDto.getUserEmail())
-                .telephone(requestDto.getUserTelephone())
-                .userType(Users.UserType.U)
-                .point(requestDto.getUserPoint())
-                .build();
+        // 신규 사용자(소비자) 생성
+        Users user = Users.createConsumer(requestDto);
 
         // 회원 가입 시 토큰 발급
-        issueTokens(user, response);
+        jwtProvider.issueTokens(user, response);
 
         return userRepository.save(user);
     }
@@ -51,47 +44,21 @@ public class UserService {
      * 점주 회원가입 시 정보 받아와 Users 테이블에 저장, 또한 Store 테이블에도 저장
      */
     @Transactional
-    public int registerStoreOwner(StoreOwnerRegisterRequestDto requestDto, HttpServletResponse response) {
+    public Store registerStoreOwner(StoreOwnerRegisterRequestDto requestDto, HttpServletResponse response) {
         // 이미 가입한 회원인지 이메일로 확인
-        if (userRepository.findByEmail(requestDto.getUserEmail()) != null) {
-            log.info("User already exists with email {}", requestDto.getUserEmail());
-            throw new ResponseStatusException(HttpStatus.CONFLICT);
-        }
+        isEmailDuplicated(requestDto.getUserEmail());
 
-        Users user = Users.builder()
-                .userName(requestDto.getUserName())
-                .email(requestDto.getUserEmail())
-                .telephone(requestDto.getUserTelephone())
-                .userType(Users.UserType.U)
-                .point(requestDto.getUserPoint())
-                .build();
+        // 신규 사용자(점주) 생성
+        Users user = Users.createStoreOwner(requestDto);
 
         // 회원 가입 시 토큰 발급
-        issueTokens(user, response);
+        jwtProvider.issueTokens(user, response);
 
         Users savedUser = userRepository.save(user);
+        // 신규 매장 생성
+        Store store = Store.create(savedUser, requestDto);
 
-        return storeRepository.saveStore(
-                savedUser.getUserNo(),
-                requestDto.getStoreName(),
-                requestDto.getLocation().getX(), // point 타입 -> mysql insert를 위한 추출
-                requestDto.getLocation().getY(),
-                requestDto.getStoreAddress(),
-                requestDto.getRegistrationNumber(),
-                requestDto.getIsFliMarketAllowed().toString(),
-                requestDto.getFliMarketSectionCount()
-                );
-    }
-
-    /**
-     * 토큰을 발급, users 객체에 refresh token 할당, 쿠키에 토큰 심기
-     */
-    public void issueTokens(Users user, HttpServletResponse response) {
-        String accessToken = jwtProvider.createAccessToken(user);
-        String refreshToken = jwtProvider.createRefreshToken(user);
-        user.updateRefreshToken(refreshToken);
-        jwtProvider.setAccessTokensInCookie(response, accessToken);
-        jwtProvider.setRefreshTokensInCookie(response, refreshToken);
+        return storeRepository.save(store);
     }
 
     /**
@@ -104,7 +71,7 @@ public class UserService {
         // RefreshToken 유효한지 확인
         if (refreshToken != null && !refreshToken.isEmpty() && jwtProvider.validateToken(refreshToken)) {
             // DB에 저장된 refresh 토큰과 일치하는지 확인 후 AccessToken 재발급
-            Users user = userRepository.findByEmail(requestDto.getUserEmail());
+            Users user = findUserByEmail(requestDto.getUserEmail());
             if (refreshToken.equals(user.getEmail())) {
                 String accessToken = jwtProvider.createAccessToken(user);
                 jwtProvider.setAccessTokensInCookie(response, accessToken);
@@ -112,5 +79,21 @@ public class UserService {
         } else {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
         }
+    }
+
+    /**
+     * 이메일 중복 검사
+     */
+    @Transactional(readOnly = true)
+    public void isEmailDuplicated(String email) {
+        if (userRepository.existsByEmail(email)) {
+            log.info("User already exists with email {}", email);
+            throw new ResponseStatusException(HttpStatus.CONFLICT);
+        }
+    }
+
+    @Transactional
+    public Users findUserByEmail(String email) {
+        return userRepository.findByEmail(email);
     }
 }
