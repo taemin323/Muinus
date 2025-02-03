@@ -81,6 +81,7 @@ public class Store {
                 .phone(requestDto.getPhone())
                 .flimarketYn(requestDto.getIsFliMarketAllowed())
                 .flimarketSectionCnt(requestDto.getFliMarketSectionCount())
+                .deleted(YesNo.N)
                 .build();
     }
 }

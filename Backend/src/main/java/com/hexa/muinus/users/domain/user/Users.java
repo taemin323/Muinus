@@ -51,8 +51,9 @@ public class Users {
                 .userName(requestDto.getUserName())
                 .email(requestDto.getUserEmail())
                 .telephone(requestDto.getUserTelephone())
-                .userType(Users.UserType.U)
+                .userType(UserType.U)
                 .point(requestDto.getUserPoint())
+                .deleted(YesNo.N)
                 .build();
     }
 
@@ -63,6 +64,7 @@ public class Users {
                 .telephone(requestDto.getUserTelephone())
                 .userType(Users.UserType.A)
                 .point(requestDto.getUserPoint())
+                .deleted(YesNo.N)
                 .build();
     }
 
