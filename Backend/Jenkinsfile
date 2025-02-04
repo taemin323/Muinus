@@ -25,6 +25,8 @@ spring:
     batch:
         jdbc:
             initialize-schema: always
+            data-source: metaDB
+            table-prefix: BATCH_
         job:
             enabled: false
 
