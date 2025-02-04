@@ -2,6 +2,7 @@ package com.hexa.muinus.users.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hexa.muinus.users.domain.user.Users;
+import com.hexa.muinus.users.domain.user.repository.UserRepository;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +20,7 @@ import org.springframework.web.client.RestTemplate;
 public class OauthService {
 
     private final UserService userService;
+    private final UserRepository userRepository;
 
     @Value("${spring.security.oauth2.client.registration.kakao.client-id}")
     private String clientId;
@@ -141,5 +143,11 @@ public class OauthService {
 
     public void redirectToMainPage(HttpServletResponse response) throws Exception{
         response.sendRedirect(frontUrl);
+    }
+
+    public void deleteRefreshToken(Users user) {
+
+        user.setRefreshToken(null);
+        userRepository.save(user);
     }
 }
