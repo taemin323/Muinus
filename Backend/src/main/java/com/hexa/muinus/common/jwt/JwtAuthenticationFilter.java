@@ -23,6 +23,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
         String path = request.getRequestURI();
         List<String> excludePatterns = List.of(
+                "/api/users/kauth",
                 "/api/users/consumer",
                 "/api/users/store-owner",
                 "/api/users/logout",

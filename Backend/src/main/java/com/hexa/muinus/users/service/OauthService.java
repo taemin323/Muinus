@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hexa.muinus.common.jwt.JwtProvider;
 import com.hexa.muinus.users.domain.user.Users;
 import com.hexa.muinus.users.domain.user.repository.UserRepository;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -36,6 +37,20 @@ public class OauthService {
 
     @Value("${spring.security.oauth2.client.registration.kakao.authorization-grant-type}")
     private String authorizationGrantType;
+
+    @Value("${spring.security.oauth2.client.provider.kakao.authorization-uri}")
+    private String authorizationUri;
+
+    public void getAuthorizationCode(HttpServletResponse response) {
+        try {
+            response.sendRedirect("https://kauth.kakao.com/oauth/authorize"
+                    + "?client_id=" + clientId
+                    + "&redirect_uri=" + redirectUrl
+                    + "&response_type=code");
+        } catch (Exception e) {
+
+        }
+    }
 
     /**
      * 카카오로부터 액세스 토큰 발급

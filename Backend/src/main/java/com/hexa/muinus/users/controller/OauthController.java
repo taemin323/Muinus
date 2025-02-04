@@ -19,6 +19,11 @@ public class OauthController {
     private final JwtProvider jwtProvider;
 
     @GetMapping("/api/users/login")
+    public void kakaoLogin(HttpServletResponse response) {
+        oauthService.getAuthorizationCode(response);
+    }
+
+    @GetMapping("/api/users/kauth")
     public ResponseEntity<?> kakaoLogin(@RequestParam("code") String authorizationCode, HttpServletResponse response) {
         String accessToken = oauthService.getAccessTokenFromKakao(authorizationCode);
         String userEmail = oauthService.getUserKakaoProfile(accessToken);
