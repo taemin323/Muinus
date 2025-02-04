@@ -1,14 +1,18 @@
 package com.hexa.muinus.users.controller;
 
+import com.hexa.muinus.users.domain.user.Users;
 import com.hexa.muinus.users.dto.ConsumerRegisterRequestDto;
 import com.hexa.muinus.users.dto.ReissueAccessTokenRequestDto;
 import com.hexa.muinus.users.dto.StoreOwnerRegisterRequestDto;
+import com.hexa.muinus.users.dto.ConsumerUpdateRequestDto;
 import com.hexa.muinus.users.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -33,4 +37,11 @@ public class UserController {
         userService.reissueAccessToken(request, response, requestDto);
         return ResponseEntity.ok().build();
     }
+
+    @PutMapping("api/users/update")
+    public ResponseEntity<?> updateConsumer(@AuthenticationPrincipal Users consumer, @RequestBody ConsumerUpdateRequestDto requestDto){
+        Users updateConsumer = userService.updateConsumer(consumer.getUserNo(), requestDto);
+        return ResponseEntity.ok(updateConsumer);
+    }
+
 }

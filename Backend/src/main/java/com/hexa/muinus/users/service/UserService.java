@@ -11,6 +11,7 @@ import com.hexa.muinus.users.domain.user.repository.UserRepository;
 import com.hexa.muinus.users.dto.ConsumerRegisterRequestDto;
 import com.hexa.muinus.users.dto.ReissueAccessTokenRequestDto;
 import com.hexa.muinus.users.dto.StoreOwnerRegisterRequestDto;
+import com.hexa.muinus.users.dto.ConsumerUpdateRequestDto;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -97,4 +98,11 @@ public class UserService {
     public Users findUserByEmail(String email) {
         return userRepository.findByEmail(email);
     }
+
+    /**
+     * 소비자 정보 수정
+     */
+//    @Transactional
+//    public Users updateConsumer(Integer userNo, ConsumerUpdateRequestDto requestDto) {
+//    }
 }
