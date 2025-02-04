@@ -26,4 +26,12 @@ public class OauthController {
         jwtProvider.issueTokens(user, response);
         return ResponseEntity.ok().build();
     }
+
+    @GetMapping("/api/users/logout")
+    public ResponseEntity<?> kakaoLogout(HttpServletResponse response){
+        // 쿠키에서 토큰 삭제
+        jwtProvider.clearTokens(response);
+
+        return ResponseEntity.ok().build();
+    }
 }
