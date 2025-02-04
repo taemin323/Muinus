@@ -31,7 +31,7 @@ public class OauthController {
     public ResponseEntity<?> kakaoLogin(@RequestParam("code") String authorizationCode, HttpServletResponse response) throws Exception {
         String accessToken = oauthService.getAccessTokenFromKakao(authorizationCode);
         String userEmail = oauthService.getUserKakaoProfile(accessToken);
-        Users user = oauthService.findUser(userEmail);
+        Users user = oauthService.findUser(userEmail, response);
         jwtProvider.issueTokens(user, response);
         return ResponseEntity.ok().build();
     }

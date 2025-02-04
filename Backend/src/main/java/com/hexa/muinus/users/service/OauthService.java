@@ -10,6 +10,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,9 +41,12 @@ public class OauthService {
     @Value("${spring.security.oauth2.client.registration.kakao.authorization-grant-type}")
     private String authorizationGrantType;
 
-    public void getAuthorizationCode(HttpServletResponse response) {
+    @Value("${spring.security.oauth2.client.provider.kakao.authorization-uri}")
+    private String authorizationUri;
+
+    public void  getAuthorizationCode(HttpServletResponse response) {
         try {
-            response.sendRedirect("https://kauth.kakao.com/oauth/authorize"
+            response.sendRedirect(authorizationUri
                     + "?client_id=" + clientId
                     + "&redirect_uri=" + redirectUrl
                     + "&response_type=code");
@@ -118,7 +122,6 @@ public class OauthService {
             userEmail = objectMapper.readTree(responseEntity.getBody()).get("kakao_account").get("email").asText();
         } catch (Exception e) {
             throw new Exception();
-            log.error("사용자 이메일 정보 요청 실패");
         }
         return userEmail;
     }
@@ -129,12 +132,12 @@ public class OauthService {
      * @return
      */
     @Transactional(readOnly = true)
-    public Users findUser(String userEmail) {
+    public Users findUser(String userEmail, HttpServletResponse response) throws Exception {
         Users user = userService.findUserByEmail(userEmail);
         // 사용자 존재 여부 확인
         if (user == null) {
-            // 사용자 미존재 시 401 에러 반환
-            throw new UserNotFoundException();
+            // 회원가입 안되어있을 시 회원가입 페이지로 리다이렉트
+                response.sendRedirect("http://localhost:3000/signup");
         }
         return userService.findUserByEmail(userEmail);
     }
