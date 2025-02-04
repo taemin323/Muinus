@@ -1,6 +1,9 @@
 package com.hexa.muinus.store.service;
 
 import com.google.zxing.WriterException;
+import com.hexa.muinus.common.exception.coupon.*;
+import com.hexa.muinus.common.exception.StoreNotFoundException;
+import com.hexa.muinus.common.exception.UserNotFoundException;
 import com.hexa.muinus.common.util.BarCodeGenerator;
 import com.hexa.muinus.store.domain.coupon.repository.CouponHistoryRepository;
 import com.hexa.muinus.store.domain.coupon.repository.CouponRepository;
@@ -45,7 +48,7 @@ public class CouponService {
 
         // 쿠폰이 존재하는지 확인
         Coupon coupon = couponRepository.findById(couponRequestDto.getCouponId())
-                .orElseThrow(() -> new IllegalArgumentException("해당 쿠폰이 존재하지 않습니다. couponId: "+couponRequestDto.getCouponId()));
+                .orElseThrow(() -> new CouponNotFoundException(couponRequestDto.getCouponId()));
 
         // 복합 키 생성
         CouponHistoryId couponHistoryId = CouponHistoryId.builder()
@@ -70,23 +73,23 @@ public class CouponService {
         // 가게 존재 여부 확인
         boolean storeExists = storeRepository.existsById(receiveCouponRequestDto.getStoreNo());
         if(!storeExists) {
-            throw new IllegalArgumentException("해당 가게가 존재하지 않습니다. storeNo: "+receiveCouponRequestDto.getStoreNo());
+            throw new StoreNotFoundException(receiveCouponRequestDto.getStoreNo());
         }
 
         // 쿠폰 존재 여부 확인
         Coupon coupon = couponRepository.findById((receiveCouponRequestDto.getCouponId()))
-                .orElseThrow(() -> new IllegalArgumentException("해당 쿠폰이 존재하지 않습니다. couponId: "+receiveCouponRequestDto.getCouponId()));
+                .orElseThrow(() -> new CouponNotFoundException(receiveCouponRequestDto.getCouponId()));
 
         // 사용자 존재 여부 확인
         Users user = userRepository.findById(receiveCouponRequestDto.getUserNo())
-                .orElseThrow(() -> new IllegalArgumentException("해당 사용자가 존재하지 않습니다. userNo: "+receiveCouponRequestDto.getUserNo()));
+                .orElseThrow(() -> new UserNotFoundException(receiveCouponRequestDto.getUserNo()));
 
         // 복합 키 생성
         UserCouponHistoryId userCouponHistoryId = new UserCouponHistoryId(receiveCouponRequestDto.getStoreNo(), receiveCouponRequestDto.getCouponId(), receiveCouponRequestDto.getUserNo());
 
         // 중복 수령 방지
         if(userCouponHistoryRepository.existsById(userCouponHistoryId)){
-            throw new IllegalArgumentException("이미 해당 쿠폰을 수령하였습니다.");
+            throw new CouponAlreadyClaimedException(userCouponHistoryId.getStoreNo(), userCouponHistoryId.getCouponId());
         }
 
         // CouponHistoryId 생성
@@ -97,11 +100,11 @@ public class CouponService {
 
         // 쿠폰 히스토리 생성
         CouponHistory couponHistory = couponHistoryRepository.findById(couponHistoryId)
-                .orElseThrow(() -> new IllegalArgumentException("쿠폰 히스토리가 존재하지 않습니다."));
+                .orElseThrow(CouponHistoryNotFoundException::new);
 
         // 발급 가능 수량 감소
         if(couponHistory.getCount() <= 0){
-            throw new IllegalStateException("더 이상 발급 가능한 쿠폰이 없습니다.");
+            throw new CouponOutOfStock(userCouponHistoryId.getStoreNo(), userCouponHistoryId.getCouponId());
         }
         couponHistory.setCount(couponHistory.getCount() - 1);
         couponHistoryRepository.save(couponHistory);
@@ -147,7 +150,7 @@ public class CouponService {
                 useCouponRequestDto.getUserNo(),
                 useCouponRequestDto.getCouponId(),
                 useCouponRequestDto.getStoreNo()
-        ).orElseThrow(() -> new IllegalArgumentException("사용 가능한 쿠폰이 존재하지 않습니다."));
+        ).orElseThrow(AvailableCouponNotFoundException::new);
 
         // 쿠폰 히스토리 ID 생성
         CouponHistoryId couponHistoryId = new CouponHistoryId(
@@ -158,11 +161,11 @@ public class CouponService {
         // 쿠폰 히스토리 조회
         log.info("coupon history start");
         CouponHistory couponHistory = couponHistoryRepository.findById(couponHistoryId)
-                .orElseThrow(() -> new IllegalArgumentException("쿠폰 히스토리가 존재하지 않습니다."));
+                .orElseThrow(CouponHistoryNotFoundException::new);
         log.info("coupon history end");
         // 쿠폰 유효 기간 확인
         if(couponHistory.getExpirationDate().isBefore(LocalDateTime.now())){
-            throw new IllegalArgumentException("쿠폰의 유효 기간이 만료되었습니다.");
+            throw new CouponExpiredException(couponHistory.getExpirationDate());
         }
 
         // 바코드 생성
@@ -171,7 +174,7 @@ public class CouponService {
             String barcodeData = generateBarCodeData(useCouponRequestDto);
             barcode = BarCodeGenerator.generateBarCodeImage(barcodeData, 300, 100);//바코드 크기
         } catch (WriterException | IOException e){
-            throw new RuntimeException("바코드 생성에 실패했습니다.");
+            throw new BarcodeGenerationFailedException();
         }
 
         // 쿠폰 사용 처리(사용 시간 기록 및 상태 업데이트)
@@ -224,26 +227,26 @@ public class CouponService {
                 }
             }
             if(couponId == null || storeNo == null || userNo == null) {
-                throw new IllegalArgumentException("바코드 데이터가 유효하지 않습니다.");
+                throw new InvalidBarcodeDataException();
             }
         } catch (Exception e){
-            throw new IllegalArgumentException("바코드 데이터를 파싱하는 중 오류가 발생했습니다.");
+            throw new BarcodeParsingErrorException();
         }
 
         // 조건에 맞는 사용 가능한 쿠폰 조회
         UserCouponHistory userCouponHistory = userCouponHistoryRepository
                 .findById_UserNoAndId_CouponIdAndId_StoreNoAndUsedAtIsNull(
                         userNo, couponId, storeNo
-                ).orElseThrow(() -> new IllegalArgumentException("사용 가능한 쿠폰이 존재하지 않습니다."));
+                ).orElseThrow(AvailableCouponNotFoundException::new);
 
         // 쿠폰 히스토리 조회
         CouponHistoryId couponHistoryId = new CouponHistoryId(storeNo, couponId);
         CouponHistory couponHistory = couponHistoryRepository.findById(couponHistoryId)
-                .orElseThrow(() -> new IllegalArgumentException("쿠폰 히스토리가 존재하지 않습니다."));
+                .orElseThrow(CouponHistoryNotFoundException::new);
 
         // 쿠폰 유효기간 확인
         if(couponHistory.getExpirationDate().isBefore(LocalDateTime.now())){
-            throw new IllegalArgumentException("쿠폰의 유효 기간이 만료되었습니다.");
+            throw new CouponExpiredException(couponHistory.getExpirationDate());
         }
 
         //할인율 적용

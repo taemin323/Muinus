@@ -3,6 +3,7 @@ package com.hexa.muinus.store.service;
 import com.hexa.muinus.common.exception.StoreLocationDuplicateException;
 import com.hexa.muinus.common.exception.StoreNotFoundException;
 import com.hexa.muinus.common.exception.UserNotFoundException;
+import com.hexa.muinus.common.exception.UserStoreNotExistException;
 import com.hexa.muinus.store.domain.information.Announcement;
 import com.hexa.muinus.store.domain.information.respository.AnnouncementRepository;
 import com.hexa.muinus.store.domain.item.repository.FliItemRepository;
@@ -39,6 +40,7 @@ public class StoreService {
      * 매장 등록
      * @param storeRegisterDTO 매장 등록 정보
      */
+    @Transactional("dataTransactionManager")
     public void registerStore(StoreRegisterDTO storeRegisterDTO) {
         log.info("Starting store registration for DTO: {}", storeRegisterDTO);
 
@@ -53,6 +55,8 @@ public class StoreService {
         }
 
         Store store = storeRegisterDTO.toEntity(user);
+        System.out.println("Convered: " + store);
+
         log.debug("Converted StoreRegistDTO to Store entity: {}", store);
 
         saveStore(store);
@@ -65,6 +69,7 @@ public class StoreService {
      * @return storeNo 추가된 Store 객체
      */
     private Store saveStore(Store store) {
+        System.out.println("Saving store: " + store);
         Store savedStore = storeRepository.save(store);
         log.info("Store saved successfully with ID: {}", savedStore.getStoreNo());
         return savedStore;
@@ -112,7 +117,7 @@ public class StoreService {
 
         // 사용자 - 매장 조회
         Store store = storeRepository.findByUser_UserNoAndStoreNo(storeModifyDTO.getUserNo(), storeModifyDTO.getStoreNo())
-                .orElseThrow(() -> new StoreNotFoundException(storeModifyDTO.getUserNo(), storeModifyDTO.getStoreNo()));
+                .orElseThrow(() -> new UserStoreNotExistException(storeModifyDTO.getUserNo(), storeModifyDTO.getStoreNo()));
 
         // 매장 정보 수정
         store.updateStoreInfo(storeModifyDTO);
@@ -184,7 +189,7 @@ public class StoreService {
 
         // 매장 유효성 검사
         Store store = storeRepository.findByUser_UserNoAndStoreNo(announcementWriteDTO.getUserNo(), announcementWriteDTO.getStoreNo())
-                .orElseThrow(() -> new StoreNotFoundException(announcementWriteDTO.getUserNo(), announcementWriteDTO.getStoreNo()));
+                .orElseThrow(() -> new UserStoreNotExistException(announcementWriteDTO.getUserNo(), announcementWriteDTO.getStoreNo()));
 
         // 공지사항 작성
         Announcement announcement = announcementWriteDTO.toEntity(store);
@@ -248,7 +253,7 @@ public class StoreService {
         log.info("Modifying flimarket state {}", dto);
 
         Store store = storeRepository.findByUser_UserNoAndStoreNo(dto.getUserNo(), dto.getStoreNo())
-                .orElseThrow(() -> new StoreNotFoundException(dto.getUserNo(), dto.getStoreNo()));
+                .orElseThrow(() -> new UserStoreNotExistException(dto.getUserNo(), dto.getStoreNo()));
 
         store.modifyFlimarketState(dto);
         log.info("Flimarket state {} has been modified successfully", store);
