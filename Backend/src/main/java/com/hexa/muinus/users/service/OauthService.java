@@ -21,6 +21,7 @@ import org.springframework.web.server.ResponseStatusException;
 public class OauthService {
 
     private final UserService userService;
+    private final UserRepository userRepository;
 
     @Value("${spring.security.oauth2.client.registration.kakao.client-id}")
     private String clientId;
@@ -122,5 +123,12 @@ public class OauthService {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
         }
         return userService.findUserByEmail(userEmail);
+    }
+
+    public void deleteRefreshToken(String userEmail) {
+        Users user = findUser(userEmail);
+
+        user.setRefreshToken(null);
+        userRepository.save(user);
     }
 }

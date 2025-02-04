@@ -4,6 +4,7 @@ import com.hexa.muinus.common.jwt.JwtProvider;
 import com.hexa.muinus.users.domain.user.Users;
 import com.hexa.muinus.users.service.OauthService;
 import com.hexa.muinus.users.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -28,9 +29,14 @@ public class OauthController {
     }
 
     @GetMapping("/api/users/logout")
-    public ResponseEntity<?> kakaoLogout(HttpServletResponse response){
+    public ResponseEntity<?> kakaoLogout(HttpServletRequest request, HttpServletResponse response){
+        String userEmail = jwtProvider.getUserEmailFromAccessToken(request);
+
         // 쿠키에서 토큰 삭제
         jwtProvider.clearTokens(response);
+
+        // DB에서 refresh token 삭제
+        oauthService.deleteRefreshToken(userEmail);
 
         return ResponseEntity.ok().build();
     }
