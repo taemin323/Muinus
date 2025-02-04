@@ -17,37 +17,6 @@ import java.util.stream.Collectors;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-//    /**
-//     * before
-//     * @param e
-//     * @return
-//     */
-//    @ExceptionHandler(MuinusException_before.class)
-//    public ResponseEntity<Map<String, Object>> handleMuinusException(MuinusException_before e) {
-//        Map<String, Object> errorDetails = new HashMap<>();
-//        errorDetails.put("message", e.getMessage());
-//        errorDetails.put("statusCode", e.getStatusCode());
-//        return ResponseEntity.status(e.getStatusCode()).body(errorDetails);
-//    }
-
-
-    /**
-     * MuinusException 예외 처리
-     */
-    @ExceptionHandler(MuinusException_before.class)
-    public ResponseEntity<Map<String, Object>> handleMuinusException(MuinusException e) {
-        log.error("MuinusException 발생: {} | details: {}", e.getErrorCode().getMessage(), e.getDetails());
-
-        Map<String, Object> errorDetails = new HashMap<>();
-        errorDetails.put("errorCode", e.getErrorCode().getCode());  // 커스텀 에러 코드 반환
-        errorDetails.put("message", e.getErrorCode().getMessage()); // 기본 메시지 반환
-        errorDetails.put("details", e.getDetails()); // 추가 정보 포함
-        errorDetails.put("timestamp", LocalDateTime.now());
-
-        return ResponseEntity.status(e.getErrorCode().getCode() / 100)
-                .body(errorDetails);
-    }
-
     /**
      * Validation 예외 처리 (MethodArgumentNotValidException)
      */
