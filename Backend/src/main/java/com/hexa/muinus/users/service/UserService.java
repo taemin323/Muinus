@@ -11,7 +11,8 @@ import com.hexa.muinus.users.domain.user.repository.UserRepository;
 import com.hexa.muinus.users.dto.ConsumerRegisterRequestDto;
 import com.hexa.muinus.users.dto.ReissueAccessTokenRequestDto;
 import com.hexa.muinus.users.dto.StoreOwnerRegisterRequestDto;
-import com.hexa.muinus.users.dto.ConsumerUpdateRequestDto;
+import com.hexa.muinus.users.dto.UserUpdateRequestDto;
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -102,7 +103,13 @@ public class UserService {
     /**
      * 소비자 정보 수정
      */
-//    @Transactional
-//    public Users updateConsumer(Integer userNo, ConsumerUpdateRequestDto requestDto) {
-//    }
+    @Transactional
+    public void updateUser(String userTelephone, HttpServletRequest request) {
+        // 이메일 추출
+        String email = jwtProvider.getUserEmailFromAccessToken(request);
+
+        Users user = findUserByEmail(email);
+
+        user.setTelephone(userTelephone);
+    }
 }

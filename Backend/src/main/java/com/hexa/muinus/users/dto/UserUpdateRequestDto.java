@@ -5,8 +5,6 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class StoreOwnerUpdateRequestDto {
-    private final String userEmail;
+public class UserUpdateRequestDto {
     private final String userTelephone;
-    private final String storePhoneNumber;
 }
