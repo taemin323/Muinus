@@ -28,11 +28,11 @@ public class OauthController {
     }
 
     @GetMapping("/api/users/kauth")
-    public ResponseEntity<?> kakaoLogin(@RequestParam("code") String authorizationCode, HttpServletResponse response) throws Exception {
+    public void kakaoLogin(@RequestParam("code") String authorizationCode, HttpServletResponse response) throws Exception {
         String accessToken = oauthService.getAccessTokenFromKakao(authorizationCode);
         String userEmail = oauthService.getUserKakaoProfile(accessToken);
         Users user = oauthService.findUser(userEmail, response);
         jwtProvider.issueTokens(user, response);
-        return ResponseEntity.ok().build();
+        oauthService.redirectToMainPage(response);
     }
 }

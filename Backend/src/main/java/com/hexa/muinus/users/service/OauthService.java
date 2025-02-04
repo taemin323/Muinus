@@ -44,6 +44,9 @@ public class OauthService {
     @Value("${spring.security.oauth2.client.provider.kakao.authorization-uri}")
     private String authorizationUri;
 
+    @Value("${spring.front.url}")
+    private String frontUrl;
+
     public void  getAuthorizationCode(HttpServletResponse response) {
         try {
             response.sendRedirect(authorizationUri
@@ -137,8 +140,12 @@ public class OauthService {
         // 사용자 존재 여부 확인
         if (user == null) {
             // 회원가입 안되어있을 시 회원가입 페이지로 리다이렉트
-                response.sendRedirect("http://localhost:3000/signup");
+                response.sendRedirect(frontUrl + "/signup");
         }
         return userService.findUserByEmail(userEmail);
+    }
+
+    public void redirectToMainPage(HttpServletResponse response) throws Exception{
+        response.sendRedirect(frontUrl);
     }
 }
