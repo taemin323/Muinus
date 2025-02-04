@@ -36,7 +36,6 @@ public class UserService {
 
         // 회원 가입 시 토큰 발급
         jwtProvider.issueTokens(user, response);
-
         return userRepository.save(user);
     }
 
@@ -72,9 +71,12 @@ public class UserService {
         if (refreshToken != null && !refreshToken.isEmpty() && jwtProvider.validateToken(refreshToken)) {
             // DB에 저장된 refresh 토큰과 일치하는지 확인 후 AccessToken 재발급
             Users user = findUserByEmail(requestDto.getUserEmail());
-            if (refreshToken.equals(user.getEmail())) {
+
+            if (refreshToken.equals(user.getRefreshToken())) {
                 String accessToken = jwtProvider.createAccessToken(user);
                 jwtProvider.setAccessTokensInCookie(response, accessToken);
+            } else if (!refreshToken.equals(user.getRefreshToken())) {
+                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid refresh token");
             }
         } else {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);

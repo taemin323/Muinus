@@ -34,6 +34,9 @@ public class OauthService {
     @Value("${spring.security.oauth2.client.provider.kakao.user-info-uri}")
     private String profileUrl;
 
+    @Value("${spring.security.oauth2.client.registration.kakao.authorization-grant-type}")
+    private String authorizationGrantType;
+
     /**
      * 카카오로부터 액세스 토큰 발급
      * @param authorizationCode
@@ -44,7 +47,7 @@ public class OauthService {
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
-        body.add("grant_type", "authorization_code");
+        body.add("grant_type", authorizationGrantType);
         body.add("client_id", clientId);
         body.add("redirect_uri", redirectUrl);
         body.add("code", authorizationCode);
@@ -115,8 +118,8 @@ public class OauthService {
         Users user = userService.findUserByEmail(userEmail);
         // 사용자 존재 여부 확인
         if (user == null) {
-            // 사용자 미존재 시 403 에러 반환
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+            // 사용자 미존재 시 401 에러 반환
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
         }
         return userService.findUserByEmail(userEmail);
     }
