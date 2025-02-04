@@ -1,14 +1,8 @@
 package com.hexa.muinus.store.service;
 
-import com.hexa.muinus.common.exception.store.BoardForbiddenException;
-import com.hexa.muinus.common.exception.store.StoreLocationDuplicateException;
-import com.hexa.muinus.common.exception.store.StoreNotFoundException;
+import com.hexa.muinus.common.exception.store.*;
 import com.hexa.muinus.common.exception.user.UserNotFoundException;
-import com.hexa.muinus.common.exception.store.StoreNotForbiddentException;
 import com.hexa.muinus.store.domain.information.Announcement;
-import com.hexa.muinus.store.domain.information.respository.AnnouncementRepository;
-import com.hexa.muinus.store.domain.item.repository.FliItemRepository;
-import com.hexa.muinus.store.domain.item.repository.StoreItemRepository;
 import com.hexa.muinus.store.domain.store.Store;
 import com.hexa.muinus.store.dto.information.AnnouncementDTO;
 import com.hexa.muinus.store.dto.information.AnnouncementDeleteDTO;
@@ -17,13 +11,11 @@ import com.hexa.muinus.store.dto.information.AnnouncementWriteDTO;
 import com.hexa.muinus.store.dto.store.*;
 import com.hexa.muinus.store.domain.store.repository.StoreRepository;
 import com.hexa.muinus.users.domain.user.Users;
-import com.hexa.muinus.users.domain.user.repository.UserRepository;
+import com.hexa.muinus.users.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -33,10 +25,9 @@ import java.util.List;
 @Slf4j
 public class StoreService {
     private final StoreRepository storeRepository;
-    private final UserRepository userRepository;
-    private final AnnouncementRepository announcementRepository;
-    private final StoreItemRepository storeItemRepository;
-    private final FliItemRepository fliItemRepository;
+    private final UserService userService;
+    private final StoreItemService storeItemService;
+    private final AnnouncementService announcementService;
 
 
     /**
@@ -47,23 +38,90 @@ public class StoreService {
     public void registerStore(StoreRegisterDTO storeRegisterDTO) {
         log.info("Starting store registration for DTO: {}", storeRegisterDTO);
 
-        // 사용자 유효성 검사
-        Users user = userRepository.findByEmail(storeRegisterDTO.getUserEmail());
-        if (user == null) {
-            throw new UserNotFoundException(storeRegisterDTO.getUserEmail());
-        }
+        Users user = getUserByEmail(storeRegisterDTO.getUserEmail());
 
-        // 주소 중복 확인
-        if ((storeRepository.findByLocationXAndLocationY(storeRegisterDTO.getLocationX(), storeRegisterDTO.getLocationY())).isPresent()) {
-            throw new StoreLocationDuplicateException(storeRegisterDTO.getLocationX(), storeRegisterDTO.getLocationY());
-        }
+        validStoreByUser(user);
+        validateStoreLocation(storeRegisterDTO.getLocationX(), storeRegisterDTO.getLocationY());
+        validateStoreRegistrationNo(storeRegisterDTO.getRegistrationNo());
 
         Store store = storeRegisterDTO.toEntity(user);
-        System.out.println("Convered: " + store);
-
         log.debug("Converted StoreRegistDTO to Store entity: {}", store);
-
         saveStore(store);
+    }
+
+    /**
+     * 점주 조회
+     * @param userEmail 사용자 이메일(점주)
+     * @return Users
+     */
+    @Transactional(readOnly = true)
+    public Users getUserByEmail(String userEmail) {
+        Users user = userService.findUserByEmail(userEmail);
+        // 사용자 유효성 검사
+        if (user == null) {
+            throw new UserNotFoundException(userEmail);
+        }
+        return user;
+    }
+
+    /**
+     * 점주 - 매장 소유 여부 확인(1개만 소유/오픈 가능)
+     * @param user 점주
+     */
+    private void validStoreByUser(Users user){
+        if(findStoreByUser(user) != null){
+            throw new StoreAlreadyRegisteredException(user.getEmail());
+        }
+    }
+
+    /**
+     * 사용자 정보로 매장 찾기
+     * @param user 사용자
+     * @return Store
+     */
+    public Store findStoreByUser(Users user){
+        return storeRepository.findByUsers(user);
+    }
+
+    /**
+     * 주소 중복 확인
+     * @param x
+     * @param y
+     */
+    private void validateStoreLocation(BigDecimal x, BigDecimal y){
+        if(findStoreByLocation(x, y) != null){
+            throw new StoreLocationDuplicateException(x, y);
+        }
+    }
+
+    /**
+     * 주소로 매장 찾기
+     * @param x 경도
+     * @param y 위도
+     * @return Store
+     */
+    public Store findStoreByLocation(BigDecimal x, BigDecimal y) {
+        return storeRepository.findByLocationXAndLocationY(x, y);
+    }
+
+    /**
+     * 사업자 등록 번호 중복 확인
+     * @param registrationNo 사업자 등록 번호
+     */
+    private void validateStoreRegistrationNo(String registrationNo){
+        if(findStoreByRegistrationNo(registrationNo) != null){
+            throw new StoreRegistrationNoDuplicateException(registrationNo);
+        }
+    }
+
+    /**
+     * 사업자등록번호로 매장 찾기
+     * @param registrationNo 사업자 등록 번호
+     * @return Store
+     */
+    @Transactional(readOnly = true)
+    public Store findStoreByRegistrationNo(String registrationNo) {
+        return storeRepository.findByRegistrationNo(registrationNo);
     }
 
     /**
@@ -88,9 +146,9 @@ public class StoreService {
     @Transactional
     public void closeStore(int storeNo) {
         log.info("Closing store with No: {}", storeNo);
-        Store store = storeRepository.findById(storeNo)
-                .orElseThrow(() -> new StoreNotFoundException(storeNo));
-
+        // 사용자 - 매장 조회
+        Store store = findStoreByStoreNo(storeNo);
+        // 매장 비활성화
         store.disableStore();
         log.info("Store {} has been disabled successfully (deleted={})", store.getStoreNo(), store.getDeleted());
     }
@@ -103,11 +161,8 @@ public class StoreService {
     @Transactional
     public void modifyStore(StoreModifyDTO storeModifyDTO) {
         log.info("Modifying store with userEmail: {}", storeModifyDTO.getUserEmail());
-
         // 사용자 - 매장 조회
-        Store store = storeRepository.findByUser_Email(storeModifyDTO.getUserEmail())
-                .orElseThrow(() -> new StoreNotForbiddentException(storeModifyDTO.getUserEmail()));
-
+        Store store = findStoreByEmail(storeModifyDTO.getUserEmail());
         // 매장 정보 수정
         store.updateStoreInfo(storeModifyDTO);
         log.info("Store {} has been updated successfully ({})", store.getStoreNo(), store);
@@ -121,22 +176,9 @@ public class StoreService {
     @Transactional(readOnly = true)
     public List<StoreSearchDTO> searchStore(int itemId, BigDecimal x, BigDecimal y, int radius) {
         log.info("Searching store with itemId: {} and radius: {}", itemId, radius);
-
+        // 제품 판매하는 매장 리스트
         List<StoreSearchDTO> stores = storeRepository.findStoresByItemIdAndRadius(itemId, x.doubleValue(), y.doubleValue(), radius).stream()
-                .map(projection -> new StoreSearchDTO(
-                        projection.getStoreNo(),
-                        projection.getName(),
-                        projection.getLocationX(),
-                        projection.getLocationY(),
-                        projection.getAddress(),
-                        projection.getPhone(),
-                        projection.getItemName(),
-                        projection.getSalePrice(),
-                        projection.getDiscountRate(),
-                        projection.getQuantity(),
-                        projection.getFlimarketYn(),
-                        projection.getDistance()
-                ))
+                .map(StoreSearchDTO::new)
                 .toList();
 
         if (stores.isEmpty()) {
@@ -159,85 +201,16 @@ public class StoreService {
         log.info("Getting store detail with storeNo: {}", storeNo);
 
         // 매장 조회
-        StoreDTO store = storeRepository.findStoreDTOById(storeNo)
-                .orElseThrow(() -> new StoreNotFoundException(storeNo));
+        StoreDTO store = StoreDTO.fromEntity(findStoreByStoreNo(storeNo));
 
         // 공지사항 조회
-        List<AnnouncementDTO> announcements = announcementRepository.findAnnouncementsByStore(storeNo);
+        List<AnnouncementDTO> announcements = announcementService.getAllAnnouncementsByStoreNo(storeNo);
 
         // 판매 제품 조회
-        List<StoreItemDTO> storeItems = storeItemRepository.findStoreItemsByStore(storeNo);
+        List<StoreItemDTO> storeItems = storeItemService.findAllStoreItems(storeNo);
 
         return new StoreDetailDTO(store, announcements, storeItems);
     }
-
-    /**
-     * 공지사항 작성
-     * @param announcementWriteDTO 등록할 공지사항 데이터
-     */
-    public void writeAnnouncement(AnnouncementWriteDTO announcementWriteDTO) {
-        log.info("Writing announcement {}", announcementWriteDTO);
-
-        // 매장 유효성 검사
-        Store store = storeRepository.findByUser_Email(announcementWriteDTO.getUserEmail())
-                .orElseThrow(() -> new StoreNotForbiddentException(announcementWriteDTO.getUserEmail()));
-
-        // 공지사항 작성
-        Announcement announcement = announcementWriteDTO.toEntity(store);
-        log.debug("Converted announcementWriteDTO to Announcement entity: {}", announcement);
-
-        saveAnnouncement(announcement);
-    }
-
-    /**
-     * insert Announcement
-     * @param announcement Announcement 객체
-     * @return boardId가 추가된 Announcement 객체
-     */
-    private Announcement saveAnnouncement(Announcement announcement){
-        Announcement savedAnnouncement = announcementRepository.save(announcement);
-        log.info("Announcement saved successfully with ID: {}", savedAnnouncement.getBoardId());
-        return savedAnnouncement;
-    }
-
-    /**
-     * 매장 공지 사항 수정
-     * 수정은 로그인한 사장님이 -> storeNo 대신 user-email로
-     * @param dto 수정 내용
-     */
-    @Transactional
-    public void modifyAnnouncement(AnnouncementModifyDTO dto) {
-        log.info("Modifying announcement {}", dto);
-
-        // 게시글 유효성 검사
-        Announcement announcement = announcementRepository.findByStore_User_Email(dto.getUserEmail());
-        if(announcement == null){
-            throw new BoardForbiddenException(dto.getUserEmail(), dto.getBoardId());
-        }
-
-        announcement.updateAnnouncement(dto);
-        log.info("Announcement {} has been updated successfully", announcement);
-    }
-
-    /**
-     * 공지 사항 삭제
-     * 수정은 로그인한 사장님이 -> storeNo 대신 user-email로
-     * @param dto 삭제할 공지 사항 정보
-     */
-    @Transactional
-    public void deleteAnnouncement(AnnouncementDeleteDTO dto) {
-        log.info("Deleting announcement {}", dto);
-
-        // 게시글 유효성 검사
-        Announcement announcement = announcementRepository.findByStore_User_EmailAndBoardId(dto.getUserEmail(), dto.getBoardId());
-        if(announcement == null){
-            throw new BoardForbiddenException(dto.getUserEmail(), dto.getBoardId());
-        }
-
-        announcementRepository.delete(announcement);
-        log.info("Announcement {} has been deleted successfully", announcement);
-    }
-
 
     /**
      * 플리마켓 상태 수정
@@ -248,17 +221,83 @@ public class StoreService {
     @Transactional
     public void modifyFlimarketState(FlimarketModifyDTO dto){
         log.info("Modifying flimarket state {}", dto);
-
-        Store store = storeRepository.findByUser_Email(dto.getUserEmail())
-                .orElseThrow(() -> new StoreNotForbiddentException(dto.getUserEmail()));
-
+        Store store = findStoreByEmail(dto.getUserEmail());
         store.modifyFlimarketState(dto);
         log.info("Flimarket state {} has been modified successfully", store);
     }
 
+    /**
+     * 매장 번호로 매장 찾기
+     * @param storeNo 매장 번호
+     * @return Store
+     */
     @Transactional(readOnly = true)
     public Store findStoreByStoreNo(int storeNo) {
         return storeRepository.findById(storeNo)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "존재하지 않는 매장입니다."));
+                .orElseThrow(() -> new StoreNotFoundException(storeNo));
+    }
+
+    /**
+     * 공지사항 작성
+     * @param announcementWriteDTO 등록할 공지사항 데이터
+     */
+    public void writeAnnouncement(AnnouncementWriteDTO announcementWriteDTO) {
+        log.info("Writing announcement {}", announcementWriteDTO);
+        // 매장 유효성 검사
+        Store store = findStoreByEmail(announcementWriteDTO.getUserEmail());
+        // 공지사항 작성
+        Announcement announcement = announcementWriteDTO.toEntity(store);
+        log.debug("Converted announcementWriteDTO to Announcement entity: {}", announcement);
+
+        announcementService.saveAnnouncement(announcement);
+    }
+
+    /**
+     * 매장 공지 사항 수정
+     * 수정은 로그인한 사장님이 -> storeNo 대신 user-email로
+     * @param dto 수정 내용
+     */
+    @Transactional
+    public void modifyAnnouncement(AnnouncementModifyDTO dto) {
+        log.info("Modifying announcement {}", dto);
+        // 공지 사항 조회
+        Announcement announcement = getAnnouncement(dto.getUserEmail(), dto.getBoardId());
+        // 공지 사항 수정
+        announcement.updateAnnouncement(dto);
+        log.info("Announcement {} has been updated successfully", announcement);
+    }
+
+    /**
+     * 공지 사항 삭제
+     * 수정은 로그인한 사장님이 -> storeNo 대신 user-email로
+     * @param dto 삭제할 공지 사항 정보
+     */
+    @Transactional
+    public void removeAnnouncement(AnnouncementDeleteDTO dto) {
+        log.info("Deleting announcement {}", dto);
+        Announcement announcement = getAnnouncement(dto.getUserEmail(), dto.getBoardId());
+        announcementService.removeAnnouncement(announcement);
+    }
+
+    /**
+     * 이메일로 store 찾기
+     * @param userEmail 점주 이메일
+     * @return Store 매장
+     * - 점주가 아니면 store 에 접근할 수 있는 권한이 없음
+     */
+    @Transactional(readOnly = true)
+    public Store findStoreByEmail(String userEmail){
+        return storeRepository.findByUser_Email(userEmail)
+                .orElseThrow(() -> new StoreNotForbiddenException(userEmail));
+    }
+
+    /**
+     * 공지 사항 받아오기
+     * @param userEmail 이메일
+     * @param boardId 공지 번호
+     * @return Announcement
+     */
+    private Announcement getAnnouncement(String userEmail, int boardId) {
+        return announcementService.findAnnouncementByUserEmailAndBoardId(userEmail, boardId);
     }
 }

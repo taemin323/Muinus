@@ -16,13 +16,13 @@ public interface StoreItemRepository extends CrudRepository<StoreItem, Integer> 
     @Query("""
     SELECT new com.hexa.muinus.store.dto.store.StoreItemDTO(
         si.storeItemId, i.itemId, i.itemName, i.itemImageUrl, 
-        si.quantity, si.salePrice, si.discountRate, (si.salePrice * (100 - si.discountRate) / 100)
+        si.quantity, si.salePrice, si.discountRate
     )
     FROM StoreItem si
     JOIN si.item i
     WHERE si.store.storeNo = :storeNo
-""")
-    List<StoreItemDTO> findStoreItemsByStore(@Param("storeNo") int storeNo);
+    """)
+    List<StoreItemDTO> findStoreItemsByStoreNo(@Param("storeNo") int storeNo);
 
     Optional<StoreItem> findByStoreAndItem(Store store, Item item);
 

@@ -18,7 +18,7 @@ public interface AnnouncementRepository extends JpaRepository<Announcement, Inte
         a.boardId, a.title, a.content, a.boardImageUrl, a.createdAt, a.updatedAt)
     FROM Announcement a WHERE a.store.storeNo = :storeNo
 """)
-    List<AnnouncementDTO> findAnnouncementsByStore(@Param("storeNo") int storeNo);
+    List<AnnouncementDTO> findAllAnnouncementsByStoreNo(@Param("storeNo") int storeNo);
 
     
     @Query(value = """
