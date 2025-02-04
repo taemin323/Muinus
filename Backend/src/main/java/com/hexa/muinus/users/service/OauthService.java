@@ -1,23 +1,17 @@
 package com.hexa.muinus.users.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hexa.muinus.common.exception.MuinusException;
-import com.hexa.muinus.common.exception.UserNotFoundException;
-import com.hexa.muinus.common.jwt.JwtProvider;
 import com.hexa.muinus.users.domain.user.Users;
-import com.hexa.muinus.users.domain.user.repository.UserRepository;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.server.ResponseStatusException;
 
 @Slf4j
 @Service
