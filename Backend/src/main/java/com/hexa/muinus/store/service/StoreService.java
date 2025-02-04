@@ -1,18 +1,21 @@
 package com.hexa.muinus.store.service;
 
-import com.hexa.muinus.common.exception.StoreLocationDuplicateException;
-import com.hexa.muinus.common.exception.StoreNotFoundException;
+import com.hexa.muinus.common.exception.store.BoardForbiddenException;
+import com.hexa.muinus.common.exception.store.StoreLocationDuplicateException;
+import com.hexa.muinus.common.exception.store.StoreNotFoundException;
 import com.hexa.muinus.common.exception.UserNotFoundException;
-import com.hexa.muinus.common.exception.UserStoreNotExistException;
+import com.hexa.muinus.common.exception.store.StoreNotForbiddentException;
 import com.hexa.muinus.store.domain.information.Announcement;
 import com.hexa.muinus.store.domain.information.respository.AnnouncementRepository;
 import com.hexa.muinus.store.domain.item.repository.FliItemRepository;
 import com.hexa.muinus.store.domain.item.repository.StoreItemRepository;
 import com.hexa.muinus.store.domain.store.Store;
-import com.hexa.muinus.store.dto.AnnouncementDTO;
-import com.hexa.muinus.store.dto.StoreItemDTO;
+import com.hexa.muinus.store.dto.information.AnnouncementDTO;
+import com.hexa.muinus.store.dto.information.AnnouncementDeleteDTO;
+import com.hexa.muinus.store.dto.information.AnnouncementModifyDTO;
+import com.hexa.muinus.store.dto.information.AnnouncementWriteDTO;
+import com.hexa.muinus.store.dto.store.*;
 import com.hexa.muinus.store.domain.store.repository.StoreRepository;
-import com.hexa.muinus.store.dto.*;
 import com.hexa.muinus.users.domain.user.Users;
 import com.hexa.muinus.users.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -45,9 +48,10 @@ public class StoreService {
         log.info("Starting store registration for DTO: {}", storeRegisterDTO);
 
         // 사용자 유효성 검사
-        Users user = userRepository.findById(storeRegisterDTO.getUserNo())
-                .orElseThrow(() -> new UserNotFoundException(storeRegisterDTO.getUserNo()));
-
+        Users user = userRepository.findByEmail(storeRegisterDTO.getUserEmail());
+        if (user == null) {
+            throw new UserNotFoundException(storeRegisterDTO.getUserEmail());
+        }
 
         // 주소 중복 확인
         if ((storeRepository.findByLocationXAndLocationY(storeRegisterDTO.getLocationX(), storeRegisterDTO.getLocationY())).isPresent()) {
@@ -91,21 +95,6 @@ public class StoreService {
         log.info("Store {} has been disabled successfully (deleted={})", store.getStoreNo(), store.getDeleted());
     }
 
-//    /**
-//     * 매장 폐업 - row 삭제 하지 않고 deleted 컬럼 사용 시
-//     * - 다른 테이블 FK 무결성 및 집계 고려하여 close : update로 사용
-//     * - Entity 영속성 사용해서 Transaction 종료 시 Update 되도록 작성
-//     *
-//     * @param storeNo
-//     */
-//    @Transactional
-//    public void closeStore(int storeNo) {
-//        log.info("Closing store with No: {}", storeNo);
-//        Store store = storeRepository.findById(storeNo)
-//            .orElseThrow(() -> new StoreNotFoundException(storeNo));
-//        //store.setDeleted("Y");
-//    }
-
 
     /**
      * 매장 정보 수정
@@ -113,11 +102,11 @@ public class StoreService {
      */
     @Transactional
     public void modifyStore(StoreModifyDTO storeModifyDTO) {
-        log.info("Modifying store with No: {}", storeModifyDTO.getStoreNo());
+        log.info("Modifying store with userEmail: {}", storeModifyDTO.getUserEmail());
 
         // 사용자 - 매장 조회
-        Store store = storeRepository.findByUser_UserNoAndStoreNo(storeModifyDTO.getUserNo(), storeModifyDTO.getStoreNo())
-                .orElseThrow(() -> new UserStoreNotExistException(storeModifyDTO.getUserNo(), storeModifyDTO.getStoreNo()));
+        Store store = storeRepository.findByUser_Email(storeModifyDTO.getUserEmail())
+                .orElseThrow(() -> new StoreNotForbiddentException(storeModifyDTO.getUserEmail()));
 
         // 매장 정보 수정
         store.updateStoreInfo(storeModifyDTO);
@@ -160,7 +149,9 @@ public class StoreService {
     /**
      * 매장 상세 정보 조회
      * 플리마켓 아이템은 공개하지 않음
-     * @param storeNo 매장 번호
+     * - 매장 검색이 되었을 때 매장 번호 반환 
+     * -> 해당 번호로 매장 접근
+     * @param storeNo 매장 번호 
      * @return StoreDetailDTO
      */
     @Transactional(readOnly = true)
@@ -188,8 +179,8 @@ public class StoreService {
         log.info("Writing announcement {}", announcementWriteDTO);
 
         // 매장 유효성 검사
-        Store store = storeRepository.findByUser_UserNoAndStoreNo(announcementWriteDTO.getUserNo(), announcementWriteDTO.getStoreNo())
-                .orElseThrow(() -> new UserStoreNotExistException(announcementWriteDTO.getUserNo(), announcementWriteDTO.getStoreNo()));
+        Store store = storeRepository.findByUser_Email(announcementWriteDTO.getUserEmail())
+                .orElseThrow(() -> new StoreNotForbiddentException(announcementWriteDTO.getUserEmail()));
 
         // 공지사항 작성
         Announcement announcement = announcementWriteDTO.toEntity(store);
@@ -211,6 +202,7 @@ public class StoreService {
 
     /**
      * 매장 공지 사항 수정
+     * 수정은 로그인한 사장님이 -> storeNo 대신 user-email로
      * @param dto 수정 내용
      */
     @Transactional
@@ -218,8 +210,10 @@ public class StoreService {
         log.info("Modifying announcement {}", dto);
 
         // 게시글 유효성 검사
-        Announcement announcement = announcementRepository.findAnnouncementByUserNoAndStoreNoAndBoardId(dto.getUserNo(), dto.getStoreNo(), dto.getBoardId())
-                .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 게시글입니다."));
+        Announcement announcement = announcementRepository.findByStore_User_Email(dto.getUserEmail());
+        if(announcement == null){
+            throw new BoardForbiddenException(dto.getUserEmail(), dto.getBoardId());
+        }
 
         announcement.updateAnnouncement(dto);
         log.info("Announcement {} has been updated successfully", announcement);
@@ -227,6 +221,7 @@ public class StoreService {
 
     /**
      * 공지 사항 삭제
+     * 수정은 로그인한 사장님이 -> storeNo 대신 user-email로
      * @param dto 삭제할 공지 사항 정보
      */
     @Transactional
@@ -234,8 +229,10 @@ public class StoreService {
         log.info("Deleting announcement {}", dto);
 
         // 게시글 유효성 검사
-        Announcement announcement = announcementRepository.findAnnouncementByUserNoAndStoreNoAndBoardId(dto.getUserNo(), dto.getStoreNo(), dto.getBoardId())
-                .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 게시글입니다."));
+        Announcement announcement = announcementRepository.findByStore_User_EmailAndBoardId(dto.getUserEmail(), dto.getBoardId());
+        if(announcement == null){
+            throw new BoardForbiddenException(dto.getUserEmail(), dto.getBoardId());
+        }
 
         announcementRepository.delete(announcement);
         log.info("Announcement {} has been deleted successfully", announcement);
@@ -244,16 +241,16 @@ public class StoreService {
 
     /**
      * 플리마켓 상태 수정
-     * - 플리마켓 비허용 -> 허용
-     * - 플리마켓 사진, 섹션 개수 수정
+     * - 플리마켓 비허용 -> 허용 : 플리마켓 사진, 섹션 개수 수정
+     * - 플리마켓 허용 -> 비허용 : 사진, 개수 초기화
      * @param dto 플리마켓 정보
      */
     @Transactional
     public void modifyFlimarketState(FlimarketModifyDTO dto){
         log.info("Modifying flimarket state {}", dto);
 
-        Store store = storeRepository.findByUser_UserNoAndStoreNo(dto.getUserNo(), dto.getStoreNo())
-                .orElseThrow(() -> new UserStoreNotExistException(dto.getUserNo(), dto.getStoreNo()));
+        Store store = storeRepository.findByUser_Email(dto.getUserEmail())
+                .orElseThrow(() -> new StoreNotForbiddentException(dto.getUserEmail()));
 
         store.modifyFlimarketState(dto);
         log.info("Flimarket state {} has been modified successfully", store);

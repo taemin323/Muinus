@@ -1,4 +1,4 @@
-package com.hexa.muinus.store.dto;
+package com.hexa.muinus.store.dto.store;
 
 import com.hexa.muinus.common.enums.YesNo;
 import com.hexa.muinus.common.validator.StoreFlimarketValidator;
@@ -17,8 +17,9 @@ import java.math.BigDecimal;
 @StoreFlimarketValidator
 public class StoreRegisterDTO {
 
-    @Positive(message = "유효한 userNo를 입력해주세요.")
-    private Integer userNo;
+    @NotBlank(message = "유효하지 않은 email입니다.")
+    @Email
+    private String userEmail;
 
     @NotBlank(message = "매장 이름을 입력해주세요.")
     private String name;

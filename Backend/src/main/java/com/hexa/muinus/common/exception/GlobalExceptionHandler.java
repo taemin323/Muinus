@@ -1,7 +1,6 @@
 package com.hexa.muinus.common.exception;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -60,7 +59,8 @@ public class GlobalExceptionHandler {
                 .collect(Collectors.toList());
         response.put("fieldErrors", fieldErrors);
 
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        return ResponseEntity.status(ErrorCode.INVALID_INPUT.getCode() / 100)
+                .body(response);
     }
 
     /**
@@ -72,10 +72,11 @@ public class GlobalExceptionHandler {
 
         Map<String, Object> response = new HashMap<>();
         response.put("timestamp", LocalDateTime.now());
-        response.put("status", HttpStatus.INTERNAL_SERVER_ERROR.value());
-        response.put("error", "Unexpected Error");
+        response.put("errorCode", ErrorCode.INTERNAL_SERVER_ERROR.getCode());
+        response.put("details", "Unexpected Error");
         response.put("message", ex.getMessage());
 
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        return ResponseEntity.status(ErrorCode.INTERNAL_SERVER_ERROR.getCode() / 100)
+                .body(response);
     }
 }

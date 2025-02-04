@@ -1,7 +1,6 @@
-package com.hexa.muinus.store.dto;
+package com.hexa.muinus.store.dto.store;
 
 import com.hexa.muinus.common.enums.YesNo;
-import com.hexa.muinus.store.domain.store.Store;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

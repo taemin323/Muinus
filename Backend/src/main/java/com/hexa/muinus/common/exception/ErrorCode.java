@@ -7,10 +7,17 @@ public enum ErrorCode {
     // 400 Bad Request
     BAD_REQUEST(40000, "Bad Request"),
     INVALID_INPUT(40001, "유효하지 않은 값입니다."),
-    USER_STORE_NOT_EXIST(40002, "일치하는 매장이 존재하지 않습니다."),
     PASSWORD_MISMATCH(40003, "비밀번호가 일치하지 않습니다."),
     INVALID_BARCODE_DATA(40004, "바코드 데이터가 유효하지 않습니다."),
     BARCODE_PARSING_ERROR(40005, "바코드 데이터를 파싱하는 중 오류가 발생했습니다."),
+
+    // 403 Forbidden
+    FORBIDDEN(40300, "Forbidden"),
+    // 4031x User Forbidden
+    USER_NOT_FORBIDDEN(40311, "접근이 허용되지 않은 사용자입니다."),
+    // 4032x Store Forbidden
+    STORE_NOT_FORBIDDEN(400321, "매장에 접근할 권한이 없습니다."),
+    BOARD_FORBIDDEN(40322, "공지사항을 수정할 권한이 없습니다."),
 
     // 404 Not Found
     NOT_FOUND(40400, "Not Found"),

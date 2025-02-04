@@ -2,7 +2,7 @@ package com.hexa.muinus.store.service;
 
 import com.google.zxing.WriterException;
 import com.hexa.muinus.common.exception.coupon.*;
-import com.hexa.muinus.common.exception.StoreNotFoundException;
+import com.hexa.muinus.common.exception.store.StoreNotFoundException;
 import com.hexa.muinus.common.exception.UserNotFoundException;
 import com.hexa.muinus.common.util.BarCodeGenerator;
 import com.hexa.muinus.store.domain.coupon.repository.CouponHistoryRepository;
