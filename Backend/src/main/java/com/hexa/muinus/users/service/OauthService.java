@@ -1,11 +1,8 @@
 package com.hexa.muinus.users.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hexa.muinus.common.exception.MuinusException;
-import com.hexa.muinus.common.exception.UserNotFoundException;
-import com.hexa.muinus.common.jwt.JwtProvider;
+import com.hexa.muinus.common.exception.user.UnauthorizedException;
 import com.hexa.muinus.users.domain.user.Users;
-import com.hexa.muinus.users.domain.user.repository.UserRepository;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.server.ResponseStatusException;
 
 @Slf4j
 @Service
@@ -117,8 +113,8 @@ public class OauthService {
         try {
             userEmail = objectMapper.readTree(responseEntity.getBody()).get("kakao_account").get("email").asText();
         } catch (Exception e) {
-            throw new Exception();
             log.error("사용자 이메일 정보 요청 실패");
+            throw new Exception();
         }
         return userEmail;
     }
@@ -134,7 +130,7 @@ public class OauthService {
         // 사용자 존재 여부 확인
         if (user == null) {
             // 사용자 미존재 시 401 에러 반환
-            throw new UserNotFoundException();
+            throw new UnauthorizedException();
         }
         return userService.findUserByEmail(userEmail);
     }
