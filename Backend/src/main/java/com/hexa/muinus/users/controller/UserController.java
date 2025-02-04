@@ -35,7 +35,7 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
-    @PatchMapping("api/users/update")
+    @PatchMapping("/api/users/update")
     public ResponseEntity<?> updateUser(@RequestBody UserUpdateRequestDto requestDto, HttpServletRequest request){
         userService.updateUser(requestDto.getUserTelephone(), request);
         return ResponseEntity.ok("수정 완료");
