@@ -17,7 +17,7 @@ public interface StoreRepository extends JpaRepository<Store, Integer> {
 
     Store findByLocationXAndLocationY(BigDecimal locationX, BigDecimal locationY);
     Store findByRegistrationNo(String registrationNo);
-    Store findByUsers(Users users);
+    Store findByUser(Users users);
     Optional<Store> findByUserAndStoreNo(Users user, Integer storeNo);
     Optional<Store> findByUser_UserNoAndStoreNo(Integer userNo, Integer storeNo);
     Optional<Store> findByUser_Email(String email);

@@ -80,7 +80,7 @@ public class StoreService {
      * @return Store
      */
     public Store findStoreByUser(Users user){
-        return storeRepository.findByUsers(user);
+        return storeRepository.findByUser(user);
     }
 
     /**
