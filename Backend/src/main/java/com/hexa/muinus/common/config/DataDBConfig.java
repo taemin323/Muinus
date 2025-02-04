@@ -6,6 +6,7 @@ import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.boot.orm.jpa.EntityManagerFactoryBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.orm.jpa.JpaTransactionManager;
@@ -24,18 +25,21 @@ import java.util.HashMap;
 )
 public class DataDBConfig {
 
+    @Primary
     @Bean(name = "dataDBSource")
     @ConfigurationProperties(prefix = "spring.datasource-data")
     public DataSource dataDBSource() {
         return DataSourceBuilder.create().build();
     }
 
+    @Primary
     @Bean(name = "dataTransactionManager")
     public PlatformTransactionManager dataTransactionManager(
             @Qualifier("dataDBSource") DataSource dataSource) {
         return new DataSourceTransactionManager(dataSource);
     }
 
+    @Primary
     @Bean(name = "dataEntityManager")
     public LocalContainerEntityManagerFactoryBean dataEntityManagerFactory(
             EntityManagerFactoryBuilder builder,
