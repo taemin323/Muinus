@@ -3,7 +3,7 @@ package com.hexa.muinus.store.service;
 import com.hexa.muinus.common.exception.store.BoardForbiddenException;
 import com.hexa.muinus.common.exception.store.StoreLocationDuplicateException;
 import com.hexa.muinus.common.exception.store.StoreNotFoundException;
-import com.hexa.muinus.common.exception.UserNotFoundException;
+import com.hexa.muinus.common.exception.user.UserNotFoundException;
 import com.hexa.muinus.common.exception.store.StoreNotForbiddentException;
 import com.hexa.muinus.store.domain.information.Announcement;
 import com.hexa.muinus.store.domain.information.respository.AnnouncementRepository;
