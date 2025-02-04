@@ -3,7 +3,6 @@ package com.hexa.muinus.store.domain.store.repository;
 import com.hexa.muinus.store.domain.store.Store;
 import com.hexa.muinus.store.dto.store.StoreDTO;
 import com.hexa.muinus.store.dto.store.StoreSearchProjection;
-import com.hexa.muinus.store.dto.store.StoreBasicProjection;
 import com.hexa.muinus.users.domain.user.Users;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
