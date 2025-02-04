@@ -1,14 +1,23 @@
 package com.hexa.muinus.common.exception;
 
-public class MuinusException extends RuntimeException {
-    private final int statusCode; // HTTP 상태 코드
+import lombok.Getter;
 
-    public MuinusException(String message, int statusCode) {
-        super(message);
-        this.statusCode = statusCode;
+@Getter
+public class MuinusException extends RuntimeException {
+    private final ErrorCode errorCode;
+    private final String details;
+
+    public MuinusException(ErrorCode errorCode) {
+        super(errorCode.getMessage());
+        this.errorCode = errorCode;
+        this.details = null;
     }
 
-    public int getStatusCode() {
-        return statusCode;
+    public MuinusException(ErrorCode errorCode, String details) {
+        super(errorCode.getMessage() + " | " + details);
+        this.errorCode = errorCode;
+        this.details = details;
     }
 }
+
+

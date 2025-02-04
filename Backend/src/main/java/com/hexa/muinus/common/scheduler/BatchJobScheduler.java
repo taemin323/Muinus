@@ -17,7 +17,7 @@ public class BatchJobScheduler {
     private Job dailySalesJob;
 
     // 매일 자정 5분에 실행 (00:05)
-    @Scheduled(cron = "0 5 0 * * ?")
+    @Scheduled(cron = "0 36 10 * * ?")
     public void runBatchJobAtMidnight5() throws Exception {
         jobLauncher.run(dailySalesJob, new JobParameters());
     }
