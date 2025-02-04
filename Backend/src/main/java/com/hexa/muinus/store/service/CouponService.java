@@ -2,6 +2,9 @@ package com.hexa.muinus.store.service;
 
 import com.google.zxing.WriterException;
 import com.hexa.muinus.common.exception.coupon.*;
+import com.hexa.muinus.common.exception.code.BarcodeGenerationFailedException;
+import com.hexa.muinus.common.exception.code.BarcodeParsingErrorException;
+import com.hexa.muinus.common.exception.code.InvalidBarcodeDataException;
 import com.hexa.muinus.common.exception.store.StoreNotFoundException;
 import com.hexa.muinus.common.exception.user.UserNotFoundException;
 import com.hexa.muinus.common.util.BarCodeGenerator;
@@ -100,7 +103,7 @@ public class CouponService {
 
         // 쿠폰 히스토리 생성
         CouponHistory couponHistory = couponHistoryRepository.findById(couponHistoryId)
-                .orElseThrow(CouponHistoryNotFoundException::new);
+                .orElseThrow(CouponNotIssuedException::new);
 
         // 발급 가능 수량 감소
         if(couponHistory.getCount() <= 0){
@@ -161,7 +164,7 @@ public class CouponService {
         // 쿠폰 히스토리 조회
         log.info("coupon history start");
         CouponHistory couponHistory = couponHistoryRepository.findById(couponHistoryId)
-                .orElseThrow(CouponHistoryNotFoundException::new);
+                .orElseThrow(CouponNotIssuedException::new);
         log.info("coupon history end");
         // 쿠폰 유효 기간 확인
         if(couponHistory.getExpirationDate().isBefore(LocalDateTime.now())){
@@ -242,7 +245,7 @@ public class CouponService {
         // 쿠폰 히스토리 조회
         CouponHistoryId couponHistoryId = new CouponHistoryId(storeNo, couponId);
         CouponHistory couponHistory = couponHistoryRepository.findById(couponHistoryId)
-                .orElseThrow(CouponHistoryNotFoundException::new);
+                .orElseThrow(CouponNotIssuedException::new);
 
         // 쿠폰 유효기간 확인
         if(couponHistory.getExpirationDate().isBefore(LocalDateTime.now())){

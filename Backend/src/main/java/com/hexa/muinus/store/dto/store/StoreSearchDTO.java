@@ -1,6 +1,7 @@
 package com.hexa.muinus.store.dto.store;
 
 import com.hexa.muinus.common.enums.YesNo;
+import com.hexa.muinus.store.domain.store.repository.StoreRepository;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -24,37 +25,20 @@ public class StoreSearchDTO {
     private YesNo flimarketYn;
     private Double distance; // 검색 위치와의 거리(m)
 
-    /**
-     * DB 조회 결과를 바탕으로 할인된 금액, 최종 금액 계산해서 생성
-     * @param storeNo
-     * @param name
-     * @param locationX
-     * @param locationY
-     * @param address
-     * @param phone
-     * @param itemName
-     * @param salePrice
-     * @param discountRate
-     * @param quantity
-     * @param flimarketYn
-     */
-    public StoreSearchDTO(Integer storeNo, String name, Double locationX, Double locationY,
-                          String address, String phone, String itemName, Integer salePrice, Integer discountRate,
-                          Integer quantity, Character flimarketYn, Double distance) {
-        this.storeNo = storeNo;
-        this.name = name;
-        this.locationX = locationX;
-        this.locationY = locationY;
-        this.address = address;
-        this.phone = phone;
-        this.itemName = itemName;
-        this.salePrice = salePrice;
-        this.discountRate = discountRate;
-        this.quantity = quantity;
-        this.distance = distance;
+    public StoreSearchDTO(StoreSearchProjection projection) {
+        this.storeNo = projection.getStoreNo();
+        this.name = projection.getName();
+        this.locationX = projection.getLocationX();
+        this.locationY = projection.getLocationY();
+        this.address = projection.getAddress();
+        this.phone = projection.getPhone();
+        this.itemName = projection.getItemName();
+        this.salePrice = projection.getSalePrice();
+        this.discountRate = projection.getDiscountRate();
+        this.quantity = projection.getQuantity();
+        this.distance = projection.getDistance();
 
-        this.flimarketYn = flimarketYnConvertYesNo(flimarketYn);
-
+        this.flimarketYn = flimarketYnConvertYesNo(projection.getFlimarketYn());
         this.discountPrice = calculateDiscountPrice(salePrice, discountRate);
         this.finalPrice = salePrice - this.discountPrice;
     }

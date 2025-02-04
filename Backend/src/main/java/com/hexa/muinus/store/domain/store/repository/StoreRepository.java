@@ -2,6 +2,7 @@ package com.hexa.muinus.store.domain.store.repository;
 
 import com.hexa.muinus.store.domain.store.Store;
 import com.hexa.muinus.store.dto.store.StoreDTO;
+import com.hexa.muinus.store.dto.store.StoreSearchProjection;
 import com.hexa.muinus.users.domain.user.Users;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -14,10 +15,13 @@ import java.util.Optional;
 
 public interface StoreRepository extends JpaRepository<Store, Integer> {
 
-    Optional<Store> findByLocationXAndLocationY(BigDecimal locationX, BigDecimal locationY);
+    Store findByLocationXAndLocationY(BigDecimal locationX, BigDecimal locationY);
+    Store findByRegistrationNo(String registrationNo);
+    Store findByUser(Users users);
     Optional<Store> findByUserAndStoreNo(Users user, Integer storeNo);
     Optional<Store> findByUser_UserNoAndStoreNo(Integer userNo, Integer storeNo);
     Optional<Store> findByUser_Email(String email);
+
 
     @Query(value = """
         SELECT 	s.store_no AS storeNo, s.name AS name, s.location_x AS locationX, s.location_y AS locationY,
@@ -36,20 +40,6 @@ public interface StoreRepository extends JpaRepository<Store, Integer> {
                                                      @Param("x") Double x,
                                                      @Param("y") Double y,
                                                      @Param("radius") int radius);
-    interface StoreSearchProjection {
-        int getStoreNo();
-        String getName();
-        double getLocationX();
-        double getLocationY();
-        String getAddress();
-        String getPhone();
-        String getItemName();
-        int getSalePrice();
-        int getDiscountRate();
-        int getQuantity();
-        Character getFlimarketYn() ;
-        double getDistance();
-    }
 
     @Query("""
         SELECT new com.hexa.muinus.store.dto.store.StoreDTO(

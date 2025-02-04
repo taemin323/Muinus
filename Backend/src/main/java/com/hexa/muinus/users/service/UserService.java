@@ -1,5 +1,8 @@
 package com.hexa.muinus.users.service;
 
+import com.hexa.muinus.common.exception.user.InvalidRefreshTokenException;
+import com.hexa.muinus.common.exception.user.RefreshTokenRequiredException;
+import com.hexa.muinus.common.exception.user.UserEmailDuplicateException;
 import com.hexa.muinus.common.jwt.JwtProvider;
 import com.hexa.muinus.store.domain.store.Store;
 import com.hexa.muinus.store.domain.store.repository.StoreRepository;
@@ -12,10 +15,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 @Service
 @RequiredArgsConstructor
@@ -74,10 +75,10 @@ public class UserService {
             if (refreshToken.equals(user.getRefreshToken())) {
                 jwtProvider.issueTokens(user, response);
             } else if (!refreshToken.equals(user.getRefreshToken())) {
-                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid refresh token");
+                throw new InvalidRefreshTokenException();
             }
         } else {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+            throw new RefreshTokenRequiredException();
         }
     }
 
@@ -88,7 +89,7 @@ public class UserService {
     public void isEmailDuplicated(String email) {
         if (userRepository.existsByEmail(email)) {
             log.info("User already exists with email {}", email);
-            throw new ResponseStatusException(HttpStatus.CONFLICT);
+            throw new UserEmailDuplicateException(email);
         }
     }
 

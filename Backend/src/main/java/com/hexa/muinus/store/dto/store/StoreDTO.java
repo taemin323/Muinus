@@ -1,6 +1,7 @@
 package com.hexa.muinus.store.dto.store;
 
 import com.hexa.muinus.common.enums.YesNo;
+import com.hexa.muinus.store.domain.store.Store;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,4 +19,17 @@ public class StoreDTO {
     private String storeImageUrl;
     private String phone;
     private YesNo flimarketYn;
+
+    public static StoreDTO fromEntity(Store store) {
+        return StoreDTO.builder()
+                .storeNo(store.getStoreNo())
+                .userNo(store.getUser().getUserNo())
+                .name(store.getName())
+                .address(store.getAddress())
+                .storeImageUrl(store.getStoreImageUrl())
+                .phone(store.getPhone())
+                .flimarketYn(store.getFlimarketYn())
+                .build();
+    }
+
 }
