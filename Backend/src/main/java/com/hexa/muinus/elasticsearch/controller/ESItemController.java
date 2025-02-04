@@ -15,12 +15,12 @@ public class ESItemController {
 
     private final ESItemService esItemService;
 
-    @GetMapping("/items/autocomplete")
+    @GetMapping("/api/items/autocomplete")
     public List<ESItem> autocomplete(@RequestParam String prefix) {
         return esItemService.autocompleteItemName(prefix);
     }
 
-    @GetMapping("/items/search")
+    @GetMapping("/api/items/search")
     public List<ESItem> searchByRange(@RequestParam(required = false) Integer minSugar,
                                       @RequestParam(required = false) Integer maxSugar,
                                       @RequestParam(required = false) Integer minCal,
