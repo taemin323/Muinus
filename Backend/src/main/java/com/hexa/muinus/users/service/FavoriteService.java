@@ -1,5 +1,8 @@
 package com.hexa.muinus.users.service;
 
+import com.hexa.muinus.common.exception.store.StoreNotFoundException;
+import com.hexa.muinus.common.exception.user.FavoriteStoreDuplicate;
+import com.hexa.muinus.common.exception.user.UserNotFoundException;
 import com.hexa.muinus.store.domain.store.Store;
 import com.hexa.muinus.store.domain.store.repository.StoreRepository;
 import com.hexa.muinus.store.domain.store.Store;
@@ -26,13 +29,13 @@ public class FavoriteService {
 
     public void addFavorite(Integer userNo, Integer storeNo){
         Users user = userRepository.findById(userNo)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException(userNo));
         Store store = storeRepository.findById(storeNo)
-                .orElseThrow(() -> new IllegalArgumentException("Store not found"));
+                .orElseThrow(() -> new StoreNotFoundException(storeNo));
 
         FavoritesId favoritesId = new FavoritesId(userNo, storeNo);
         if(favoriteRepository.existsById(favoritesId)){
-            throw new IllegalArgumentException("This store is already in favorites");
+            throw new FavoriteStoreDuplicate(userNo, storeNo);
         }
 
         Favorites favorite = new Favorites(favoritesId, user, store);
@@ -45,7 +48,7 @@ public class FavoriteService {
 
         //Store 정보를 기반으로 FavoriteResponseDto 리스트 생성
         return storeNoList.stream().map(storeNo -> {
-            Store store = storeRepository.findById(storeNo).orElseThrow(() -> new IllegalArgumentException(("Store not found with No:")+storeNo));
+            Store store = storeRepository.findById(storeNo).orElseThrow(() -> new StoreNotFoundException(storeNo));
             return new FavoriteResponseDto(store.getName(), store.getAddress());
         }).collect(Collectors.toList());
     }
