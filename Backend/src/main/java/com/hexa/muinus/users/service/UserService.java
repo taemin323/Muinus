@@ -71,10 +71,8 @@ public class UserService {
         if (refreshToken != null && !refreshToken.isEmpty() && jwtProvider.validateToken(refreshToken)) {
             // DB에 저장된 refresh 토큰과 일치하는지 확인 후 AccessToken 재발급
             Users user = findUserByEmail(requestDto.getUserEmail());
-
             if (refreshToken.equals(user.getRefreshToken())) {
-                String accessToken = jwtProvider.createAccessToken(user);
-                jwtProvider.setAccessTokensInCookie(response, accessToken);
+                jwtProvider.issueTokens(user, response);
             } else if (!refreshToken.equals(user.getRefreshToken())) {
                 throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid refresh token");
             }
