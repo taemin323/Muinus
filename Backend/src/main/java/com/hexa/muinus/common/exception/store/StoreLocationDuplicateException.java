@@ -1,4 +1,7 @@
-package com.hexa.muinus.common.exception;
+package com.hexa.muinus.common.exception.store;
+
+import com.hexa.muinus.common.exception.ErrorCode;
+import com.hexa.muinus.common.exception.MuinusException;
 
 import java.math.BigDecimal;
 

@@ -1,7 +1,8 @@
-package com.hexa.muinus.store.dto;
+package com.hexa.muinus.store.dto.information;
 
 import com.hexa.muinus.store.domain.information.Announcement;
 import com.hexa.muinus.store.domain.store.Store;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -14,11 +15,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class AnnouncementWriteDTO {
 
-    @Positive(message = "유효한 storeNo를 입력해주세요.")
-    private Integer storeNo;
-
-    @Positive(message = "유효한 userNo를 입력해주세요.")
-    private Integer userNo;
+    @NotNull(message = "유효한 email을 입력해주세요.")
+    @Email
+    private String userEmail;
 
     @NotBlank(message = "제목을 입력해주세요")
     private String title;

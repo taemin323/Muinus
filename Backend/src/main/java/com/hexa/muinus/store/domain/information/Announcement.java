@@ -1,8 +1,7 @@
 package com.hexa.muinus.store.domain.information;
 
 import com.hexa.muinus.store.domain.store.Store;
-import com.hexa.muinus.store.dto.AnnouncementModifyDTO;
-import com.hexa.muinus.store.dto.AnnouncementWriteDTO;
+import com.hexa.muinus.store.dto.information.AnnouncementModifyDTO;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

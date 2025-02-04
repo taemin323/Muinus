@@ -1,7 +1,7 @@
 package com.hexa.muinus.store.domain.store.repository;
 
 import com.hexa.muinus.store.domain.store.Store;
-import com.hexa.muinus.store.dto.StoreDTO;
+import com.hexa.muinus.store.dto.store.StoreDTO;
 import com.hexa.muinus.users.domain.user.Users;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -11,16 +11,13 @@ import org.springframework.data.repository.query.Param;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
-
-import java.util.Optional;
 
 public interface StoreRepository extends JpaRepository<Store, Integer> {
 
     Optional<Store> findByLocationXAndLocationY(BigDecimal locationX, BigDecimal locationY);
     Optional<Store> findByUserAndStoreNo(Users user, Integer storeNo);
     Optional<Store> findByUser_UserNoAndStoreNo(Integer userNo, Integer storeNo);
+    Optional<Store> findByUser_Email(String email);
 
     @Query(value = """
         SELECT 	s.store_no AS storeNo, s.name AS name, s.location_x AS locationX, s.location_y AS locationY,
@@ -55,7 +52,7 @@ public interface StoreRepository extends JpaRepository<Store, Integer> {
     }
 
     @Query("""
-        SELECT new com.hexa.muinus.store.dto.StoreDTO(
+        SELECT new com.hexa.muinus.store.dto.store.StoreDTO(
             s.storeNo, s.user.userNo, s.name, 
             s.address, s.storeImageUrl, s.phone, s.flimarketYn
         )

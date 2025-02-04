@@ -1,5 +1,7 @@
-package com.hexa.muinus.store.dto;
+package com.hexa.muinus.store.dto.information;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -13,9 +15,7 @@ public class AnnouncementDeleteDTO {
     @Positive(message = "유효한 boardId 입력해주세요.")
     private Integer boardId;
 
-    @Positive(message = "유효한 storeNo를 입력해주세요.")
-    private Integer storeNo;
-
-    @Positive(message = "유효한 userNo를 입력해주세요.")
-    private Integer userNo;
+    @NotNull(message = "유효한 email을 입력해주세요.")
+    @Email
+    private String userEmail;
 }

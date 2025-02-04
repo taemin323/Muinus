@@ -1,8 +1,8 @@
 package com.hexa.muinus.store.domain.store;
 
 import com.hexa.muinus.common.enums.YesNo;
-import com.hexa.muinus.store.dto.FlimarketModifyDTO;
-import com.hexa.muinus.store.dto.StoreModifyDTO;
+import com.hexa.muinus.store.dto.store.FlimarketModifyDTO;
+import com.hexa.muinus.store.dto.store.StoreModifyDTO;
 import com.hexa.muinus.users.domain.user.Users;
 import com.hexa.muinus.users.dto.StoreOwnerRegisterRequestDto;
 import jakarta.persistence.*;
@@ -114,9 +114,15 @@ public class Store {
     }
 
     public void modifyFlimarketState(FlimarketModifyDTO dto){
-        this.flimarketYn = YesNo.Y;
-        this.flimarketImageUrl = dto.getFlimarketImageUrl();
-        this.flimarketSectionCnt = dto.getFlimarketSectionCnt();
+        this.flimarketYn = dto.getFlimarketYn();
+
+        if (this.flimarketYn == YesNo.Y) { // 플리마켓 허용
+            this.flimarketImageUrl = dto.getFlimarketImageUrl();
+            this.flimarketSectionCnt = dto.getFlimarketSectionCnt() != null ? dto.getFlimarketSectionCnt() : 0;
+        } else { // 플리마켓이 비허용 필드 초기화
+            this.flimarketImageUrl = null;
+            this.flimarketSectionCnt = 0;
+        }
     }
 
 }

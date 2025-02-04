@@ -1,12 +1,9 @@
-package com.hexa.muinus.store.dto;
+package com.hexa.muinus.store.dto.store;
 
 import com.hexa.muinus.common.enums.YesNo;
-import com.hexa.muinus.store.domain.store.Store;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.math.BigDecimal;
 
 @Data
 @NoArgsConstructor
