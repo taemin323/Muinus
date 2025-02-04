@@ -19,8 +19,10 @@ public enum ErrorCode {
 
     // 401 Unauthorized
     UNAUTHORIZED(40100, "Unauthorized"),
-    INVALID_REFRESH_TOKEN(40111, "유효하지 않은 토큰입니다."),
-    REFRESH_TOKEN_REQUIRED(40110, "인증 토큰이 존재하지 않습니다."),
+    REFRESH_TOKEN_REQUIRED(40110, "Refresh Token이 존재하지 않습니다."),
+    INVALID_REFRESH_TOKEN(40111, "유효하지 않은 Refresh Token입니다."),
+    INVALID_ACCESS_TOKEN(40112, "유효하지 않은 Access Token입니다."),
+    UNREGISTERED_USER(40113, "등록되지 않은 사용자입니다."),
 
     // 403 Forbidden
     FORBIDDEN(40300, "Forbidden"),
