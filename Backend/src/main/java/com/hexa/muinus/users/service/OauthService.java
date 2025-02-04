@@ -1,6 +1,8 @@
 package com.hexa.muinus.users.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hexa.muinus.common.exception.MuinusException;
+import com.hexa.muinus.common.exception.UserNotFoundException;
 import com.hexa.muinus.common.jwt.JwtProvider;
 import com.hexa.muinus.users.domain.user.Users;
 import com.hexa.muinus.users.domain.user.repository.UserRepository;
@@ -37,9 +39,6 @@ public class OauthService {
 
     @Value("${spring.security.oauth2.client.registration.kakao.authorization-grant-type}")
     private String authorizationGrantType;
-
-    @Value("${spring.security.oauth2.client.provider.kakao.authorization-uri}")
-    private String authorizationUri;
 
     public void getAuthorizationCode(HttpServletResponse response) {
         try {
@@ -94,7 +93,7 @@ public class OauthService {
      * @param accessToken
      * @return
      */
-    public String getUserKakaoProfile(String accessToken) {
+    public String getUserKakaoProfile(String accessToken) throws Exception {
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
 
@@ -118,6 +117,7 @@ public class OauthService {
         try {
             userEmail = objectMapper.readTree(responseEntity.getBody()).get("kakao_account").get("email").asText();
         } catch (Exception e) {
+            throw new Exception();
             log.error("사용자 이메일 정보 요청 실패");
         }
         return userEmail;
@@ -134,7 +134,7 @@ public class OauthService {
         // 사용자 존재 여부 확인
         if (user == null) {
             // 사용자 미존재 시 401 에러 반환
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+            throw new UserNotFoundException();
         }
         return userService.findUserByEmail(userEmail);
     }
