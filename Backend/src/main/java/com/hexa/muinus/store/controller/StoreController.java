@@ -134,6 +134,7 @@ public class StoreController {
     @DeleteMapping("/board")
     public ResponseEntity<Void> deleteAnnouncement(@Valid @RequestBody AnnouncementDeleteDTO announcementDeleteDTO){
         log.info("StoreController > deleteAnnouncement: {}", announcementDeleteDTO);
+        storeService.removeAnnouncement(announcementDeleteDTO);
         return ResponseEntity.ok().build();
     }
 

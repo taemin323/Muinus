@@ -18,7 +18,8 @@ public enum ErrorCode {
 
     // 401 Unauthorized
     UNAUTHORIZED(40100, "Unauthorized"),
-
+    INVALID_REFRESH_TOKEN(40111, "유효하지 않은 토큰입니다."),
+    REFRESH_TOKEN_REQUIRED(40110, "인증 토큰이 존재하지 않습니다."),
 
     // 403 Forbidden
     FORBIDDEN(40300, "Forbidden"),
@@ -28,17 +29,19 @@ public enum ErrorCode {
 
     // 404 Not Found
     NOT_FOUND(40400, "Not Found"),
-    USER_NOT_FOUND(40410, "유효하지 않은 사용자입니다."),
-    STORE_NOT_FOUND(40420, "유효하지 않은 매장입니다."),
+    USER_NOT_FOUND(40410, "존재하지 않는 사용자입니다."),
+    STORE_NOT_FOUND(40420, "존재하지 않는 매장입니다."),
     COUPON_NOT_FOUND(40430, "해당 쿠폰이 존재하지 않습니다."),
     COUPON_HISTORY_NOT_FOUND(40431, "쿠폰 히스토리가 존재하지 않습니다."),
     AVAILABLE_COUPON_NOT_FOUND(40432, "사용 가능한 쿠폰이 존재하지 않습니다."),
 
     // 409 Conflict
     CONFLICT(40900, "Conflict"),
-    USER_DUPLICATE(40910, "이미 가입된 사용자입니다."),
-    FAVORITE_STORE_DUPLICATE(40911, "해당 가게는 이미 즐겨찾기 목록에 있습니다."),
-    STORE_LOCATION_DUPLICATE(40920, "이미 등록된 위치입니다."),
+    USER_EMAIL_DUPLICATE(40910, "이미 가입된 이메일입니다."),
+    FAVORITE_STORE_DUPLICATE(40911, "해당 매장은 이미 즐겨찾기 목록에 있습니다."),
+    STORE_LOCATION_DUPLICATE(40920, "이미 매장으로 등록된 위치입니다."),
+    STORE_REGISTRATION_NO_DUPLICATE(40921, "이미 등록된 사업자등록번호 입니다."),
+    STORE_ALREADY_REGISTERED(40922, "이미 매장이 등록된 사용자입니다."),
     COUPON_ALREADY_CLAIMED(40930, "이미 쿠폰을 수령하였습니다."),
     COUPON_ALREADY_USED(40931, "이미 사용된 쿠폰입니다."),
 
