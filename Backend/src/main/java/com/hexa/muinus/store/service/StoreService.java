@@ -1,9 +1,12 @@
 package com.hexa.muinus.store.service;
 
+import com.hexa.muinus.common.enums.YesNo;
 import com.hexa.muinus.common.exception.store.*;
 import com.hexa.muinus.common.exception.user.UserNotFoundException;
 import com.hexa.muinus.store.domain.information.Announcement;
+import com.hexa.muinus.store.domain.item.repository.FliItemRepository;
 import com.hexa.muinus.store.domain.store.Store;
+import com.hexa.muinus.store.dto.FliItemDTO;
 import com.hexa.muinus.store.dto.information.AnnouncementDTO;
 import com.hexa.muinus.store.dto.information.AnnouncementDeleteDTO;
 import com.hexa.muinus.store.dto.information.AnnouncementModifyDTO;
@@ -18,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -28,6 +32,7 @@ public class StoreService {
     private final UserService userService;
     private final StoreItemService storeItemService;
     private final AnnouncementService announcementService;
+    private final FliItemService fliItemService;
 
 
     /**
@@ -190,8 +195,7 @@ public class StoreService {
 
     /**
      * 매장 상세 정보 조회
-     * 플리마켓 아이템은 공개하지 않음
-     * - 매장 검색이 되었을 때 매장 번호 반환 
+     * - 매장 검색이 되었을 때 매장 번호 반환
      * -> 해당 번호로 매장 접근
      * @param storeNo 매장 번호 
      * @return StoreDetailDTO
@@ -206,10 +210,16 @@ public class StoreService {
         // 공지사항 조회
         List<AnnouncementDTO> announcements = announcementService.getAllAnnouncementsByStoreNo(storeNo);
 
-        // 판매 제품 조회
+        // 판매 상품 조회
         List<StoreItemDTO> storeItems = storeItemService.findAllStoreItems(storeNo);
 
-        return new StoreDetailDTO(store, announcements, storeItems);
+        // 플리마켓 상품 조회
+        List<FliItemDTO> fliItems = new ArrayList<>();
+        if(store.getFlimarketYn() == YesNo.Y){
+            fliItems = fliItemService.getSellingFliItemsByStoreNo(storeNo);
+        }
+
+        return new StoreDetailDTO(store, announcements, storeItems, fliItems);
     }
 
     /**
