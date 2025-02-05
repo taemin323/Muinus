@@ -1,10 +1,8 @@
 package com.hexa.muinus.users.controller;
 
+import com.hexa.muinus.common.jwt.JwtProvider;
 import com.hexa.muinus.users.domain.user.Users;
-import com.hexa.muinus.users.dto.ConsumerRegisterRequestDto;
-import com.hexa.muinus.users.dto.ReissueAccessTokenRequestDto;
-import com.hexa.muinus.users.dto.StoreOwnerRegisterRequestDto;
-import com.hexa.muinus.users.dto.UserUpdateRequestDto;
+import com.hexa.muinus.users.dto.*;
 import com.hexa.muinus.users.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -41,4 +39,8 @@ public class UserController {
         return ResponseEntity.ok("수정 완료");
     }
 
+    @GetMapping("/api/users/mypage")
+    public ResponseEntity<UserPageResponseDto> getMyPage(HttpServletRequest request){
+        return ResponseEntity.ok().body(userService.getMyPage(request));
+    }
 }
