@@ -1,5 +1,6 @@
 package com.hexa.muinus.store.dto.store;
 
+import com.hexa.muinus.store.dto.FliItemDTO;
 import com.hexa.muinus.store.dto.information.AnnouncementDTO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -14,4 +15,5 @@ public class StoreDetailDTO {
     private StoreDTO store;
     private List<AnnouncementDTO> announcements;
     private List<StoreItemDTO> storeItems;
+    private List<FliItemDTO> fliItems;
 }
