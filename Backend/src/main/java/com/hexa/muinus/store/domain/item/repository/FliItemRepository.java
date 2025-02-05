@@ -25,4 +25,6 @@ public interface FliItemRepository extends CrudRepository<FliItem, Integer> {
     Optional<FliItem> findByStoreAndSectionId(Store store, Integer sectionId);
 
     Optional<FliItem> findByStoreAndFliItemId(Store store, Integer itemId);
+
+    Optional<FliItem> findByStore_StoreNoAndUsers_UserNoAndFliItemName(Integer storeId, Integer userId, String itemName);
 }
