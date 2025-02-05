@@ -9,6 +9,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
+@Builder
 public class RequestReceivingId implements Serializable {
     private Integer storeNo;
     private Integer itemId;
