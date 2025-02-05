@@ -6,11 +6,12 @@ import com.hexa.muinus.common.exception.user.UserEmailDuplicateException;
 import com.hexa.muinus.common.jwt.JwtProvider;
 import com.hexa.muinus.store.domain.store.Store;
 import com.hexa.muinus.store.domain.store.repository.StoreRepository;
+import com.hexa.muinus.users.domain.user.FliUser;
 import com.hexa.muinus.users.domain.user.Users;
+import com.hexa.muinus.users.domain.user.repository.FliUserRepository;
 import com.hexa.muinus.users.domain.user.repository.UserRepository;
-import com.hexa.muinus.users.dto.ConsumerRegisterRequestDto;
-import com.hexa.muinus.users.dto.ReissueAccessTokenRequestDto;
-import com.hexa.muinus.users.dto.StoreOwnerRegisterRequestDto;
+import com.hexa.muinus.users.dto.*;
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +26,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final StoreRepository storeRepository;
+    private final FliUserRepository fliUserRepository;
     private final JwtProvider jwtProvider;
 
     @Transactional
@@ -96,5 +98,47 @@ public class UserService {
     @Transactional
     public Users findUserByEmail(String email) {
         return userRepository.findByEmail(email);
+    }
+
+    /**
+     * 소비자 정보 수정
+     */
+    @Transactional
+    public void updateUser(String userTelephone, HttpServletRequest request) {
+        // 이메일 추출
+        String email = jwtProvider.getUserEmailFromAccessToken(request);
+
+        Users user = findUserByEmail(email);
+
+        user.setTelephone(userTelephone);
+    }
+
+    /**
+     * 마이페이지 이동
+     */
+    @Transactional
+    public UserPageResponseDto getMyPage(HttpServletRequest request) {
+        //이메일 추출
+        String email = jwtProvider.getUserEmailFromAccessToken(request);
+
+        // 로그인 유저 조회
+        Users user = findUserByEmail(email);
+        FliUser fliUser = fliUserRepository.findById(user.getUserNo()).orElse(null);
+
+        // 일반유저
+        if(user.getUserType() == Users.UserType.U){
+            if(fliUser != null){
+                //fliUser
+                return new UserPageResponseDto(user, fliUser);
+            } else{
+                return new UserPageResponseDto(user, null);
+            }
+
+        } else {// 점주
+            if(fliUser != null){
+                return new UserPageResponseDto(user, fliUser);
+            }
+        }
+        return new UserPageResponseDto(user, null);
     }
 }

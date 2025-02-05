@@ -139,4 +139,12 @@ public class JwtProvider {
         setAccessTokensInCookie(response, accessToken);
         setRefreshTokensInCookie(response, refreshToken);
     }
+
+    /**
+     * 로그아웃 시 쿠키에서 토큰 삭제
+     */
+    public void clearTokens(HttpServletResponse response) {
+        setAccessTokensInCookie(response, null);
+        setRefreshTokensInCookie(response, null);
+    }
 }
