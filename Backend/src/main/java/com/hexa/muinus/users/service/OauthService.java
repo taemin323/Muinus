@@ -145,6 +145,10 @@ public class OauthService {
         response.sendRedirect(frontUrl);
     }
 
+    /**
+     * 로그아웃
+     * @param user
+     */
     public void deleteRefreshToken(Users user) {
 
         user.setRefreshToken(null);
