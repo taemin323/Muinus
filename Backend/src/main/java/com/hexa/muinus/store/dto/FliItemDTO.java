@@ -13,4 +13,5 @@ public class FliItemDTO {
     private String fliItemName;
     private int price;
     private int quantity;
+    private String imagePath;
 }

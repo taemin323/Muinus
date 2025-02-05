@@ -37,6 +37,9 @@ public class FliItem {
     @Column(name = "quantity", nullable = false)
     private Integer quantity = 1;
 
+    @Column(name= "image_path", nullable = false, length = 500)
+    private String imagePath;
+
     @Column(name = "section_id", nullable = false, columnDefinition = "TINYINT UNSIGNED")
     private Integer sectionId;
 
