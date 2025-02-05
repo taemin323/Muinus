@@ -11,6 +11,7 @@ import com.hexa.muinus.store.domain.store.repository.StoreRepository;
 import com.hexa.muinus.store.dto.fli.FliCheckDTO;
 import com.hexa.muinus.store.dto.fli.FliRequestDTO;
 
+import com.hexa.muinus.store.dto.fli.FliResponseDTO;
 import com.hexa.muinus.users.domain.user.FliUser;
 import com.hexa.muinus.users.domain.user.Users;
 
@@ -21,6 +22,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -105,6 +107,10 @@ public class FliRequestService {
             item = fliItem.get();
             item.setStatus(FliItemStatus.REJECTED);
         }
+    }
+
+    public List<FliResponseDTO> listFli(int storeId) {
+        return fliItemRepository.findPendingFliResponseByStoreId(storeId);
     }
 }
 

@@ -2,10 +2,13 @@ package com.hexa.muinus.store.controller;
 
 import com.hexa.muinus.store.dto.fli.FliCheckDTO;
 import com.hexa.muinus.store.dto.fli.FliRequestDTO;
+import com.hexa.muinus.store.dto.fli.FliResponseDTO;
 import com.hexa.muinus.store.service.FliRequestService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/fli")
@@ -30,6 +33,11 @@ public class FliController {
     public ResponseEntity<String> rejectFli(@RequestBody FliCheckDTO dto) {
         fliService.rejectFli(dto);
         return ResponseEntity.ok("Fli reject successful");
+    }
+
+    @GetMapping("/list")
+    public ResponseEntity<List<FliResponseDTO>> listFli(@RequestParam("storeId") int storeId) {
+        return ResponseEntity.ok(fliService.listFli(storeId));
     }
 }
 
