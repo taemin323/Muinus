@@ -125,8 +125,11 @@ public class OauthService {
         return userService.findUserByEmail(userEmail);
     }
 
-    public void deleteRefreshToken(String userEmail) {
-        Users user = findUser(userEmail);
+    /**
+     * 로그아웃
+     * @param user
+     */
+    public void deleteRefreshToken(Users user) {
 
         user.setRefreshToken(null);
         userRepository.save(user);

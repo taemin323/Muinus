@@ -31,13 +31,15 @@ public class OauthController {
     @GetMapping("/api/users/logout")
     public ResponseEntity<?> kakaoLogout(HttpServletRequest request, HttpServletResponse response){
         String userEmail = jwtProvider.getUserEmailFromAccessToken(request);
+        Users user = oauthService.findUser(userEmail);
 
-        // 쿠키에서 토큰 삭제
-        jwtProvider.clearTokens(response);
+        if(user != null){
+            // 쿠키에서 토큰 삭제
+            jwtProvider.clearTokens(response);
 
-        // DB에서 refresh token 삭제
-        oauthService.deleteRefreshToken(userEmail);
-
+            // DB에서 refresh token 삭제
+            oauthService.deleteRefreshToken(user);
+        }
         return ResponseEntity.ok().build();
     }
 }
