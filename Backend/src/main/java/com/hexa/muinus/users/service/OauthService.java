@@ -1,6 +1,7 @@
 package com.hexa.muinus.users.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hexa.muinus.common.jwt.JwtProvider;
 import com.hexa.muinus.users.domain.user.Users;
 import com.hexa.muinus.users.domain.user.repository.UserRepository;
 import jakarta.servlet.http.HttpServletResponse;
