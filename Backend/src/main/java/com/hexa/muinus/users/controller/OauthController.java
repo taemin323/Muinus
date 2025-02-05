@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class OauthController {
 
     private final OauthService oauthService;
+    private final UserService userService;
     private final JwtProvider jwtProvider;
 
     @GetMapping("/api/users/login")
@@ -31,7 +32,7 @@ public class OauthController {
     @GetMapping("/api/users/logout")
     public ResponseEntity<?> kakaoLogout(HttpServletRequest request, HttpServletResponse response){
         String userEmail = jwtProvider.getUserEmailFromAccessToken(request);
-        Users user = oauthService.findUser(userEmail);
+        Users user = userService.findUserByEmail(userEmail);
 
         if(user != null){
             // 쿠키에서 토큰 삭제
