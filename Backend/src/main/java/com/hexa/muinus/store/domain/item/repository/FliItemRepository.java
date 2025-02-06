@@ -30,16 +30,18 @@ public interface FliItemRepository extends CrudRepository<FliItem, Integer> {
     Optional<FliItem> findByStore_StoreNoAndUsers_UserNoAndFliItemName(Integer storeId, Integer userId, String itemName);
 
     @Query("SELECT new com.hexa.muinus.store.dto.fli.FliResponseDTO(" +
-            "s.storeNo, " +
-            "u.userNo, " +
-            "fu.accountNumber, " +
-            "fu.bank, " +
-            "fu.accountName, " +
-            "fi.fliItemName, " +
-            "fi.quantity, " +
-            "fi.price, " +
-            "fi.sectionId, " +
-            "CAST(FUNCTION('DATEDIFF', fi.expirationDate, fi.applicationDate) AS integer)" +
+            "s.storeNo, " +                           // storeId
+            "u.userNo, " +                            // userId
+            "fu.accountNumber, " +                    // userAccount
+            "fu.bank, " +                             // userBank
+            "fu.accountName, " +                      // accountName
+            "fi.fliItemName, " +                      // itemName
+            "fi.quantity, " +                         // quantity
+            "fi.price, " +                            // price
+            "fi.sectionId, " +                        // sectionNumber
+            "fi.applicationDate, " +                  // startDateTime (DB의 application_date)
+            "CAST(FUNCTION('DATEDIFF', fi.expirationDate, fi.applicationDate) AS integer), " + // expirationDate
+            "fi.imagePath" +                          // imageUrl
             ") " +
             "FROM FliItem fi " +
             "JOIN fi.store s " +

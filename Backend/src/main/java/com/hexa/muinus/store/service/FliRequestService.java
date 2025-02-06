@@ -77,7 +77,9 @@ public class FliRequestService {
                 .quantity(dto.getQuantity())
                 .sectionId(dto.getSectionNumber())
                 .status(FliItemStatus.PENDING)
-                .expirationDate(LocalDateTime.now().plusDays(dto.getExpirationDate()))
+                .applicationDate(dto.getStartDate())
+                .expirationDate(dto.getStartDate().plusDays(dto.getExpirationDate()))
+                .imagePath(dto.getImageUrl())
                 .build();
 
         fliItemRepository.save(fliItem);
