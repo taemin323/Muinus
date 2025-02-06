@@ -13,6 +13,7 @@ import com.hexa.muinus.common.util.BarCodeGenerator;
 import com.hexa.muinus.store.domain.coupon.repository.CouponHistoryRepository;
 import com.hexa.muinus.store.domain.coupon.repository.CouponRepository;
 import com.hexa.muinus.store.domain.store.Store;
+import com.hexa.muinus.store.dto.CouponListResponseDto;
 import com.hexa.muinus.users.domain.coupon.repository.UserCouponHistoryRepository;
 import com.hexa.muinus.store.domain.coupon.Coupon;
 import com.hexa.muinus.store.domain.coupon.CouponHistory;
@@ -25,15 +26,15 @@ import com.hexa.muinus.users.domain.user.Users;
 import com.hexa.muinus.users.domain.user.repository.UserRepository;
 import com.hexa.muinus.users.dto.*;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.nio.file.AccessDeniedException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -48,6 +49,14 @@ public class CouponService {
     private final StoreService storeService;
     private final JwtProvider jwtProvider;
 
+    @Transactional(readOnly = true)
+    public List<CouponListResponseDto> getCouponList() {
+        List<Coupon> couponList = couponRepository.findAll();
+        List<CouponListResponseDto> response = couponList.stream()
+                .map(coupon -> new CouponListResponseDto(coupon.getCouponId(), coupon.getName(), coupon.getDiscountRate(), coupon.getContent()))
+                .collect(Collectors.toList());
+        return response;
+    }
 
     @Transactional
     public void createCoupon(HttpServletRequest request, CouponRequestDto couponRequestDto) {
@@ -138,7 +147,7 @@ public class CouponService {
         userCouponHistoryRepository.save(userCouponHistory);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public List<ReceiveCouponResponseDto> getUserCoupons(Integer userNo){
         // UserCouponHistory 조회
         List<UserCouponHistory> userCouponHistories = userCouponHistoryRepository.findByUser_userNo(userNo);
@@ -275,4 +284,5 @@ public class CouponService {
         //할인 후 결과 반환
         return new ApplyDiscountResponseDto(discountedAmount, "할인 적용이 완료되었습니다.");
     }
+
 }

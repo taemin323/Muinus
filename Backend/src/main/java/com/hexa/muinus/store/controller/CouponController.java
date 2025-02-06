@@ -1,5 +1,6 @@
 package com.hexa.muinus.store.controller;
 
+import com.hexa.muinus.store.dto.CouponListResponseDto;
 import com.hexa.muinus.store.dto.CouponRequestDto;
 import com.hexa.muinus.store.service.CouponService;
 import com.hexa.muinus.users.dto.*;
@@ -18,6 +19,12 @@ import java.util.List;
 public class CouponController {
 
     private final CouponService couponService;
+
+    // 쿠폰 종류 전체 조회
+    @GetMapping("/list")
+    public ResponseEntity<List<CouponListResponseDto>> getCouponList(){
+        return ResponseEntity.ok().body(couponService.getCouponList());
+    }
 
     // 쿠폰 생성
     @PostMapping("/create")
