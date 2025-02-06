@@ -1,8 +1,10 @@
 package com.hexa.muinus.store.controller;
 
+import com.hexa.muinus.store.dto.CouponListResponseDto;
 import com.hexa.muinus.store.dto.CouponRequestDto;
 import com.hexa.muinus.store.service.CouponService;
 import com.hexa.muinus.users.dto.*;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -18,10 +20,16 @@ public class CouponController {
 
     private final CouponService couponService;
 
+    // 쿠폰 종류 전체 조회
+    @GetMapping("/list")
+    public ResponseEntity<List<CouponListResponseDto>> getCouponList(){
+        return ResponseEntity.ok().body(couponService.getCouponList());
+    }
+
     // 쿠폰 생성
     @PostMapping("/create")
-    public ResponseEntity<?> createCoupon(@Valid @RequestBody CouponRequestDto couponRequestDto){
-        couponService.createCoupon(couponRequestDto);
+    public ResponseEntity<?> createCoupon(HttpServletRequest request, @Valid @RequestBody CouponRequestDto couponRequestDto){
+        couponService.createCoupon(request, couponRequestDto);
         return ResponseEntity.ok("쿠폰 생성이 완료되었습니다.");
     }
 
@@ -33,9 +41,9 @@ public class CouponController {
     }
 
     // 보유 쿠폰 전체 조회
-    @GetMapping("/receive/user/{userNo}")
-    public ResponseEntity<List<ReceiveCouponResponseDto>> getUserCoupons(@PathVariable Integer userNo){
-        List<ReceiveCouponResponseDto> userCoupons = couponService.getUserCoupons(userNo);
+    @GetMapping("/receive/list")
+    public ResponseEntity<List<ReceiveCouponResponseDto>> getUserCoupons(HttpServletRequest request){
+        List<ReceiveCouponResponseDto> userCoupons = couponService.getUserCoupons(request);
         return ResponseEntity.ok(userCoupons);
     }
 

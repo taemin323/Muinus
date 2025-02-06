@@ -7,10 +7,12 @@ import com.hexa.muinus.common.exception.code.BarcodeParsingErrorException;
 import com.hexa.muinus.common.exception.code.InvalidBarcodeDataException;
 import com.hexa.muinus.common.exception.store.StoreNotFoundException;
 import com.hexa.muinus.common.exception.user.UserNotFoundException;
+import com.hexa.muinus.common.jwt.JwtProvider;
 import com.hexa.muinus.common.util.BarCodeGenerator;
 import com.hexa.muinus.store.domain.coupon.repository.CouponHistoryRepository;
 import com.hexa.muinus.store.domain.coupon.repository.CouponRepository;
 import com.hexa.muinus.store.domain.store.Store;
+import com.hexa.muinus.store.dto.CouponListResponseDto;
 import com.hexa.muinus.users.domain.coupon.repository.UserCouponHistoryRepository;
 import com.hexa.muinus.store.domain.coupon.Coupon;
 import com.hexa.muinus.store.domain.coupon.CouponHistory;
@@ -22,7 +24,8 @@ import com.hexa.muinus.users.domain.coupon.UserCouponHistoryId;
 import com.hexa.muinus.users.domain.user.Users;
 import com.hexa.muinus.users.domain.user.repository.UserRepository;
 import com.hexa.muinus.users.dto.*;
-import jakarta.transaction.Transactional;
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -30,6 +33,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -42,33 +46,52 @@ public class CouponService {
     private final StoreRepository storeRepository;
     private final UserRepository userRepository;
     private final StoreService storeService;
+    private final JwtProvider jwtProvider;
 
+    @Transactional(readOnly = true)
+    public List<CouponListResponseDto> getCouponList() {
+        List<Coupon> couponList = couponRepository.findAll();
+        List<CouponListResponseDto> response = couponList.stream()
+                .map(coupon -> new CouponListResponseDto(coupon.getCouponId(), coupon.getName(), coupon.getDiscountRate(), coupon.getContent()))
+                .collect(Collectors.toList());
+        return response;
+    }
 
     @Transactional
-    public void createCoupon(CouponRequestDto couponRequestDto) {
-        // 가게 이름을 통해 가게 번호 조회
-        Store store = storeService.findStoreByStoreNo(couponRequestDto.getStoreNo());
+    public void createCoupon(HttpServletRequest request, CouponRequestDto couponRequestDto) {
+        // 이메일 추출
+        String email = jwtProvider.getUserEmailFromAccessToken(request);
 
-        // 쿠폰이 존재하는지 확인
-        Coupon coupon = couponRepository.findById(couponRequestDto.getCouponId())
-                .orElseThrow(() -> new CouponNotFoundException(couponRequestDto.getCouponId()));
+        // 로그인 유저 조회
+        Users user = userRepository.findByEmail(email);
 
-        // 복합 키 생성
-        CouponHistoryId couponHistoryId = CouponHistoryId.builder()
-                .storeNo(store.getStoreNo())
-                .couponId(coupon.getCouponId())
-                .build();
+        // 점주 유저만 쿠폰 생성 가능
+        if(user.getUserType() != Users.UserType.A){
+            throw new CouponAccessForbiddenException();
+        }
+            Store store = storeService.findStoreByUser(user);
 
-        // 쿠폰 발급 내역 생성
-        CouponHistory couponHistory = CouponHistory.builder()
-                .id(couponHistoryId)
-                .store(store)
-                .coupon(coupon)
-                .count(couponRequestDto.getCount())
-                .expirationDate(couponRequestDto.getExpirationDate())
-                .createdAt(LocalDateTime.now())
-                .build();
-        couponHistoryRepository.save(couponHistory);
+            // 쿠폰이 존재하는지 확인
+            Coupon coupon = couponRepository.findById(couponRequestDto.getCouponId())
+                    .orElseThrow(() -> new CouponNotFoundException(couponRequestDto.getCouponId()));
+
+            // 복합 키 생성
+            CouponHistoryId couponHistoryId = CouponHistoryId.builder()
+                    .storeNo(store.getStoreNo())
+                    .couponId(coupon.getCouponId())
+                    .build();
+
+            // 쿠폰 발급 내역 생성
+            CouponHistory couponHistory = CouponHistory.builder()
+                    .id(couponHistoryId)
+                    .store(store)
+                    .coupon(coupon)
+                    .count(couponRequestDto.getCount())
+                    .expirationDate(couponRequestDto.getExpirationDate())
+                    .createdAt(LocalDateTime.now())
+                    .build();
+            couponHistoryRepository.save(couponHistory);
+
     }
 
     @Transactional
@@ -123,10 +146,16 @@ public class CouponService {
         userCouponHistoryRepository.save(userCouponHistory);
     }
 
-    @Transactional
-    public List<ReceiveCouponResponseDto> getUserCoupons(Integer userNo){
+    @Transactional(readOnly = true)
+    public List<ReceiveCouponResponseDto> getUserCoupons(HttpServletRequest request){
+        // 이메일 추출
+        String email = jwtProvider.getUserEmailFromAccessToken(request);
+
+        // 로그인 유저 조회
+        Users user = userRepository.findByEmail(email);
+
         // UserCouponHistory 조회
-        List<UserCouponHistory> userCouponHistories = userCouponHistoryRepository.findByUser_userNo(userNo);
+        List<UserCouponHistory> userCouponHistories = userCouponHistoryRepository.findByUser_userNo(user.getUserNo());
 
         // 변환(ReceiveCouponResponseDto)
         return userCouponHistories.stream()
@@ -134,6 +163,9 @@ public class CouponService {
                     CouponHistory couponHistory = history.getCouponHistory();
                     Coupon coupon = couponHistory.getCoupon();
                     return new ReceiveCouponResponseDto(
+                            couponHistory.getCoupon().getCouponId(),
+                            user.getUserNo(),
+                            couponHistory.getStore().getStoreNo(),
                             couponHistory.getStore().getName(),
                             coupon.getName(),
                             coupon.getContent(),
