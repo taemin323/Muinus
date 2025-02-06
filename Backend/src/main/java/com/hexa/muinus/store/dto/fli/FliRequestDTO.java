@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -26,7 +28,11 @@ public class FliRequestDTO {
     private int price;
     @Positive(message = "유효한 구역을 입력해주세요.")
     private int sectionNumber;
+    @Positive(message = "유효한 시작일자를 입력해주세요.")
+    private LocalDateTime startDate;
     @Positive(message = "유효한 만료기간을 입력해주세요.")
     private int expirationDate;
+    @Positive(message = "유효한 이미지를 입력해주세요.")
+    private String imageUrl;
 
 }

@@ -1,9 +1,10 @@
 package com.hexa.muinus.store.dto.fli;
 
-import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
@@ -19,5 +20,7 @@ public class FliResponseDTO {
     private int quantity;
     private int price;
     private int sectionNumber;
+    private LocalDateTime startDateTime;
     private int expirationDate;
+    private String imageUrl;
 }
