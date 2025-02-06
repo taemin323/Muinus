@@ -3,6 +3,7 @@ package com.hexa.muinus.store.controller;
 import com.hexa.muinus.store.dto.CouponRequestDto;
 import com.hexa.muinus.store.service.CouponService;
 import com.hexa.muinus.users.dto.*;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -20,8 +21,8 @@ public class CouponController {
 
     // 쿠폰 생성
     @PostMapping("/create")
-    public ResponseEntity<?> createCoupon(@Valid @RequestBody CouponRequestDto couponRequestDto){
-        couponService.createCoupon(couponRequestDto);
+    public ResponseEntity<?> createCoupon(HttpServletRequest request, @Valid @RequestBody CouponRequestDto couponRequestDto){
+        couponService.createCoupon(request, couponRequestDto);
         return ResponseEntity.ok("쿠폰 생성이 완료되었습니다.");
     }
 

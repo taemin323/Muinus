@@ -27,8 +27,9 @@ public enum ErrorCode {
     // 403 Forbidden
     FORBIDDEN(40300, "Forbidden"),
     USER_NOT_FORBIDDEN(40311, "접근이 허용되지 않은 사용자입니다."),
-    STORE_NOT_FORBIDDEN(400321, "매장 정보에 접근할 권한이 없습니다."),
+    STORE_NOT_FORBIDDEN(40321, "매장 정보에 접근할 권한이 없습니다."),
     BOARD_FORBIDDEN(40322, "공지사항을 수정할 권한이 없습니다."),
+    COUPON_ACCESS_FORBIDDEN(40330, "쿠폰 생성 권한이 없습니다."),
 
     // 404 Not Found
     NOT_FOUND(40400, "Not Found"),
