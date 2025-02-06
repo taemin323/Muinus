@@ -13,7 +13,7 @@ public interface RequestReceivingRepository extends CrudRepository<RequestReceiv
 
     @Query("SELECT new com.hexa.muinus.store.dto.item.ItemResponseDTO(r.item.itemName, COUNT(r)) " +
             "FROM RequestReceiving r " +
-            "WHERE r.store.storeNo = :storeId " +
+            "WHERE r.store.storeNo = :storeNo " +
             "GROUP BY r.item.itemName")
-    List<ItemResponseDTO> findItemRequestCountsByStoreId(@Param("storeId") Long storeId);
+    List<ItemResponseDTO> findItemRequestCountsByStoreNo(@Param("storeNo") Integer storeNo);
 }
