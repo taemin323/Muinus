@@ -148,9 +148,15 @@ public class CouponService {
     }
 
     @Transactional(readOnly = true)
-    public List<ReceiveCouponResponseDto> getUserCoupons(Integer userNo){
+    public List<ReceiveCouponResponseDto> getUserCoupons(HttpServletRequest request){
+        // 이메일 추출
+        String email = jwtProvider.getUserEmailFromAccessToken(request);
+
+        // 로그인 유저 조회
+        Users user = userRepository.findByEmail(email);
+
         // UserCouponHistory 조회
-        List<UserCouponHistory> userCouponHistories = userCouponHistoryRepository.findByUser_userNo(userNo);
+        List<UserCouponHistory> userCouponHistories = userCouponHistoryRepository.findByUser_userNo(user.getUserNo());
 
         // 변환(ReceiveCouponResponseDto)
         return userCouponHistories.stream()
@@ -158,6 +164,9 @@ public class CouponService {
                     CouponHistory couponHistory = history.getCouponHistory();
                     Coupon coupon = couponHistory.getCoupon();
                     return new ReceiveCouponResponseDto(
+                            couponHistory.getCoupon().getCouponId(),
+                            user.getUserNo(),
+                            couponHistory.getStore().getStoreNo(),
                             couponHistory.getStore().getName(),
                             coupon.getName(),
                             coupon.getContent(),

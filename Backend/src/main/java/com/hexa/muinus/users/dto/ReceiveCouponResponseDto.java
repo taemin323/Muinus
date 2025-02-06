@@ -12,6 +12,9 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ReceiveCouponResponseDto {
+    private Integer couponId;
+    private Integer userNo;
+    private Integer storeNo;
     private String storeName;
     private String couponName;
     private String content;

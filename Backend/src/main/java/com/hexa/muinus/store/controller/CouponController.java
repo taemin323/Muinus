@@ -41,9 +41,9 @@ public class CouponController {
     }
 
     // 보유 쿠폰 전체 조회
-    @GetMapping("/receive/user/{userNo}")
-    public ResponseEntity<List<ReceiveCouponResponseDto>> getUserCoupons(@PathVariable Integer userNo){
-        List<ReceiveCouponResponseDto> userCoupons = couponService.getUserCoupons(userNo);
+    @GetMapping("/receive/list")
+    public ResponseEntity<List<ReceiveCouponResponseDto>> getUserCoupons(HttpServletRequest request){
+        List<ReceiveCouponResponseDto> userCoupons = couponService.getUserCoupons(request);
         return ResponseEntity.ok(userCoupons);
     }
 
