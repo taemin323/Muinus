@@ -18,17 +18,17 @@ public class RequestReceiving {
     private RequestReceivingId id;
 
     @MapsId("storeNo")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "store_no", nullable = false, insertable = false, updatable = false)
     private Store store;
 
     @MapsId("itemId")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "item_id", nullable = false, insertable = false, updatable = false)
     private Item item;
 
     @MapsId("userNo")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_no", nullable = false, insertable = false, updatable = false)
     private Users user;
 
