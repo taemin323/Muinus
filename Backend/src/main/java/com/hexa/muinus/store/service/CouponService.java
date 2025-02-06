@@ -5,7 +5,6 @@ import com.hexa.muinus.common.exception.coupon.*;
 import com.hexa.muinus.common.exception.code.BarcodeGenerationFailedException;
 import com.hexa.muinus.common.exception.code.BarcodeParsingErrorException;
 import com.hexa.muinus.common.exception.code.InvalidBarcodeDataException;
-import com.hexa.muinus.common.exception.general.UnauthorizedException;
 import com.hexa.muinus.common.exception.store.StoreNotFoundException;
 import com.hexa.muinus.common.exception.user.UserNotFoundException;
 import com.hexa.muinus.common.jwt.JwtProvider;
