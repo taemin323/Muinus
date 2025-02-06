@@ -57,8 +57,8 @@ public class RequestReceivingService {
     }
 
     @Transactional(readOnly = true)
-    public List<ItemResponseDTO> getItemRequestCounts(Long storeId) {
-        return requestReceivingRepository.findItemRequestCountsByStoreId(storeId);
+    public List<ItemResponseDTO> getItemRequestCounts(Integer storeNo) {
+        return requestReceivingRepository.findItemRequestCountsByStoreNo(storeNo);
     }
 }
 
