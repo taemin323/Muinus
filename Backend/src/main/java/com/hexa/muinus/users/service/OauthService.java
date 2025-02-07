@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hexa.muinus.common.jwt.JwtProvider;
 import com.hexa.muinus.users.domain.user.Users;
 import com.hexa.muinus.users.domain.user.repository.UserRepository;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,15 +14,14 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.server.ResponseStatusException;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class OauthService {
 
+    private final UserService userService;
     private final UserRepository userRepository;
-    private final JwtProvider jwtProvider;
 
     @Value("${spring.security.oauth2.client.registration.kakao.client-id}")
     private String clientId;
@@ -35,6 +35,26 @@ public class OauthService {
     @Value("${spring.security.oauth2.client.provider.kakao.user-info-uri}")
     private String profileUrl;
 
+    @Value("${spring.security.oauth2.client.registration.kakao.authorization-grant-type}")
+    private String authorizationGrantType;
+
+    @Value("${spring.security.oauth2.client.provider.kakao.authorization-uri}")
+    private String authorizationUri;
+
+    @Value("${spring.front.url}")
+    private String frontUrl;
+
+    public void  getAuthorizationCode(HttpServletResponse response) {
+        try {
+            response.sendRedirect(authorizationUri
+                    + "?client_id=" + clientId
+                    + "&redirect_uri=" + redirectUrl
+                    + "&response_type=code");
+        } catch (Exception e) {
+
+        }
+    }
+
     /**
      * 카카오로부터 액세스 토큰 발급
      * @param authorizationCode
@@ -45,7 +65,7 @@ public class OauthService {
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
-        body.add("grant_type", "authorization_code");
+        body.add("grant_type", authorizationGrantType);
         body.add("client_id", clientId);
         body.add("redirect_uri", redirectUrl);
         body.add("code", authorizationCode);
@@ -77,7 +97,7 @@ public class OauthService {
      * @param accessToken
      * @return
      */
-    public String getUserKakaoProfile(String accessToken) {
+    public String getUserKakaoProfile(String accessToken) throws Exception {
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
 
@@ -101,7 +121,7 @@ public class OauthService {
         try {
             userEmail = objectMapper.readTree(responseEntity.getBody()).get("kakao_account").get("email").asText();
         } catch (Exception e) {
-            log.error("사용자 이메일 정보 요청 실패");
+            throw new Exception();
         }
         return userEmail;
     }
@@ -112,13 +132,27 @@ public class OauthService {
      * @return
      */
     @Transactional(readOnly = true)
-    public Users findUser(String userEmail) {
-        Users user = userRepository.findByEmail(userEmail);
+    public Users findUser(String userEmail, HttpServletResponse response) throws Exception {
+        Users user = userService.findUserByEmail(userEmail);
         // 사용자 존재 여부 확인
         if (user == null) {
-            // 사용자 미존재 시 403 에러 반환
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+            // 회원가입 안되어있을 시 회원가입 페이지로 리다이렉트
+                response.sendRedirect(frontUrl + "/signup");
         }
-        return userRepository.findByEmail(userEmail);
+        return userService.findUserByEmail(userEmail);
+    }
+
+    public void redirectToMainPage(HttpServletResponse response) throws Exception{
+        response.sendRedirect(frontUrl);
+    }
+
+    /**
+     * 로그아웃
+     * @param user
+     */
+    public void deleteRefreshToken(Users user) {
+
+        user.setRefreshToken(null);
+        userRepository.save(user);
     }
 }

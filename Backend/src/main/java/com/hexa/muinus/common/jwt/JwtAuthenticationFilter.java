@@ -6,7 +6,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -24,6 +23,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
         String path = request.getRequestURI();
         List<String> excludePatterns = List.of(
+                "/favicon.ico",
+                "/api/users/kauth",
                 "/api/users/consumer",
                 "/api/users/store-owner",
                 "/api/users/logout",
@@ -31,8 +32,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 "/api/users/reissue",
                 "/api/store/list**",
                 "/api/store/detail**",
-                "/api/barcode**",
-                "/api/section**"
+                "/api/kiosk/**"
         );
         // 특정 경로를 무시하도록 설정
         return excludePatterns.stream().anyMatch(pattern -> path.matches(pattern.replace("**", ".*")));
@@ -41,6 +41,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
+        log.info("uri : {} ",request.getRequestURI());
         log.info("JWT Authentication Filter");
         String accessToken = jwtProvider.getCookieValue(request, "AccessToken");
         log.info("JWT Access Token: {}", accessToken);

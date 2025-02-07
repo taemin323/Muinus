@@ -37,6 +37,9 @@ public class FliItem {
     @Column(name = "quantity", nullable = false)
     private Integer quantity = 1;
 
+    @Column(name= "image_path", nullable = false, length = 500)
+    private String imagePath;
+
     @Column(name = "section_id", nullable = false, columnDefinition = "TINYINT UNSIGNED")
     private Integer sectionId;
 
@@ -44,7 +47,7 @@ public class FliItem {
     @Column(nullable = false, columnDefinition = "ENUM('PENDING', 'APPROVED', 'REJECTED', 'SELLING', 'SOLD')")
     private FliItemStatus status = FliItemStatus.PENDING;
 
-    @Column(name = "application_date", nullable = false, updatable = false, insertable = false)
+    @Column(name = "application_date", nullable = false)
     private LocalDateTime applicationDate;
 
     @Column(name = "expiration_date", nullable = false)

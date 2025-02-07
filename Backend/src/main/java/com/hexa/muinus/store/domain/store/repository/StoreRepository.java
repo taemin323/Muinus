@@ -1,8 +1,8 @@
 package com.hexa.muinus.store.domain.store.repository;
 
 import com.hexa.muinus.store.domain.store.Store;
-import com.hexa.muinus.store.dto.StoreDTO;
-import com.hexa.muinus.store.dto.StoreSearchDTO;
+import com.hexa.muinus.store.dto.store.StoreDTO;
+import com.hexa.muinus.store.dto.store.StoreSearchProjection;
 import com.hexa.muinus.users.domain.user.Users;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -15,25 +15,34 @@ import java.util.Optional;
 
 public interface StoreRepository extends JpaRepository<Store, Integer> {
 
-    Optional<Store> findByLocationXAndLocationY(BigDecimal locationX, BigDecimal locationY);
+    Store findByLocationXAndLocationY(BigDecimal locationX, BigDecimal locationY);
+    Store findByRegistrationNo(String registrationNo);
+    Store findByUser(Users users);
     Optional<Store> findByUserAndStoreNo(Users user, Integer storeNo);
+    Optional<Store> findByUser_UserNoAndStoreNo(Integer userNo, Integer storeNo);
+    Optional<Store> findByUser_Email(String email);
+
 
     @Query(value = """
-            SELECT new com.hexa.muinus.store.dto.StoreSearchDTO(
-                s.storeNo, s.name, s.locationX, s.locationY, 
-                s.address, s.phone, i.itemName, si.salePrice, 
-                si.discountRate, (si.salePrice * (100 - si.discountRate) / 100), 
-                si.quantity, s.flimarketYn
-            )
-            FROM Store s
-            JOIN StoreItem si ON s.storeNo = si.store.storeNo
-            JOIN Item i ON si.item.itemId = i.itemId
-            WHERE i.itemId = :itemId
-        """)
-    List<StoreSearchDTO> findStoresByItemId(@Param("itemId") Integer itemId);
+        SELECT 	s.store_no AS storeNo, s.name AS name, s.location_x AS locationX, s.location_y AS locationY,
+                s.address AS address, s.phone AS phone, i.item_name AS itemName, si.sale_price AS salePrice,
+                si.discount_rate AS discountRate, si.quantity AS quantity, s.flimarket_yn AS flimarketYn,
+                SQRT(POW((s.location_y - :y) * 111, 2) + POW((s.location_x - :x) * 111 * COS(RADIANS(:x)), 2)) * 1000 AS distance
+         FROM store s
+         JOIN store_item si ON si.store_no = s.store_no
+         AND	 si.item_id = :itemId
+         JOIN item i ON i.item_id = si.item_id
+         WHERE SQRT(POW((s.location_y - :y) * 111, 2) + POW((s.location_x - :x) * 111 * COS(RADIANS(:x)), 2)) * 1000 <= :radius
+         AND   si.quantity > 0
+         ORDER BY distance
+    """, nativeQuery = true)
+    List<StoreSearchProjection> findStoresByItemIdAndRadius(@Param("itemId") Integer itemId,
+                                                     @Param("x") Double x,
+                                                     @Param("y") Double y,
+                                                     @Param("radius") int radius);
 
     @Query("""
-        SELECT new com.hexa.muinus.store.dto.StoreDTO(
+        SELECT new com.hexa.muinus.store.dto.store.StoreDTO(
             s.storeNo, s.user.userNo, s.name, 
             s.address, s.storeImageUrl, s.phone, s.flimarketYn
         )
@@ -41,9 +50,12 @@ public interface StoreRepository extends JpaRepository<Store, Integer> {
         WHERE s.storeNo = :storeNo
     """)
     Optional<StoreDTO> findStoreDTOById(@Param("storeNo") int storeNo);
+    // 가게 이름으로 store_no 조회
+    @Query("SELECT s.storeNo FROM Store s WHERE s.name = :storeName")
+    Optional<Integer> findStoreNoByName(@Param("storeName") String storeName);
 
     @Modifying
-    @Query(value = "INSERT INTO store (user_no, name, location, address, registration_no, flimarket_yn, flimarket_section_cnt) " +
-            "VALUES (:userNo, :name, POINT(:longitude, :latitude), :address, :registrationNo, :flimarketYn, :fliMarketSectionCount)", nativeQuery = true)
+    @Query(value = "INSERT INTO store (user_no, name, location_x, location_y, address, registration_no, flimarket_yn, flimarket_section_cnt) " +
+            "VALUES (:userNo, :name, :longitude, :latitude, :address, :registrationNo, :flimarketYn, :fliMarketSectionCount)", nativeQuery = true)
     int saveStore(Integer userNo, String name, Double longitude, Double latitude, String address, String registrationNo, String flimarketYn, Byte fliMarketSectionCount);
 }

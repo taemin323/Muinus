@@ -1,10 +1,10 @@
 package com.hexa.muinus.common.exception;
 
-import org.springframework.http.HttpStatus;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.http.ResponseEntity;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -12,39 +12,43 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-    @ExceptionHandler(UserNotFoundException.class)
-    public ResponseEntity<String> handleUserNotFoundException(UserNotFoundException e) {
-        return ResponseEntity.status(e.getStatusCode()).body(e.getMessage());
-    }
 
-    @ExceptionHandler(StoreNotFoundException.class)
-    public ResponseEntity<String> handleStoreNotFoundException(StoreNotFoundException e) {
-        return ResponseEntity.status(e.getStatusCode()).body(e.getMessage());
-    }
-
-    @ExceptionHandler(StoreLocationDuplicateException.class)
-    public ResponseEntity<String> handleStoreLocationDuplicateException(StoreLocationDuplicateException e) {
-        return ResponseEntity.status(e.getStatusCode()).body(e.getMessage());
-    }
-
+    /**
+     * MuinusException 예외 처리
+     */
     @ExceptionHandler(MuinusException.class)
     public ResponseEntity<Map<String, Object>> handleMuinusException(MuinusException e) {
+        log.error("MuinusException 발생: {} | details: {}", e.getErrorCode().getMessage(), e.getDetails());
+
         Map<String, Object> errorDetails = new HashMap<>();
-        errorDetails.put("message", e.getMessage());
-        errorDetails.put("statusCode", e.getStatusCode());
-        return ResponseEntity.status(e.getStatusCode()).body(errorDetails);
+        errorDetails.put("errorCode", e.getErrorCode().getCode());  // 커스텀 에러 코드 반환
+        errorDetails.put("message", e.getErrorCode().getMessage()); // 기본 메시지 반환
+        errorDetails.put("details", e.getDetails()); // 추가 정보 포함
+        errorDetails.put("timestamp", LocalDateTime.now());
+
+        return ResponseEntity.status(e.getErrorCode().getCode() / 100)
+                .body(errorDetails);
     }
 
-    // Validation 에러
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Object> handleValidationExceptions(MethodArgumentNotValidException ex) {
-        Map<String, Object> body = new HashMap<>();
-        body.put("timestamp", LocalDateTime.now());
-        body.put("status", HttpStatus.BAD_REQUEST.value());
-        body.put("error", "Validation Failed");
 
+
+
+    /**
+     * Validation 예외 처리 (MethodArgumentNotValidException)
+     */
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<Map<String, Object>> handleValidationExceptions(MethodArgumentNotValidException ex) {
+        log.error("Validation 예외 발생: {}", ex.getMessage());
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("errorCode", ErrorCode.INVALID_INPUT.getCode());
+        response.put("timestamp", LocalDateTime.now());
+        response.put("message", ErrorCode.INVALID_INPUT.getMessage());
+
+        // 필드별 오류 메시지 추가
         List<Map<String, String>> fieldErrors = ex.getBindingResult().getFieldErrors().stream()
                 .map(fieldError -> {
                     Map<String, String> error = new HashMap<>();
@@ -53,18 +57,26 @@ public class GlobalExceptionHandler {
                     return error;
                 })
                 .collect(Collectors.toList());
-        body.put("fieldErrors", fieldErrors);
+        response.put("fieldErrors", fieldErrors);
 
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
+        return ResponseEntity.status(ErrorCode.INVALID_INPUT.getCode() / 100)
+                .body(response);
     }
 
+    /**
+     * 모든 예외 (Exception) 처리 (서버 내부 오류)
+     */
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<Object> handleGlobalExceptions(Exception ex) {
-        Map<String, Object> body = new HashMap<>();
-        body.put("timestamp", LocalDateTime.now());
-        body.put("status", HttpStatus.INTERNAL_SERVER_ERROR.value());
-        body.put("error", "Unexpected Error");
-        body.put("message", ex.getMessage());
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(body);
+    public ResponseEntity<Map<String, Object>> handleGlobalExceptions(Exception ex) {
+        log.error("Unhandled 예외 발생: {}", ex.getMessage(), ex);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("timestamp", LocalDateTime.now());
+        response.put("errorCode", ErrorCode.INTERNAL_SERVER_ERROR.getCode());
+        response.put("details", "Unexpected Error");
+        response.put("message", ex.getMessage());
+
+        return ResponseEntity.status(ErrorCode.INTERNAL_SERVER_ERROR.getCode() / 100)
+                .body(response);
     }
 }

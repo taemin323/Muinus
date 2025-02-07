@@ -1,10 +1,12 @@
 package com.hexa.muinus.store.service;
 
-import com.hexa.muinus.store.dto.ItemDto;
-import com.hexa.muinus.store.domain.item.repository.ItemRepository;
+import com.hexa.muinus.common.exception.item.ItemNotFoundException;
 import com.hexa.muinus.store.domain.item.Item;
+import com.hexa.muinus.store.domain.item.repository.ItemRepository;
+import com.hexa.muinus.store.dto.ItemDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -33,7 +35,7 @@ public class ItemService {
     public Item updateItem(Integer id, ItemDto updatedItem) {
 
         Item item = itemRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("해당 상품이 존재하지 않습니다."));
+                .orElseThrow(() -> new ItemNotFoundException(id));
 
         item.setBarcode(updatedItem.getBarcode());
         item.setItemName(updatedItem.getItemName());
@@ -64,7 +66,7 @@ public class ItemService {
      */
     public Item getItem(Integer id) {
         Optional<Item> item = itemRepository.findById(id);
-        return item.orElseThrow(() -> new IllegalArgumentException("해당 상품이 존재하지 않습니다."));
+        return item.orElseThrow(() -> new ItemNotFoundException(id));
     }
 
     /**
@@ -73,6 +75,11 @@ public class ItemService {
      */
     public List<Item> getAllItems() {
         return itemRepository.findAll();
+    }
+
+    public Item findItemByBarcode(String barcode) {
+        return itemRepository.findItemByBarcode(barcode)
+                .orElseThrow(() -> new ItemNotFoundException(barcode));
     }
 }
 
