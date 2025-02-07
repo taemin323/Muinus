@@ -294,8 +294,10 @@ public class CouponService {
             throw new CouponExpiredException(couponHistory.getExpirationDate());
         }
 
-        //할인 후 결과 반환
-        return new CouponBarcodeCheckResponseDto(couponId, storeNo, userNo, "매장에 유효한 쿠폰입니다.");
+        //discountRate 추출
+        Integer discountRate = couponHistory.getCoupon().getDiscountRate();
+
+        return new CouponBarcodeCheckResponseDto(couponId, storeNo, userNo, discountRate, "매장에 유효한 쿠폰입니다.");
     }
 
     @Transactional
