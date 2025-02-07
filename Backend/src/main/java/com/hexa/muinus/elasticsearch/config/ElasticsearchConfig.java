@@ -81,7 +81,7 @@ public class ElasticsearchConfig {
      * ElasticsearchOperations 빈 생성
      * - 새로운 ElasticsearchTemplate은 org.springframework.data.elasticsearch.client.elc 패키지에 있습니다.
      */
-    @Bean
+    @Bean("elasticsearchTemplate")
     public ElasticsearchOperations elasticsearchOperations(ElasticsearchClient client, ElasticsearchConverter converter) {
         return new ElasticsearchTemplate(client, converter);
     }
