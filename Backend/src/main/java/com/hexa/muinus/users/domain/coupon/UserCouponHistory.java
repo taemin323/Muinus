@@ -39,5 +39,14 @@ public class UserCouponHistory {
     @Column(name = "used_at")
     private LocalDateTime usedAt;
 
+    public static UserCouponHistory create(UserCouponHistoryId userCouponHistoryId, CouponHistory couponHistory, Users user, LocalDateTime createdAt) {
+        return UserCouponHistory.builder()
+                .id(userCouponHistoryId)
+                .couponHistory(couponHistory)
+                .user(user)
+                .createdAt(createdAt)
+                .usedAt(LocalDateTime.now())
+                .build();
+    }
 }
 

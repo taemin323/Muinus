@@ -11,6 +11,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @Getter
 @Setter
+@Builder
 public class UserCouponHistoryId implements Serializable {
 
     @Column(name = "store_no")
@@ -21,4 +22,12 @@ public class UserCouponHistoryId implements Serializable {
 
     @Column(name = "user_no")
     private int userNo;
+
+    public static UserCouponHistoryId create(Integer storeNo, Integer couponId, Integer userNo) {
+        return UserCouponHistoryId.builder()
+                .userNo(userNo)
+                .storeNo(storeNo)
+                .couponId(couponId)
+                .build();
+    }
 }
