@@ -1,9 +1,10 @@
 package com.hexa.muinus.elasticsearch.domain;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.elasticsearch.annotations.*;
 import lombok.Data;
-
+import org.springframework.data.annotation.Id;
+import org.springframework.data.elasticsearch.annotations.Document;
+import org.springframework.data.elasticsearch.annotations.Field;
+import org.springframework.data.elasticsearch.annotations.FieldType;
 import java.time.LocalDateTime;
 
 @Data
@@ -11,12 +12,13 @@ import java.time.LocalDateTime;
 public class ESItem {
 
     @Id
+    @Field(name = "item_id", type = FieldType.Long)
     private Integer itemId;
 
     @Field(name = "barcode", type = FieldType.Keyword)
     private String barcode;
 
-    @Field(name = "item_name", type = FieldType.Text)
+    @Field(name = "item_name", type = FieldType.Text, analyzer = "standard")
     private String itemName;
 
     @Field(name = "brand", type = FieldType.Keyword)
@@ -28,8 +30,8 @@ public class ESItem {
     @Field(name = "protein", type = FieldType.Integer)
     private Integer protein;
 
-    @Field(name = "fat", type = FieldType.Float) // 데이터 타입을 Float으로 변경
-    private Float fat;
+    @Field(name = "fat", type = FieldType.Integer)
+    private Integer fat;
 
     @Field(name = "carbohydrate", type = FieldType.Integer)
     private Integer carbohydrate;
@@ -43,9 +45,9 @@ public class ESItem {
     @Field(name = "item_image_url", type = FieldType.Keyword)
     private String itemImageUrl;
 
-    @Field(name = "updated_at", type = FieldType.Date, format = DateFormat.date_optional_time)
+    @Field(name = "updated_at", type = FieldType.Date)
     private LocalDateTime updatedAt;
 
-//    @CompletionField(maxInputLength = 100)
-//    private Completion suggest;
+    @Field(name = "suggest")
+    private Object suggest;
 }
