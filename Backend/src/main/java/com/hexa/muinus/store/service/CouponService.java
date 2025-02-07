@@ -178,19 +178,19 @@ public class CouponService {
     }
 
     @Transactional
-    public UseCouponResponseDto useCoupon(UseCouponRequestDto useCouponRequestDto) {
+    public CouponBarcodeResponseDto createCouponBarcode(CouponBarcodeRequestDto couponBarcodeRequestDto) {
 
         // 사용 가능한 쿠폰 조회
         UserCouponHistory userCouponHistory = userCouponHistoryRepository.findById_UserNoAndId_CouponIdAndId_StoreNoAndUsedAtIsNull(
-                useCouponRequestDto.getUserNo(),
-                useCouponRequestDto.getCouponId(),
-                useCouponRequestDto.getStoreNo()
+                couponBarcodeRequestDto.getUserNo(),
+                couponBarcodeRequestDto.getCouponId(),
+                couponBarcodeRequestDto.getStoreNo()
         ).orElseThrow(AvailableCouponNotFoundException::new);
 
         // 쿠폰 히스토리 ID 생성
         CouponHistoryId couponHistoryId = new CouponHistoryId(
-                useCouponRequestDto.getStoreNo(),
-                useCouponRequestDto.getCouponId()
+                couponBarcodeRequestDto.getStoreNo(),
+                couponBarcodeRequestDto.getCouponId()
         );
 
         // 쿠폰 히스토리 조회
@@ -206,36 +206,33 @@ public class CouponService {
         // 바코드 생성
         String barcode;
         try {
-            String barcodeData = generateBarCodeData(useCouponRequestDto);
+            String barcodeData = generateBarCodeData(couponBarcodeRequestDto);
             barcode = BarCodeGenerator.generateBarCodeImage(barcodeData, 300, 100);//바코드 크기
         } catch (WriterException | IOException e){
             throw new BarcodeGenerationFailedException();
         }
 
-        // 쿠폰 사용 처리(사용 시간 기록 및 상태 업데이트)
-        userCouponHistory.setUsedAt(LocalDateTime.now());
-        userCouponHistoryRepository.save(userCouponHistory);
-
-        return new UseCouponResponseDto(barcode);
+        return new CouponBarcodeResponseDto(barcode);
     }
 
     /**
      * 바코드에 포함될 데이터를 생성하는 메서드.
      *
-     * @param useCouponRequestDto 쿠폰 사용 요청 DTO
+     * @param couponBarcodeRequestDto 쿠폰 사용 요청 DTO
      * @return 바코드 데이터 문자열
      */
-    private String generateBarCodeData(UseCouponRequestDto useCouponRequestDto){
+    private String generateBarCodeData(CouponBarcodeRequestDto couponBarcodeRequestDto){
         return String.format("coupon_id:%d,store_no:%d,user_no:%d",
-                useCouponRequestDto.getCouponId(),
-                useCouponRequestDto.getStoreNo(),
-                useCouponRequestDto.getUserNo()
+                couponBarcodeRequestDto.getCouponId(),
+                couponBarcodeRequestDto.getStoreNo(),
+                couponBarcodeRequestDto.getUserNo()
         );
     }
 
     @Transactional
-    public ApplyDiscountResponseDto applyDiscount(ApplyDisCountRequestDto applyDisCountRequestDto){
-        String barcodeData = applyDisCountRequestDto.getBarcodeData();
+    public CouponBarcodeCheckResponseDto checkCouponBarcode(HttpServletRequest request, CouponBarcodeCheckRequestDto couponBarcodeCheckRequestDto){
+
+        String barcodeData = couponBarcodeCheckRequestDto.getBarcodeData();
 
         // 바코드 데이터 파싱
         String[] dataParts = barcodeData.split(",");
@@ -268,6 +265,19 @@ public class CouponService {
             throw new BarcodeParsingErrorException();
         }
 
+        // 키오스크에 로그인된 email 추출
+        String email = jwtProvider.getUserEmailFromAccessToken(request);
+        //로그인 유저 조회
+        Users user = userRepository.findByEmail(email);
+
+        // user로 store 조회
+        Store store = storeRepository.findByUser(user);
+
+        // 이 키오스크(판매점)이랑 쿠폰의 storeNo가 일치하는지
+        if(store.getStoreNo() != storeNo){
+            throw new CouponNotFoundException();
+        }
+
         // 조건에 맞는 사용 가능한 쿠폰 조회
         UserCouponHistory userCouponHistory = userCouponHistoryRepository
                 .findById_UserNoAndId_CouponIdAndId_StoreNoAndUsedAtIsNull(
@@ -284,13 +294,10 @@ public class CouponService {
             throw new CouponExpiredException(couponHistory.getExpirationDate());
         }
 
-        //할인율 적용
+        //discountRate 추출
         Integer discountRate = couponHistory.getCoupon().getDiscountRate();
-        Integer originalAmount = applyDisCountRequestDto.getTotalAmount();
-        Integer discountedAmount = originalAmount * (1 - (discountRate/100));
 
-        //할인 후 결과 반환
-        return new ApplyDiscountResponseDto(discountedAmount, "할인 적용이 완료되었습니다.");
+        return new CouponBarcodeCheckResponseDto(couponId, storeNo, userNo, discountRate, "매장에 유효한 쿠폰입니다.");
     }
 
     @Transactional

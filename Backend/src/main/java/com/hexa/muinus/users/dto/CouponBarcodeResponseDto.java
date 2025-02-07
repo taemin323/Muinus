@@ -6,6 +6,6 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @AllArgsConstructor
-public class UseCouponResponseDto {
+public class CouponBarcodeResponseDto {
     private String barcode;// Base64 인코딩된 바코드 이미지 데이터
 }

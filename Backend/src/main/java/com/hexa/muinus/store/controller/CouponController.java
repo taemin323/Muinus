@@ -47,18 +47,18 @@ public class CouponController {
         return ResponseEntity.ok(userCoupons);
     }
 
-    // 쿠폰 사용
-    @PostMapping("/use")
-    public ResponseEntity<UseCouponResponseDto> useCoupon(@Valid @RequestBody UseCouponRequestDto useCouponRequestDto){
-        UseCouponResponseDto responseDto = couponService.useCoupon(useCouponRequestDto);
+    // 쿠폰 바코드 생성
+    @PostMapping("/barcode")
+    public ResponseEntity<CouponBarcodeResponseDto> createCouponBarcode(@Valid @RequestBody CouponBarcodeRequestDto couponBarcodeRequestDto){
+        CouponBarcodeResponseDto responseDto = couponService.createCouponBarcode(couponBarcodeRequestDto);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(responseDto);
     }
 
-    // 할인율 적용
-    @PostMapping("/discount")
-    public ResponseEntity<ApplyDiscountResponseDto> applyDiscount(@Valid @RequestBody ApplyDisCountRequestDto applyDisCountRequestDto){
-        ApplyDiscountResponseDto responseDto = couponService.applyDiscount(applyDisCountRequestDto);
+    // 쿠폰 바코드 인식
+    @PostMapping("/check")
+        public ResponseEntity<CouponBarcodeCheckResponseDto> checkCouponBarcode(HttpServletRequest request, @Valid @RequestBody CouponBarcodeCheckRequestDto couponBarcodeCheckRequestDto){
+        CouponBarcodeCheckResponseDto responseDto = couponService.checkCouponBarcode(request, couponBarcodeCheckRequestDto);
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
 }
