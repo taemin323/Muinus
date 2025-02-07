@@ -10,6 +10,8 @@ import java.util.List;
 public class PaymentRequestDTO {
 
     private Integer storeNo;
+    private Integer userNo;
+    private Integer couponId;
     private List<ItemsForPayment> itemsForPayment;
     private List<FliItemsForPayment> fliItemsForPayment;
     private Integer totalAmount;

@@ -1,6 +1,8 @@
 package com.hexa.muinus.store.service;
 
 import com.hexa.muinus.common.jwt.JwtProvider;
+import com.hexa.muinus.store.domain.coupon.Coupon;
+import com.hexa.muinus.store.domain.coupon.CouponHistory;
 import com.hexa.muinus.store.domain.item.FliItem;
 import com.hexa.muinus.store.domain.item.Item;
 import com.hexa.muinus.store.domain.item.StoreItem;
@@ -10,9 +12,12 @@ import com.hexa.muinus.store.dto.kiosk.PaymentRequestDTO;
 import com.hexa.muinus.store.dto.kiosk.PaymentResponseDTO;
 import com.hexa.muinus.store.dto.kiosk.PutFliItemResponseDTO;
 import com.hexa.muinus.store.dto.kiosk.ScanBarcodeResponseDTO;
+import com.hexa.muinus.users.domain.coupon.UserCouponHistory;
+import com.hexa.muinus.users.domain.coupon.UserCouponHistoryId;
 import com.hexa.muinus.users.domain.user.GuestUser;
 import com.hexa.muinus.users.domain.user.Users;
 import com.hexa.muinus.users.service.GuestUserService;
+import com.hexa.muinus.users.service.UserCouponHistoryService;
 import com.hexa.muinus.users.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Slf4j
@@ -40,6 +46,9 @@ public class KioskService {
     private final TransactionsService transactionsService;
     private final FliGuestTransactionDetailsService fliGuestTransactionDetailsService;
     private final FliTransactionDetailsService fliTransactionDetailsService;
+    private final CouponHistoryService couponHistoryService;
+    private final CouponService couponService;
+    private final UserCouponHistoryService userCouponHistoryService;
 
 
     @Transactional(readOnly = true)
@@ -89,14 +98,13 @@ public class KioskService {
                 .build();
     }
 
-    // transactions 테이블에 receipt_code, store_no, user_no, totalAmount, status 저장
-    // transaction_detail 테이블 -> transaction_id, store_item_id, unit_price, quantity, sub_total
     @Transactional
     protected void processPaymentForUser(String userEmail, String receiptCode, Store store, PaymentRequestDTO requestDTO) {
         Users user = userService.findUserByEmail(userEmail);
         Transactions transactions = Transactions.create(receiptCode, store, user, requestDTO);
         transactions = transactionsService.save(transactions);
 
+        // 각 상품 구매 기록 저장
         for (int i=0;i<requestDTO.getItemsForPayment().size();i++) {
             Item item = itemService.getItem(requestDTO.getItemsForPayment().get(i).getItemId());
             StoreItem storeItem = storeItemService.findStoreItemByStoreAndItem(store, item);
@@ -104,16 +112,23 @@ public class KioskService {
             transactionDetailsService.save(transactionDetails);
         }
 
+        // 플리 마켓 상품 구매 기록 저장
         for (int i=0;i<requestDTO.getFliItemsForPayment().size();i++) {
             FliItem fliItem = fliItemService.findFliItemByStoreAndFliItemId(store, requestDTO.getFliItemsForPayment().get(i).getFliItemId());
             FliTransactionDetails fliTransactionDetails = FliTransactionDetails.create(transactions, fliItem, requestDTO, i);
             fliTransactionDetailsService.save(fliTransactionDetails);
         }
+
+        // 쿠폰 사용 여부 확인 후 사용 기록 저장
+        if (requestDTO.getCouponId() != null) { // 쿠폰 사용
+            Coupon coupon = couponService.findCouponById(requestDTO.getCouponId());
+            CouponHistory couponHistory = couponHistoryService.findByStoreAndCoupon(store, coupon);
+            UserCouponHistoryId userCouponHistoryId = UserCouponHistoryId.create(store.getStoreNo(), coupon.getCouponId(), user.getUserNo());
+            UserCouponHistory userCouponHistory = UserCouponHistory.create(userCouponHistoryId, couponHistory, user, couponHistory.getCreatedAt());
+            userCouponHistoryService.save(userCouponHistory);
+        }
     }
 
-    // guest 테이블에 guest_name 저장
-    // guest_transactions 테이블 -> receipt_code, store_no, guest_no, total_amount, status
-    // guest_transaction_detail 테이블 -> transaction_id, store_item_id, unit_price, quantity, sub_total
     @Transactional
     protected void processPaymentForGuestUser(String receiptCode, Store store, PaymentRequestDTO requestDTO) {
         GuestUser guestUser = GuestUser.builder().guestName(UUID.randomUUID().toString()).build();
