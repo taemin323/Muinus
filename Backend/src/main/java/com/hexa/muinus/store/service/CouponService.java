@@ -292,4 +292,10 @@ public class CouponService {
         //할인 후 결과 반환
         return new ApplyDiscountResponseDto(discountedAmount, "할인 적용이 완료되었습니다.");
     }
+
+    @Transactional
+    public Coupon findCouponById(Integer couponId) {
+        return couponRepository.findById(couponId)
+                .orElseThrow(() -> new CouponNotFoundException(couponId));
+    }
 }
