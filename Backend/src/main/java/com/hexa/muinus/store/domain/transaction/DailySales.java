@@ -36,18 +36,4 @@ public class DailySales {
     @Column(name = "total_amount", nullable = false)
     private int totalAmount = 0;
 
-    @Transient
-    public LocalDate getSaleDate() {
-        return id != null ? id.getSaleDate() : null;
-    }
-
-    @Transient
-    public Integer getStoreNo() {
-        return id != null ? id.getStoreNo() : null;
-    }
-
-    @Transient
-    public Integer getItemId() {
-        return id != null ? id.getItemId() : null;
-    }
 }

@@ -9,20 +9,18 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
-import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
-import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.sql.DataSource;
-import java.util.HashMap;
 
 @Configuration
 @EnableJpaRepositories(
-        basePackages = {"com.hexa.muinus.store", "com.hexa.muinus.users"},
+        basePackages = {"com.hexa.muinus"},
         entityManagerFactoryRef = "dataEntityManager",
         transactionManagerRef = "dataTransactionManager"
 )
+
 public class DataDBConfig {
 
     @Primary
@@ -46,7 +44,7 @@ public class DataDBConfig {
             @Qualifier("dataDBSource") DataSource dataSource) {
         return builder
                 .dataSource(dataSource)
-                .packages("com.hexa.muinus.store", "com.hexa.muinus.users") // ✅ 운영 DB 관련 엔티티 패키지
+                .packages("com.hexa.muinus")
                 .persistenceUnit("data")
                 .build();
     }
