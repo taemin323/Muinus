@@ -42,7 +42,7 @@ public interface StoreRepository extends JpaRepository<Store, Integer> {
                                                      @Param("y") Double y,
                                                      @Param("radius") int radius);
     @Query(value = """
-        SELECT  s.store_no, s.name, s.location_x, s.location_y,
+        SELECT  s.store_no AS storeNo, s.name AS name, s.location_x AS locationX, s.location_y AS locationY,
                 SQRT(POW((s.location_y - :y) * 111, 2) + POW((s.location_x - :x) * 111 * COS(RADIANS(:x)), 2)) * 1000 AS distance
         FROM store s
         WHERE SQRT(POW((s.location_y - :y) * 111, 2) + POW((s.location_x - :x) * 111 * COS(RADIANS(:x)), 2)) < 1

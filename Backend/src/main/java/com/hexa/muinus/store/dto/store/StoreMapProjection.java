@@ -1,16 +1,11 @@
 package com.hexa.muinus.store.dto.store;
 
+import java.math.BigDecimal;
+
 public interface StoreMapProjection {
     int getStoreNo();
     String getName();
-    double getLocationX();
-    double getLocationY();
-    String getAddress();
-    String getPhone();
-    String getItemName();
-    int getSalePrice();
-    int getDiscountRate();
-    int getQuantity();
-    Character getFlimarketYn() ;
+    Double getLocationX();
+    Double getLocationY();
     double getDistance();
 }

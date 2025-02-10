@@ -90,6 +90,7 @@ public class StoreController {
      * @return List<StoreMapDTO
      *
      */
+    @GetMapping("/list/near")
     public ResponseEntity<List<StoreMapDTO>> getNearStores(BigDecimal x, BigDecimal y){
         log.info("StoreController > getNearStores");
         return ResponseEntity.ok().body(storeService.getNearStores(x, y));
