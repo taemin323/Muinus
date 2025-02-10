@@ -1,8 +1,8 @@
 package com.hexa.muinus.store.controller;
 
-import com.hexa.muinus.store.dto.coupon.CouponListResponseDto;
-import com.hexa.muinus.store.dto.coupon.CouponRequestDto;
 import com.hexa.muinus.store.dto.coupon.CouponTypeResponseDto;
+import com.hexa.muinus.store.dto.coupon.CouponRequestDto;
+import com.hexa.muinus.store.dto.coupon.CouponListResponseDto;
 import com.hexa.muinus.store.service.CouponService;
 import com.hexa.muinus.users.dto.*;
 import jakarta.servlet.http.HttpServletRequest;
@@ -48,7 +48,7 @@ public class CouponController {
         return ResponseEntity.ok("쿠폰 수령이 완료되었습니다.");
     }
 
-    // 보유 쿠폰 전체 조회
+    // 보유 쿠폰 전체 조회(소비자)
     @GetMapping("/receive/list")
     public ResponseEntity<List<ReceiveCouponResponseDto>> getUserCoupons(HttpServletRequest request){
         List<ReceiveCouponResponseDto> userCoupons = couponService.getUserCoupons(request);
