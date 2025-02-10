@@ -1,5 +1,6 @@
 package com.hexa.muinus.store.controller;
 
+import com.hexa.muinus.store.dto.information.AnnouncementDTO;
 import com.hexa.muinus.store.dto.information.AnnouncementDeleteDTO;
 import com.hexa.muinus.store.dto.information.AnnouncementModifyDTO;
 import com.hexa.muinus.store.dto.information.AnnouncementWriteDTO;
@@ -135,6 +136,19 @@ public class StoreController {
     public ResponseEntity<Void> deleteAnnouncement(@Valid @RequestBody AnnouncementDeleteDTO announcementDeleteDTO){
         log.info("StoreController > deleteAnnouncement: {}", announcementDeleteDTO);
         storeService.removeAnnouncement(announcementDeleteDTO);
+        return ResponseEntity.ok().build();
+    }
+
+    /**
+     * 공지사항 목록
+     * @param userEmail 이메일
+     * @return List<AnnouncementDTO>
+     * - 성공 : 200(OK)
+     * - 실패 : Exception
+     */
+    @GetMapping("/board/list")
+    public ResponseEntity<List<AnnouncementDTO>> getAnnouncements(@RequestParam("email") String userEmail){
+        log.info("StoreController > getAnnouncementList: {}", userEmail);
         return ResponseEntity.ok().build();
     }
 
