@@ -13,6 +13,7 @@ import com.hexa.muinus.store.domain.coupon.repository.CouponHistoryRepository;
 import com.hexa.muinus.store.domain.coupon.repository.CouponRepository;
 import com.hexa.muinus.store.domain.store.Store;
 import com.hexa.muinus.store.dto.coupon.CouponListResponseDto;
+import com.hexa.muinus.store.dto.coupon.CouponTypeResponseDto;
 import com.hexa.muinus.users.domain.coupon.repository.UserCouponHistoryRepository;
 import com.hexa.muinus.store.domain.coupon.Coupon;
 import com.hexa.muinus.store.domain.coupon.CouponHistory;
@@ -49,10 +50,10 @@ public class CouponService {
     private final JwtProvider jwtProvider;
 
     @Transactional(readOnly = true)
-    public List<CouponListResponseDto> getCouponList() {
-        List<Coupon> couponList = couponRepository.findAll();
-        List<CouponListResponseDto> response = couponList.stream()
-                .map(coupon -> new CouponListResponseDto(coupon.getCouponId(), coupon.getName(), coupon.getDiscountRate(), coupon.getContent()))
+    public List<CouponTypeResponseDto> getCouponType() {
+        List<Coupon> couponType = couponRepository.findAll();
+        List<CouponTypeResponseDto> response = couponType.stream()
+                .map(coupon -> new CouponTypeResponseDto(coupon.getCouponId(), coupon.getName(), coupon.getDiscountRate(), coupon.getContent()))
                 .collect(Collectors.toList());
         return response;
     }
@@ -91,6 +92,28 @@ public class CouponService {
                     .createdAt(LocalDateTime.now())
                     .build();
             couponHistoryRepository.save(couponHistory);
+
+    }
+
+    @Transactional(readOnly = true)
+    public List<CouponListResponseDto> getCouponList(Integer storeNo) {
+
+        // 가게 번호와 맞는 쿠폰들 전체 조회
+        List<CouponHistory> couponHistories = couponHistoryRepository.findById_StoreNo(storeNo);
+        return couponHistories.stream()
+                .map(ch -> {
+                    // CouponHistory -> Coupon 참조
+                    Coupon coupon = ch.getCoupon();
+
+                    // CouponHistory에서 만료일, Coupon에서 name, discountRate, content 추출
+                    return new CouponListResponseDto(
+                            coupon.getName(),
+                            coupon.getDiscountRate(),
+                            coupon.getContent(),
+                            ch.getExpirationDate()
+                    );
+                })
+                .toList();
 
     }
 
@@ -305,4 +328,5 @@ public class CouponService {
         return couponRepository.findById(couponId)
                 .orElseThrow(() -> new CouponNotFoundException(couponId));
     }
+
 }
