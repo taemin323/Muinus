@@ -328,4 +328,5 @@ public class CouponService {
         return couponRepository.findById(couponId)
                 .orElseThrow(() -> new CouponNotFoundException(couponId));
     }
+
 }
