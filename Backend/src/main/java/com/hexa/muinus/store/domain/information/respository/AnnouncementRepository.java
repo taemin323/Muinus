@@ -17,6 +17,7 @@ public interface AnnouncementRepository extends JpaRepository<Announcement, Inte
     SELECT new com.hexa.muinus.store.dto.information.AnnouncementDTO(
         a.boardId, a.title, a.content, a.boardImageUrl, a.createdAt, a.updatedAt)
     FROM Announcement a WHERE a.store.storeNo = :storeNo
+    ORDER BY a.createdAt DESC
 """)
     List<AnnouncementDTO> findAllAnnouncementsByStoreNo(@Param("storeNo") int storeNo);
 
