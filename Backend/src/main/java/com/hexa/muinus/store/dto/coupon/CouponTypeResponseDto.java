@@ -4,14 +4,13 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CouponListResponseDto {
+public class CouponTypeResponseDto {
+    private Integer couponId;
     private String name;
     private Integer discountRate;
     private String content;
-    private LocalDateTime expirationDate;
+
 }
