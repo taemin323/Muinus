@@ -2,7 +2,7 @@ package com.hexa.muinus.store.service;
 
 import com.hexa.muinus.common.enums.YesNo;
 import com.hexa.muinus.common.exception.store.*;
-import com.hexa.muinus.common.exception.user.UserNotFoundException;
+import com.hexa.muinus.common.exception.user.*;
 import com.hexa.muinus.store.domain.information.Announcement;
 import com.hexa.muinus.store.domain.store.Store;
 import com.hexa.muinus.store.dto.fli.FliItemDTO;
@@ -38,7 +38,7 @@ public class StoreService {
      * 매장 등록
      * @param storeRegisterDTO 매장 등록 정보
      */
-    @Transactional("dataTransactionManager")
+    @Transactional
     public void registerStore(StoreRegisterDTO storeRegisterDTO) {
         log.info("Starting store registration for DTO: {}", storeRegisterDTO);
 
@@ -244,6 +244,17 @@ public class StoreService {
     public Store findStoreByStoreNo(int storeNo) {
         return storeRepository.findById(storeNo)
                 .orElseThrow(() -> new StoreNotFoundException(storeNo));
+    }
+
+    /**
+     * 이메일로 내 매장 공지사항 목록 불러오기
+     * @param userEmail 내 이메일
+     * @return 내 매장에 작성한 공지사항
+     */
+    public List<AnnouncementDTO> getAnnouncements(String userEmail) {
+        log.info("Getting announcements for userEmail: {}", userEmail);
+        Store store = findStoreByEmail(userEmail);
+        return announcementService.getAllAnnouncementsByStoreNo(store.getStoreNo());
     }
 
     /**
