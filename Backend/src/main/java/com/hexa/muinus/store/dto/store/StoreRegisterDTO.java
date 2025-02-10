@@ -42,7 +42,7 @@ public class StoreRegisterDTO {
     private String phone;
 
     @NotNull(message = "플리마켓 허용 여부를 선택해주세요.")
-    private YesNo flimarketYn;
+    private YesNo flimarketYn = YesNo.N;
 
     private String flimarketImageUrl;
 
