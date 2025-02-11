@@ -64,6 +64,11 @@ dependencies {
     //추천 시스템 관련
     implementation 'org.apache.mahout:mahout-core:0.9'
     implementation 'org.apache.mahout:mahout-integration:0.9'
+
+    //S3 관련
+    implementation 'io.awspring.cloud:spring-cloud-aws-starter-s3:3.2.1'
+    testImplementation 'software.amazon.awssdk:s3:2.30.16'
+
 }
 
 tasks.named('test') {
