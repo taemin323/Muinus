@@ -63,36 +63,30 @@ public class CouponService {
         // 이메일 추출
         String email = jwtProvider.getUserEmailFromAccessToken(request);
 
-        // 로그인 유저 조회
-        Users user = userRepository.findByEmail(email);
+        // 점주 유저만 쿠폰 생성 가능 -> Store에 userNo가 있는 user만 가능
+        Store store = storeService.findStoreByEmail(email);
 
-        // 점주 유저만 쿠폰 생성 가능
-        if(user.getUserType() != Users.UserType.A){
-            throw new CouponAccessForbiddenException();
-        }
-            Store store = storeService.findStoreByUser(user);
+        // 쿠폰이 존재하는지 확인
+        Coupon coupon = couponRepository.findById(couponRequestDto.getCouponId())
+                .orElseThrow(() -> new CouponNotFoundException(couponRequestDto.getCouponId()));
 
-            // 쿠폰이 존재하는지 확인
-            Coupon coupon = couponRepository.findById(couponRequestDto.getCouponId())
-                    .orElseThrow(() -> new CouponNotFoundException(couponRequestDto.getCouponId()));
+        // 복합 키 생성
+        CouponHistoryId couponHistoryId = CouponHistoryId.builder()
+                .storeNo(store.getStoreNo())
+                .couponId(coupon.getCouponId())
+                .build();
 
-            // 복합 키 생성
-            CouponHistoryId couponHistoryId = CouponHistoryId.builder()
-                    .storeNo(store.getStoreNo())
-                    .couponId(coupon.getCouponId())
-                    .build();
+        // 쿠폰 발급 내역 생성
+        CouponHistory couponHistory = CouponHistory.builder()
+                .id(couponHistoryId)
+                .store(store)
+                .coupon(coupon)
+                .count(couponRequestDto.getCount())
+                .expirationDate(couponRequestDto.getExpirationDate())
+                .createdAt(LocalDateTime.now())
+                .build();
 
-            // 쿠폰 발급 내역 생성
-            CouponHistory couponHistory = CouponHistory.builder()
-                    .id(couponHistoryId)
-                    .store(store)
-                    .coupon(coupon)
-                    .count(couponRequestDto.getCount())
-                    .expirationDate(couponRequestDto.getExpirationDate())
-                    .createdAt(LocalDateTime.now())
-                    .build();
-            couponHistoryRepository.save(couponHistory);
-
+        couponHistoryRepository.save(couponHistory);
     }
 
     @Transactional(readOnly = true)
@@ -100,9 +94,8 @@ public class CouponService {
         // 이메일 추출
         String email = jwtProvider.getUserEmailFromAccessToken(request);
 
-        // 로그인 유저 조회 후 스토어 가져오기
-        Users user = userRepository.findByEmail(email);
-        Store store = storeRepository.findByUser(user);
+        // 점주 유저만 쿠폰 생성 가능 -> Store에 userNo가 있는 user만 가능
+        Store store = storeService.findStoreByEmail(email);
 
         // 가게 번호와 맞는 쿠폰들 전체 조회
         List<CouponHistory> couponHistories = couponHistoryRepository.findById_StoreNo(store.getStoreNo());
@@ -113,6 +106,8 @@ public class CouponService {
 
                     // CouponHistory에서 수량, 만료일, Coupon에서 name, discountRate, content 추출
                     return new CouponListResponseDto(
+                            store.getStoreNo(),
+                            coupon.getCouponId(),
                             coupon.getName(),
                             coupon.getDiscountRate(),
                             ch.getCount(),
@@ -121,31 +116,38 @@ public class CouponService {
                     );
                 })
                 .toList();
-
     }
 
     @Transactional
-    public void receiveCoupon(ReceiveCouponRequestDto receiveCouponRequestDto) {
+    public void receiveCoupon(HttpServletRequest request, ReceiveCouponRequestDto receiveCouponRequestDto) {
+        // 이메일 추출
+        String email = jwtProvider.getUserEmailFromAccessToken(request);
+
+        // 로그인 유저 확인
+        Users user = userRepository.findByEmail(email);
+        Integer userNo = user.getUserNo();
+
+        Integer storeNo = receiveCouponRequestDto.getStoreNo();
+        Integer couponId = receiveCouponRequestDto.getCouponId();
+
         // 가게 존재 여부 확인
-        boolean storeExists = storeRepository.existsById(receiveCouponRequestDto.getStoreNo());
+        boolean storeExists = storeRepository.existsById(storeNo);
         if(!storeExists) {
-            throw new StoreNotFoundException(receiveCouponRequestDto.getStoreNo());
+            throw new StoreNotFoundException(storeNo);
         }
 
         // 쿠폰 존재 여부 확인
-        Coupon coupon = couponRepository.findById((receiveCouponRequestDto.getCouponId()))
-                .orElseThrow(() -> new CouponNotFoundException(receiveCouponRequestDto.getCouponId()));
-
-        // 사용자 존재 여부 확인
-        Users user = userRepository.findById(receiveCouponRequestDto.getUserNo())
-                .orElseThrow(() -> new UserNotFoundException(receiveCouponRequestDto.getUserNo()));
+        boolean exists = couponRepository.existsById(couponId);
+        if(!exists){
+            throw new CouponNotFoundException();
+        }
 
         // 복합 키 생성
-        UserCouponHistoryId userCouponHistoryId = new UserCouponHistoryId(receiveCouponRequestDto.getStoreNo(), receiveCouponRequestDto.getCouponId(), receiveCouponRequestDto.getUserNo());
+        UserCouponHistoryId userCouponHistoryId = new UserCouponHistoryId(storeNo, couponId, userNo);
 
         // 중복 수령 방지
         if(userCouponHistoryRepository.existsById(userCouponHistoryId)){
-            throw new CouponAlreadyClaimedException(userCouponHistoryId.getStoreNo(), userCouponHistoryId.getCouponId());
+            throw new CouponAlreadyClaimedException(storeNo, couponId, userNo);
         }
 
         // CouponHistoryId 생성
@@ -165,7 +167,7 @@ public class CouponService {
         couponHistory.setCount(couponHistory.getCount() - 1);
         couponHistoryRepository.save(couponHistory);
 
-        // 새로운 쿠폰 수령
+        // 새로운 UserCouponHistory 생성.
         UserCouponHistory userCouponHistory = new UserCouponHistory(
                 userCouponHistoryId,
                 couponHistory,
@@ -211,11 +213,11 @@ public class CouponService {
     public CouponBarcodeResponseDto createCouponBarcode(CouponBarcodeRequestDto couponBarcodeRequestDto) {
 
         // 사용 가능한 쿠폰 조회
-        UserCouponHistory userCouponHistory = userCouponHistoryRepository.findById_UserNoAndId_CouponIdAndId_StoreNoAndUsedAtIsNull(
-                couponBarcodeRequestDto.getUserNo(),
-                couponBarcodeRequestDto.getCouponId(),
-                couponBarcodeRequestDto.getStoreNo()
-        ).orElseThrow(AvailableCouponNotFoundException::new);
+        UserCouponHistoryId userCouponHistoryId = new UserCouponHistoryId(couponBarcodeRequestDto.getUserNo(), couponBarcodeRequestDto.getUserNo(),couponBarcodeRequestDto.getStoreNo());
+        boolean exists = userCouponHistoryRepository.existsByIdAndUsedAtIsNull(userCouponHistoryId);
+        if(!exists){
+            throw new AvailableCouponNotFoundException();
+        }
 
         // 쿠폰 히스토리 ID 생성
         CouponHistoryId couponHistoryId = new CouponHistoryId(
@@ -297,22 +299,21 @@ public class CouponService {
 
         // 키오스크에 로그인된 email 추출
         String email = jwtProvider.getUserEmailFromAccessToken(request);
-        //로그인 유저 조회
-        Users user = userRepository.findByEmail(email);
 
-        // user로 store 조회
-        Store store = storeRepository.findByUser(user);
+        // 점주 유저만 쿠폰 생성 가능 -> Store에 userNo가 있는 user만 가능
+        Store store = storeService.findStoreByEmail(email);
 
         // 이 키오스크(판매점)이랑 쿠폰의 storeNo가 일치하는지
-        if(store.getStoreNo() != storeNo){
+        if(store.getStoreNo().equals(storeNo)){
             throw new CouponNotFoundException();
         }
 
         // 조건에 맞는 사용 가능한 쿠폰 조회
-        UserCouponHistory userCouponHistory = userCouponHistoryRepository
-                .findById_UserNoAndId_CouponIdAndId_StoreNoAndUsedAtIsNull(
-                        userNo, couponId, storeNo
-                ).orElseThrow(AvailableCouponNotFoundException::new);
+        UserCouponHistoryId userCouponHistoryId = new UserCouponHistoryId(storeNo, couponId, userNo);
+        boolean exists = userCouponHistoryRepository.existsByIdAndUsedAtIsNull(userCouponHistoryId);
+        if(!exists){
+            throw new AvailableCouponNotFoundException();
+        }
 
         // 쿠폰 히스토리 조회
         CouponHistoryId couponHistoryId = new CouponHistoryId(storeNo, couponId);
@@ -320,7 +321,8 @@ public class CouponService {
                 .orElseThrow(CouponNotIssuedException::new);
 
         // 쿠폰 유효기간 확인
-        if(couponHistory.getExpirationDate().isBefore(LocalDateTime.now())){
+        LocalDateTime now = LocalDateTime.now();
+        if(couponHistory.getExpirationDate().isBefore(now)){
             throw new CouponExpiredException(couponHistory.getExpirationDate());
         }
 
