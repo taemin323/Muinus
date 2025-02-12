@@ -18,10 +18,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLDecoder;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -75,7 +72,7 @@ public class S3ImageService {
             PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                     .bucket(bucketName)
                     .key(s3FileName)
-                    .acl("public-read")
+//                    .acl("public-read")
                     .contentType("image/" + extension)
                     .build();
 
@@ -118,7 +115,7 @@ public class S3ImageService {
             String base64Data = parts.length > 1 ? parts[1] : parts[0];
 
             // Base64 문자열을 바이트 배열로 변환
-            byte[] imageBytes = java.util.Base64.getDecoder().decode(base64Data);
+            byte[] imageBytes = Base64.getDecoder().decode(base64Data);
 
             MultipartFile multipartFile = new Base64DecodedMultipartFile(
                     imageBytes,
