@@ -11,14 +11,14 @@ import lombok.NoArgsConstructor;
 public class StoreMapDTO {
 
     private int storeNo;
-    private String name;
+    private String storeName;
     private Double locationX; // 위도
     private Double locationY; // 경도
     private Double distance; // 검색 위치와의 거리(m)
 
     public StoreMapDTO(StoreMapProjection projection) {
         this.storeNo = projection.getStoreNo();
-        this.name = projection.getName();
+        this.storeName = projection.getName();
         this.locationX = projection.getLocationX();
         this.locationY = projection.getLocationY();
         this.distance = projection.getDistance();
