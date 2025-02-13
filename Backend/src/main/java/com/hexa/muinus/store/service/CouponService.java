@@ -25,7 +25,9 @@ import com.hexa.muinus.users.domain.coupon.UserCouponHistoryId;
 import com.hexa.muinus.users.domain.user.Users;
 import com.hexa.muinus.users.domain.user.repository.UserRepository;
 import com.hexa.muinus.users.dto.*;
+import jakarta.persistence.OptimisticLockException;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -117,65 +119,94 @@ public class CouponService {
                 })
                 .toList();
     }
+    
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void decreaseCouponCount(CouponHistoryId couponHistoryId){
+        int updateRows = couponHistoryRepository.decreaseCouponCount(couponHistoryId);
+        
+        if(updateRows == 0){
+            throw new OptimisticLockException("쿠폰 감소 실패 - 재고 부족 또는 충돌 발생");
+        }
+    }
 
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void receiveCoupon(HttpServletRequest request, ReceiveCouponRequestDto receiveCouponRequestDto) {
-        // 이메일 추출
-        String email = jwtProvider.getUserEmailFromAccessToken(request);
+        int maxAttempts = 5;// 최대 재시도 횟수
+        int attempt = 0;
+        
+        while(attempt < maxAttempts){
+            try{
+                // 이메일 추출
+                String email = jwtProvider.getUserEmailFromAccessToken(request);
 
-        // 로그인 유저 확인
-        Users user = userRepository.findByEmail(email);
-        Integer userNo = user.getUserNo();
+                // 로그인 유저 확인
+                Users user = userRepository.findByEmail(email);
+                Integer userNo = user.getUserNo();
 
-        Integer storeNo = receiveCouponRequestDto.getStoreNo();
-        Integer couponId = receiveCouponRequestDto.getCouponId();
+                Integer storeNo = receiveCouponRequestDto.getStoreNo();
+                Integer couponId = receiveCouponRequestDto.getCouponId();
 
-        // 가게 존재 여부 확인
-        boolean storeExists = storeRepository.existsById(storeNo);
-        if(!storeExists) {
-            throw new StoreNotFoundException(storeNo);
+                // 가게 존재 여부 확인
+                boolean storeExists = storeRepository.existsById(storeNo);
+                if (!storeExists) {
+                    throw new StoreNotFoundException(storeNo);
+                }
+
+                // 쿠폰 존재 여부 확인
+                boolean exists = couponRepository.existsById(couponId);
+                if (!exists) {
+                    throw new CouponNotFoundException();
+                }
+
+                // 복합 키 생성
+                UserCouponHistoryId userCouponHistoryId = new UserCouponHistoryId(storeNo, couponId, userNo);
+
+                // 중복 수령 방지
+                if (userCouponHistoryRepository.existsById(userCouponHistoryId)) {
+                    throw new CouponAlreadyClaimedException(storeNo, couponId, userNo);
+                }
+
+                // CouponHistoryId 생성
+                CouponHistoryId couponHistoryId = new CouponHistoryId(
+                        receiveCouponRequestDto.getStoreNo(),
+                        receiveCouponRequestDto.getCouponId()
+                );
+
+                // 쿠폰 히스토리 조회
+                CouponHistory couponHistory = couponHistoryRepository.findById(couponHistoryId)
+                        .orElseThrow(CouponNotIssuedException::new);
+
+                // 발급 가능 수량 확인
+                if (couponHistory.getCount() <= 0) {
+                    throw new CouponOutOfStock(userCouponHistoryId.getStoreNo(), userCouponHistoryId.getCouponId());
+                }
+
+                // 쿠폰 개수 감소(트랜잭션 분리)
+                decreaseCouponCount(couponHistoryId);
+
+
+                // 새로운 UserCouponHistory 생성.
+                UserCouponHistory userCouponHistory = new UserCouponHistory(
+                        userCouponHistoryId,
+                        couponHistory,
+                        user,
+                        LocalDateTime.now(),
+                        null
+                );
+                userCouponHistoryRepository.save(userCouponHistory);
+
+                return; //성공 시 종료;
+                
+            } catch (OptimisticLockException e){
+                attempt++;
+                log.warn("낙관적 락 충돌 발생 - 재시도 {}/{}", attempt, maxAttempts);
+                
+                if(attempt >= maxAttempts){
+                    log.error("최대 재시도 횟수 초과 - 쿠폰 수령 실패");
+                    throw new RuntimeException("쿠폰 수령 중 충돌이 발생했습니다. 다시 시도해주세요");
+                }
+            }
         }
-
-        // 쿠폰 존재 여부 확인
-        boolean exists = couponRepository.existsById(couponId);
-        if(!exists){
-            throw new CouponNotFoundException();
-        }
-
-        // 복합 키 생성
-        UserCouponHistoryId userCouponHistoryId = new UserCouponHistoryId(storeNo, couponId, userNo);
-
-        // 중복 수령 방지
-        if(userCouponHistoryRepository.existsById(userCouponHistoryId)){
-            throw new CouponAlreadyClaimedException(storeNo, couponId, userNo);
-        }
-
-        // CouponHistoryId 생성
-        CouponHistoryId couponHistoryId = new CouponHistoryId(
-                receiveCouponRequestDto.getStoreNo(),
-                receiveCouponRequestDto.getCouponId()
-        );
-
-        // 쿠폰 히스토리 생성
-        CouponHistory couponHistory = couponHistoryRepository.findById(couponHistoryId)
-                .orElseThrow(CouponNotIssuedException::new);
-
-        // 발급 가능 수량 감소
-        if(couponHistory.getCount() <= 0){
-            throw new CouponOutOfStock(userCouponHistoryId.getStoreNo(), userCouponHistoryId.getCouponId());
-        }
-        couponHistory.setCount(couponHistory.getCount() - 1);
-        couponHistoryRepository.save(couponHistory);
-
-        // 새로운 UserCouponHistory 생성.
-        UserCouponHistory userCouponHistory = new UserCouponHistory(
-                userCouponHistoryId,
-                couponHistory,
-                user,
-                LocalDateTime.now(),
-                null
-        );
-        userCouponHistoryRepository.save(userCouponHistory);
     }
 
     @Transactional(readOnly = true)
