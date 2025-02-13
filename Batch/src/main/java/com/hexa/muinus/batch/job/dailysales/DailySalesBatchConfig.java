@@ -1,12 +1,12 @@
 package com.hexa.muinus.batch.job.dailysales;
 
 import com.hexa.muinus.batch.domain.DailySales;
-import com.hexa.muinus.batch.domain.Preference;
-import com.hexa.muinus.batch.exeption.BatchErrorCode;
-import com.hexa.muinus.batch.exeption.BatchProcessingException;
+import com.hexa.muinus.batch.exception.BatchErrorCode;
+import com.hexa.muinus.batch.exception.BatchProcessingException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
+import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
@@ -18,6 +18,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 
 @Slf4j
 @Configuration
+@EnableBatchProcessing(dataSourceRef = "dataDBSource", transactionManagerRef = "metaTransactionManager")
 public class DailySalesBatchConfig {
 
     private final PlatformTransactionManager transactionManager;

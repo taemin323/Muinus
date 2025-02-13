@@ -2,12 +2,15 @@ package com.hexa.muinus.batch.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Getter;
+import lombok.Data;
 
-@Getter
+import java.time.LocalDate;
+
+@Data
 @Builder
 @AllArgsConstructor
 public class PreferenceId {
     private Long userNo;
     private Long itemId;
+    private LocalDate updatedAt;
 }
