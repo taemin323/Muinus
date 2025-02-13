@@ -5,12 +5,14 @@ import com.hexa.muinus.elasticsearch.domain.ESStoreItem;
 import com.hexa.muinus.elasticsearch.service.ESItemService;
 import com.hexa.muinus.elasticsearch.dto.SearchNativeDTO;
 import com.hexa.muinus.elasticsearch.service.ItemNameSearchEngine;
+import com.hexa.muinus.nlp.service.NLPService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 @Slf4j
@@ -21,6 +23,7 @@ public class ESItemController {
 
     private final ESItemService esItemService;
     private final ItemNameSearchEngine searchEngine;
+    private final NLPService nlpService;
 
     @GetMapping("/autocomplete")
     public List<ESItem> autocomplete(@RequestParam String prefix) {
@@ -68,6 +71,10 @@ public class ESItemController {
         return searchEngine.searchByQuery(searchNativeDTO);
     }
 
+    @GetMapping("/search-query")
+    public List<String> search(@RequestParam String query) throws IOException {
+        return searchEngine.search(query);
+    }
 
 }
 

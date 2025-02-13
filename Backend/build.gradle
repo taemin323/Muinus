@@ -46,6 +46,12 @@ dependencies {
 
     //ElasticSearch 관련
     implementation 'org.springframework.boot:spring-boot-starter-data-elasticsearch:3.4.1'
+    implementation 'org.openkoreantext:open-korean-text:2.2.0'
+    implementation 'com.fasterxml.jackson.core:jackson-core:2.18.2'
+
+//    implementation 'org.elasticsearch.client:elasticsearch-java:7.17.9'
+
+
 
 
     // 배치
