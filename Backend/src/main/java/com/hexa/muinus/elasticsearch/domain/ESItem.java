@@ -45,9 +45,12 @@ public class ESItem {
     @Field(name = "item_image_url", type = FieldType.Keyword)
     private String itemImageUrl;
 
-    @Field(name = "updated_at", type = FieldType.Date)
-    private LocalDateTime updatedAt;
+//    @Field(name = "updated_at", type = FieldType.Date)
+//    private LocalDateTime updatedAt;
+//
+//    @Field(name = "suggest")
+//    private Object suggest;
 
-    @Field(name = "suggest")
-    private Object suggest;
+    @Field(name = "item_keyword")
+    private String itemKeyword;
 }

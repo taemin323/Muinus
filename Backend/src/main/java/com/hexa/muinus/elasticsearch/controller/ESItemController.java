@@ -5,7 +5,7 @@ import com.hexa.muinus.elasticsearch.domain.ESStoreItem;
 import com.hexa.muinus.elasticsearch.service.ESItemService;
 import com.hexa.muinus.elasticsearch.dto.SearchNativeDTO;
 import com.hexa.muinus.elasticsearch.service.ItemNameSearchEngine;
-import com.hexa.muinus.nlp.service.NLPService;
+import com.hexa.muinus.elasticsearch.service.NLPService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
