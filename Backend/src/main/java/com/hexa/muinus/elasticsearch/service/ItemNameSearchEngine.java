@@ -1,7 +1,6 @@
 package com.hexa.muinus.elasticsearch.service;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
-import co.elastic.clients.elasticsearch._types.query_dsl.Query;
 import co.elastic.clients.elasticsearch.core.SearchRequest;
 import co.elastic.clients.elasticsearch.core.SearchResponse;
 import co.elastic.clients.elasticsearch.core.search.Hit;
@@ -10,7 +9,6 @@ import com.hexa.muinus.common.exception.MuinusException;
 import com.hexa.muinus.elasticsearch.domain.ESItem;
 import com.hexa.muinus.elasticsearch.dto.SearchNativeDTO;
 import com.hexa.muinus.elasticsearch.repository.ESItemRepository;
-import com.hexa.muinus.nlp.service.NLPService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -65,14 +63,14 @@ public class ItemNameSearchEngine {
         SearchRequest.Builder searchRequestBuilder = new SearchRequest.Builder();
         searchRequestBuilder.query(q -> q.bool(b -> {
             keywords.forEach(keyword -> {
-                // 'must' 조건 추가 (모든 키워드가 포함되어야 하는 조건)
-                b.must(m -> m.match(mm -> mm.field("message")
-                        .query(keyword)
-                        .boost(2.0f)
-                        .fuzziness("AUTO")));
+//                // 'must' 조건 추가 (모든 키워드가 포함되어야 하는 조건)
+//                b.must(m -> m.match(mm -> mm.field("item_name.ngram_shingle")
+//                        .query(keyword)
+//                        .boost(2.0f)
+//                        .fuzziness("AUTO")));
 
                 // 'should' 조건 추가 (각 키워드가 포함되어야 하는 조건, 부스트 낮게)
-                b.should(m -> m.match(mm -> mm.field("message")
+                b.should(m -> m.match(mm -> mm.field("item_name.ngram_shingle")
                         .query(keyword)
                         .boost(0.5f)
                         .fuzziness("AUTO")));

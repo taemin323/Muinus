@@ -4,6 +4,7 @@ import com.hexa.muinus.common.exception.ESErrorCode;
 import com.hexa.muinus.common.exception.MuinusException;
 import com.hexa.muinus.elasticsearch.domain.ESItem;
 import com.hexa.muinus.elasticsearch.repository.ESItemRepository;
+import com.hexa.muinus.elasticsearch.service.NLPService;
 import com.hexa.muinus.store.domain.item.Item;
 import com.hexa.muinus.store.domain.item.repository.ItemRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,12 +23,14 @@ public class ItemSynchronizer {
 
     private final ItemRepository itemRepository;
     private final ESItemRepository esItemRepository;
+    private final NLPService nlpService;
 
     /**
      * 매일 한시
      * MySQL ITEM, ES ITEM 자동 동기화
      */
-    @Scheduled(cron = "0 27 7 * * ?")
+    @Scheduled(cron = "0 0/1 * * * *")
+//    @Scheduled(cron = "0 12 9 * * ?")
     public void scheduledSync() {
         try {
             log.info("MySQL Item -> ES Item 동기화 시작 :{}", LocalDateTime.now());
@@ -61,6 +64,8 @@ public class ItemSynchronizer {
         esItem.setItemId(item.getItemId());
         esItem.setBarcode(item.getBarcode());
         esItem.setItemName(item.getItemName());
+        esItem.setItemKeyword(nlpService.generateText(nlpService.extractKeywords(esItem.getItemName())));
+
         esItem.setBrand(item.getBrand());
         esItem.setCalories(item.getCalories());
         esItem.setProtein(item.getProtein());

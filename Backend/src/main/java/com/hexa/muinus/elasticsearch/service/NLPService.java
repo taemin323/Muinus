@@ -1,6 +1,5 @@
-package com.hexa.muinus.nlp.service;
+package com.hexa.muinus.elasticsearch.service;
 
-import ch.qos.logback.core.subst.Token;
 import lombok.extern.slf4j.Slf4j;
 import org.openkoreantext.processor.OpenKoreanTextProcessor;
 import org.openkoreantext.processor.tokenizer.KoreanTokenizer;
@@ -10,7 +9,6 @@ import scala.collection.Seq;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
 
 @Slf4j
@@ -49,5 +47,10 @@ public class NLPService {
         log.info("Nouns: {}", nouns);
         return nouns;
     }
+
+    public String generateText(List<String> keywords) {
+        return String.join(" ", keywords);
+    }
+
 }
 
