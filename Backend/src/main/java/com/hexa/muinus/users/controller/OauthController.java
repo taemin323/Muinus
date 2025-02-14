@@ -30,6 +30,7 @@ public class OauthController {
 
     @GetMapping("/api/users/login")
     public void kakaoLogin(HttpServletRequest request, HttpServletResponse response) {
+        log.info("로그인을 시도한 url : {}", request.getHeader("Referer"));
         loginTrialURL = request.getHeader("Referer");
         oauthService.getAuthorizationCode(response);
     }
