@@ -26,7 +26,7 @@ public class OauthController {
     private final JwtProvider jwtProvider;
 
     // 어느 페이지에서 로그인을 시도했는지 확인용
-    private String loginTrialURL;
+    private static String loginTrialURL;
 
     @GetMapping("/api/users/login")
     public void kakaoLogin(HttpServletRequest request, HttpServletResponse response) {
