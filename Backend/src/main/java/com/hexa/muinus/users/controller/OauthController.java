@@ -26,7 +26,8 @@ public class OauthController {
     private final JwtProvider jwtProvider;
 
     @GetMapping("/api/users/login")
-    public void kakaoLogin(HttpServletResponse response) {
+    public void kakaoLogin(HttpServletRequest request, HttpServletResponse response) {
+        log.info("로그인을 시도한 url : {}", request.getRequestURI());
         oauthService.getAuthorizationCode(response);
     }
 
