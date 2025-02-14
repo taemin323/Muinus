@@ -143,6 +143,7 @@ public class OauthService {
     }
 
     public void redirectToMainPage(HttpServletResponse response, String loginTrialURL) throws Exception{
+        log.info("로그인 시도한 url(리다이렉트될 페이지) : {}", loginTrialURL);
         response.sendRedirect(loginTrialURL);
     }
 
