@@ -24,6 +24,7 @@ public class ESItemController {
     private final ESItemService esItemService;
     private final ItemNameSearchEngine searchEngine;
     private final NLPService nlpService;
+    private final ItemNameSearchEngine itemNameSearchEngine;
 
     @GetMapping("/autocomplete")
     public List<ESItem> autocomplete(@RequestParam String prefix) {
@@ -74,6 +75,11 @@ public class ESItemController {
     @GetMapping("/search-query")
     public List<String> search(@RequestParam String query) throws IOException {
         return searchEngine.search(query);
+    }
+
+    @GetMapping("/test")
+    public List<String> test( @RequestParam String query) throws IOException {
+        return nlpService.extractKeywords(query);
     }
 
 }
