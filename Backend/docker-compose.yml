@@ -45,20 +45,6 @@ services:
     networks:
       - muinus-network
 
-  openvidu-server:
-    image: openvidu/openvidu-server:latest 
-    container_name: muinus-openvidu
-    restart: always
-    ports:
-      - "4443:4443"
-    environment:
-      - OPENVIDU_SECRET=ssafy
-      - OPENVIDU_PUBLICURL=https://i12a506.p.ssafy.io
-      - OPENVIDU_CDR=false
-      - OPENVIDU_RECORDING=false
-    networks:
-      - muinus-network
-
 networks:
   muinus-network:
     external: true
