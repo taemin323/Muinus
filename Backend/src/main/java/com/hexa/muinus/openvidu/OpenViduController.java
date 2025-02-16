@@ -60,13 +60,17 @@ public class OpenViduController {
     public ResponseEntity<String> createConnection(@PathVariable("sessionId") String sessionId,
                                                    @RequestBody(required = false) Map<String, Object> params)
             throws OpenViduJavaClientException, OpenViduHttpException {
+        log.info("Creating session with id {}", sessionId);
         Session session = openvidu.getActiveSession(sessionId);
+        log.info("Created session: {}", session);
+
         if (session == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
         ConnectionProperties properties = ConnectionProperties.fromJson(params).build();
         Connection connection = session.createConnection(properties);
+        log.info("connection :{}",connection);
         return new ResponseEntity<>(connection.getToken(), HttpStatus.OK);
     }
 
