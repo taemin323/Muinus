@@ -4,7 +4,7 @@ import com.hexa.muinus.common.exception.ESErrorCode;
 import com.hexa.muinus.common.exception.MuinusException;
 import com.hexa.muinus.elasticsearch.domain.ESItem;
 import com.hexa.muinus.elasticsearch.repository.ESItemRepository;
-import com.hexa.muinus.elasticsearch.service.NLPService;
+import com.hexa.muinus.elasticsearch.service.OktService;
 import com.hexa.muinus.store.domain.item.Item;
 import com.hexa.muinus.store.domain.item.repository.ItemRepository;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +23,7 @@ public class ItemSynchronizer {
 
     private final ItemRepository itemRepository;
     private final ESItemRepository esItemRepository;
-    private final NLPService nlpService;
+    private final OktService nlpService;
 
     /**
      * 매일 한시

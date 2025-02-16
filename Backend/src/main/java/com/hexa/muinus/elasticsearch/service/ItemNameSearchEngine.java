@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 public class ItemNameSearchEngine {
 
     private final ElasticsearchClient elasticsearchClient;
-    private final NLPService nlpService;
+    private final OktService nlpService;
     private final ESItemRepository esItemRepository;
 
     public List<ESItem> searchByQuery(SearchNativeDTO dto) {
@@ -45,6 +45,21 @@ public class ItemNameSearchEngine {
             throw new MuinusException(ESErrorCode.ES_QUERY_ERROR, "Elasticsearch 검색 중 오류 발생");
         }
     }
+
+    public List<ESItem> searchTest(String query) {
+        try {
+            List<ESItem> results = esItemRepository.confirmItems(query);
+            log.debug("results: {}", results);
+
+            return results;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new MuinusException(ESErrorCode.ES_QUERY_ERROR, "Elasticsearch 검색 중 오류 발생");
+        }
+    }
+
+
 
     public List<String> search(String queryText) throws IOException {
         // 텍스트에서 키워드(명사) 추출
