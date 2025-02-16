@@ -31,4 +31,10 @@ public interface ESItemRepository extends ElasticsearchRepository<ESItem, Intege
     """)
     List<ESItem> searchItemsByQuery(String query, Integer minSugar, Integer maxSugar, Integer minCal, Integer maxCal);
 
+    @Query(
+    """
+                   
+    """
+    )
+    List<ESItem> confirmItems(String query);
 }

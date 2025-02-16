@@ -5,7 +5,7 @@ import com.hexa.muinus.elasticsearch.domain.ESStoreItem;
 import com.hexa.muinus.elasticsearch.service.ESItemService;
 import com.hexa.muinus.elasticsearch.dto.SearchNativeDTO;
 import com.hexa.muinus.elasticsearch.service.ItemNameSearchEngine;
-import com.hexa.muinus.elasticsearch.service.NLPService;
+import com.hexa.muinus.elasticsearch.service.OktService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +23,7 @@ public class ESItemController {
 
     private final ESItemService esItemService;
     private final ItemNameSearchEngine searchEngine;
-    private final NLPService nlpService;
+    private final OktService nlpService;
     private final ItemNameSearchEngine itemNameSearchEngine;
 
     @GetMapping("/autocomplete")
