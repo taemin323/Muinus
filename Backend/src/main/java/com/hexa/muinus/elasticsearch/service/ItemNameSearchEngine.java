@@ -37,8 +37,8 @@ public class ItemNameSearchEngine {
     public List<ESItem> searchByQuery(SearchNativeDTO dto) {
         String query = dto.getQuery();
 
-        List<String> tokens = getTokens(query, "item_name", "custom_search_analyzer");
-
+        List<String> tokens = getTokens(query, "items", "custom_search_analyzer");
+        log.info("tokens: {}", tokens);
         if(tokens.isEmpty()){
             return List.of();
         }
@@ -53,12 +53,15 @@ public class ItemNameSearchEngine {
                 mainTokens.add(token);
             }
         }
-
+        log.info("mainTokens: {}", mainTokens);
+        log.info("subTokens: {}", subTokens);
 
         try { 
             List<ESItem> items = searchNoriOperation(mainTokens, subTokens, "item_name.nori", dto);
+            log.info("nori - items: {}", items);
             if(items.isEmpty()){
                 items = searchNoriOperation(mainTokens, subTokens, "item_name.nori_shingle", dto);
+                log.info("shingle - items: {}", items);
             }
             return items;
 
