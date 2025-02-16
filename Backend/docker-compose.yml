@@ -46,7 +46,7 @@ services:
       - muinus-network
 
   openvidu-server:
-    image: openvidu/openvidu-server-kms:2.29.0  # 최신 버전 확인 후 사용
+    image: openvidu/openvidu-server:latest 
     container_name: muinus-openvidu
     restart: always
     ports:
