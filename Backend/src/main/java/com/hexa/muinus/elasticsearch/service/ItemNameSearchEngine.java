@@ -4,6 +4,9 @@ import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch.core.SearchRequest;
 import co.elastic.clients.elasticsearch.core.SearchResponse;
 import co.elastic.clients.elasticsearch.core.search.Hit;
+import co.elastic.clients.elasticsearch.indices.AnalyzeRequest;
+import co.elastic.clients.elasticsearch.indices.AnalyzeResponse;
+import co.elastic.clients.elasticsearch.indices.analyze.AnalyzeToken;
 import com.hexa.muinus.common.exception.ESErrorCode;
 import com.hexa.muinus.common.exception.MuinusException;
 import com.hexa.muinus.elasticsearch.domain.ESItem;
@@ -11,11 +14,13 @@ import com.hexa.muinus.elasticsearch.dto.SearchNativeDTO;
 import com.hexa.muinus.elasticsearch.repository.ESItemRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.SearchHit;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -27,18 +32,35 @@ public class ItemNameSearchEngine {
     private final OktService nlpService;
     private final ESItemRepository esItemRepository;
 
+    private final static Set<String> subKeywords = Set.of("케이크", "케익", "콘", "바");
+
     public List<ESItem> searchByQuery(SearchNativeDTO dto) {
         String query = dto.getQuery();
-        Integer minSugar = dto.getMinSugar();
-        Integer maxSugar = dto.getMaxSugar();
-        Integer minCal = dto.getMinCal();
-        Integer maxCal = dto.getMaxCal();
 
-        try {
-            List<ESItem> results = esItemRepository.searchItemsByQuery(query, minSugar, maxSugar, minCal, maxCal);
-            log.debug("results: {}", results);
+        List<String> tokens = getTokens(query, "item_name", "custom_search_analyzer");
 
-            return results;
+        if(tokens.isEmpty()){
+            return List.of();
+        }
+
+        List<String> mainTokens = new ArrayList<>();
+        List<String> subTokens = new ArrayList<>();
+
+        for (String token : tokens) {
+            if(subTokens.contains(token)) {
+                subTokens.add(token);
+            }else{
+                mainTokens.add(token);
+            }
+        }
+
+
+        try { 
+            List<ESItem> items = searchNoriOperation(mainTokens, subTokens, "item_name.nori", dto);
+            if(items.isEmpty()){
+                items = searchNoriOperation(mainTokens, subTokens, "item_name.nori_shingle", dto);
+            }
+            return items;
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -46,67 +68,79 @@ public class ItemNameSearchEngine {
         }
     }
 
-    public List<ESItem> searchTest(String query) {
-        try {
-            List<ESItem> results = esItemRepository.confirmItems(query);
-            log.debug("results: {}", results);
-
-            return results;
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new MuinusException(ESErrorCode.ES_QUERY_ERROR, "Elasticsearch 검색 중 오류 발생");
-        }
-    }
-
-
-
-    public List<String> search(String queryText) throws IOException {
-        // 텍스트에서 키워드(명사) 추출
-        List<String> keywords = nlpService.extractKeywords(queryText);
-
-        // 키워드가 하나의 문자열로 결합되도록 한다.
-        String keywordQuery = String.join(" ", keywords);
-
-        // Elasticsearch 쿼리 작성
-//        SearchRequest searchRequest = new SearchRequest.Builder()
-//                .query(q -> q.match(m -> m.field("message").query(keywordQuery))) // "message" 필드에서 키워드 검색
-//                .build();
-
-
-        // 동적으로 쿼리 생성
+    private List<ESItem> searchNoriOperation(List<String> mainTokens, List<String> subTokens, String analyzer, SearchNativeDTO condition) throws IOException {
         SearchRequest.Builder searchRequestBuilder = new SearchRequest.Builder();
-        searchRequestBuilder.query(q -> q.bool(b -> {
-            keywords.forEach(keyword -> {
-//                // 'must' 조건 추가 (모든 키워드가 포함되어야 하는 조건)
-//                b.must(m -> m.match(mm -> mm.field("item_name.ngram_shingle")
-//                        .query(keyword)
-//                        .boost(2.0f)
-//                        .fuzziness("AUTO")));
+        BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
 
-                // 'should' 조건 추가 (각 키워드가 포함되어야 하는 조건, 부스트 낮게)
-                b.should(m -> m.match(mm -> mm.field("item_name.ngram_shingle")
-                        .query(keyword)
-                        .boost(0.5f)
-                        .fuzziness("AUTO")));
-            });
-            return b;
-        }));
+        // add main, sub tokens
+        addMatchQuery(boolQuery, mainTokens, analyzer, 5f);
+        addMatchQuery(boolQuery, subTokens, analyzer, 2f);
 
-        // 빌드된 쿼리로 SearchRequest 생성
+        // 당, 칼로리
+        addRangeFilter(boolQuery, "sugars", condition.getMinSugar(), condition.getMaxSugar());
+        addRangeFilter(boolQuery, "calories", condition.getMinCal(), condition.getMaxCal());
+
+        // 최소 하나는 매칭 (전체 검색 방지)
+        boolQuery.minimumShouldMatch(1);
+
+        // 검색
         SearchRequest searchRequest = searchRequestBuilder.build();
+        SearchResponse<ESItem> searchResponse = elasticsearchClient.search(searchRequest, ESItem.class);
 
-
-
-
-        // 검색 실행
-        SearchResponse<Object> searchResponse = elasticsearchClient.search(searchRequest, Object.class);
-
-        // 검색 결과에서 필요한 정보 추출 (여기선 source를 그대로 출력)
         return searchResponse.hits().hits().stream()
-                .map(Hit::source).filter(Objects::nonNull)
-                .map(Object::toString)
+                .map(Hit::source)
+                .filter(Objects::nonNull)
                 .collect(Collectors.toList());
     }
+
+    private void addMatchQuery(BoolQueryBuilder boolQuery, List<String> tokens, String field ,float boost) {
+        for(String token : tokens){
+            boolQuery.should(QueryBuilders.constantScoreQuery(QueryBuilders.matchQuery(field, token)).boost(boost));
+        }
+    }
+
+    // 당, 칼로리
+    private void addRangeFilter(BoolQueryBuilder boolQuery, String field, int min, int max) {
+        boolQuery.filter(QueryBuilders.rangeQuery(field).gte(min).lte(max));
+    }
+
+    /**
+     * 검색쿼리 -> 토큰 가져오기
+     * @param query
+     * @param index
+     * @param analyzer
+     * @return
+     */
+    public List<String> getTokens(String query, String index, String analyzer) {
+        try {
+            // AnalyzeRequest 빌더를 사용해 요청 생성
+            AnalyzeRequest request = AnalyzeRequest.of(a -> a
+                    .index(index)                           // 인덱스 지정
+                    .analyzer(analyzer)       // 사용할 analyzer 지정
+                    .text(query)
+            );
+
+            // Analyze API 호출
+            AnalyzeResponse response = elasticsearchClient.indices().analyze(request);
+            List<AnalyzeToken> analyzeTokens = response.tokens();
+
+            List<String> tokens = analyzeTokens.stream().map(AnalyzeToken::token).toList();
+            return tokens;
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return List.of();
+        }
+    }
+
+
+
+
+//        // 검색 결과에서 필요한 정보 추출 (여기선 source를 그대로 출력)
+//        return searchResponse.hits().hits().stream()
+//                .map(Hit::source).filter(Objects::nonNull)
+//                .map(Object::toString)
+//                .collect(Collectors.toList());
+//    }
 }
 
