@@ -132,15 +132,5 @@ public class ItemNameSearchEngine {
             return List.of();
         }
     }
-
-
-
-
-//        // 검색 결과에서 필요한 정보 추출 (여기선 source를 그대로 출력)
-//        return searchResponse.hits().hits().stream()
-//                .map(Hit::source).filter(Objects::nonNull)
-//                .map(Object::toString)
-//                .collect(Collectors.toList());
-//    }
 }
 
