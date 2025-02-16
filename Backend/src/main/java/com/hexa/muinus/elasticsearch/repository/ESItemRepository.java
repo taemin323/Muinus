@@ -36,5 +36,5 @@ public interface ESItemRepository extends ElasticsearchRepository<ESItem, Intege
                    
     """
     )
-    List<ESItem> confirmItems(String query);
+    List<ESItem> getNoriSearchTokens(String query);
 }

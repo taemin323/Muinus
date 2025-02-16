@@ -64,8 +64,6 @@ public class ItemSynchronizer {
         esItem.setItemId(item.getItemId());
         esItem.setBarcode(item.getBarcode());
         esItem.setItemName(item.getItemName());
-        esItem.setItemKeyword(nlpService.generateText(nlpService.extractKeywords(esItem.getItemName())));
-
         esItem.setBrand(item.getBrand());
         esItem.setCalories(item.getCalories());
         esItem.setProtein(item.getProtein());

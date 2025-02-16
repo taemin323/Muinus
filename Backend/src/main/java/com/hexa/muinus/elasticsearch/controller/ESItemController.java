@@ -74,7 +74,7 @@ public class ESItemController {
 
     @GetMapping("/search-query")
     public List<String> search(@RequestParam String query) throws IOException {
-        return searchEngine.search(query);
+        return searchEngine.search2(query);
     }
 
     @GetMapping("/test")
