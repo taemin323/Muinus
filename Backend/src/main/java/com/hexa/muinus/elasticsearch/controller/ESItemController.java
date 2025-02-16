@@ -71,16 +71,5 @@ public class ESItemController {
         log.info("Search Item: {}", searchNativeDTO);
         return searchEngine.searchByQuery(searchNativeDTO);
     }
-
-    @GetMapping("/search-query")
-    public List<String> search(@RequestParam String query) throws IOException {
-        return searchEngine.search2(query);
-    }
-
-    @GetMapping("/test")
-    public List<String> test( @RequestParam String query) throws IOException {
-        return nlpService.extractKeywords(query);
-    }
-
 }
 
