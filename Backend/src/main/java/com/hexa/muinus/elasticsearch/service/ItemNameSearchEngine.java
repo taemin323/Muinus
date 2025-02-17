@@ -63,7 +63,7 @@ public class ItemNameSearchEngine {
         try {
             List<ESItem> items = searchNoriOperation(tokens, "item_name.nori", dto, 0, 7);
             log.debug("nori - items: {}", items);
-            if(!items.isEmpty()){
+            if(items.isEmpty()){
                 items = searchNoriOperation(tokens, "item_name.nori_shingle", dto, 0, 7);
                 log.debug("shingle - items: {}", items);
             }
@@ -76,6 +76,7 @@ public class ItemNameSearchEngine {
     }
 
     private List<ESItem> shuffleSameScore(List<SearchHit<ESItem>> hits) {
+        log.info(hits.toString());
         if(hits.isEmpty()) return List.of();
 
         log.debug("before shuffle - hits: {}", hits);
