@@ -21,7 +21,6 @@ public class ESItemController {
 
     private final ESItemService esItemService;
     private final ItemNameSearchEngine searchEngine;
-    private final ItemNameSearchEngine itemNameSearchEngine;
 
     @GetMapping("/autocomplete")
     public List<ESItem> autocomplete(@RequestParam String prefix) {
