@@ -4,7 +4,6 @@ import com.hexa.muinus.common.exception.ESErrorCode;
 import com.hexa.muinus.common.exception.MuinusException;
 import com.hexa.muinus.elasticsearch.domain.ESItem;
 import com.hexa.muinus.elasticsearch.repository.ESItemRepository;
-import com.hexa.muinus.elasticsearch.service.OktService;
 import com.hexa.muinus.store.domain.item.Item;
 import com.hexa.muinus.store.domain.item.repository.ItemRepository;
 import lombok.RequiredArgsConstructor;
