@@ -56,6 +56,7 @@ public class ItemNameSearchEngine {
 
         List<String> tokens = getTokens(query, "items", "custom_search_analyzer");
         log.debug("tokens: {}", tokens);
+        
         if(tokens.isEmpty()){
             return List.of();
         }

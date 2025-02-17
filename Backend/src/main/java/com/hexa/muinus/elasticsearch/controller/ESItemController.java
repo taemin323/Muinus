@@ -63,9 +63,9 @@ public class ESItemController {
     }
 
     @GetMapping("/search-native")
-    public List<ESItem> searchByQuery(@Valid @ModelAttribute SearchNativeDTO searchNativeDTO) {
+    public ResponseEntity<List<ESItem>> searchByQuery(@Valid @ModelAttribute SearchNativeDTO searchNativeDTO) {
         log.info("Search Item: {}", searchNativeDTO);
-        return searchEngine.searchByQuery(searchNativeDTO);
+        return ResponseEntity.ok(searchEngine.searchByQuery(searchNativeDTO));
     }
 }
 
