@@ -22,7 +22,7 @@ public class ItemSynchronizer {
 
     private final ItemRepository itemRepository;
     private final ESItemRepository esItemRepository;
-    private final OktService nlpService;
+//    private final OktService nlpService;
 
     /**
      * 매일 한시
