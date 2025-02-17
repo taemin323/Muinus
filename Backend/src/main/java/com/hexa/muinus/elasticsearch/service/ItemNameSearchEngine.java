@@ -38,7 +38,7 @@ public class ItemNameSearchEngine {
 
     private final static Set<String> SUB_KEYWORDS = Set.of("케이크", "케익", "콘", "바");
     private final static Float MAIN_SCORE = 5.0F;
-    private final static Float SUB_SCORE = 3.0F;
+    private final static Float SUB_SCORE = 2.0F;
 
     public List<ESItem> searchByQuery(SearchNativeDTO dto) {
         String query = dto.getQuery();
