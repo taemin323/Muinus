@@ -12,7 +12,7 @@
         "type": "nori_tokenizer",
         "decompound_mode": "discard",
         "discard_punctuation": "false",
-        "user_dictionary": "analysis/nori.txt"
+        "user_dictionary": "/usr/share/elasticsearch/config/analysis/nori.txt"
       }
     },
     "filter": {
@@ -37,11 +37,11 @@
       },
       "synonym_filter": {
         "type": "synonym",
-        "synonyms_path": "analysis/synonym.txt"
+        "synonyms_path": "/usr/share/elasticsearch/config/analysis/synonym.txt"
       },
       "all_stopwords_filter": {
         "type": "stop",
-        "stopwords_path": "analysis/all_stopwords.txt"
+        "stopwords_path": "/usr/share/elasticsearch/config/analysis/all_stopwords.txt"
       },
       "search_stopwords_filter": {
         "type": "stop",
