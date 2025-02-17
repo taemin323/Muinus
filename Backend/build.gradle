@@ -67,6 +67,8 @@ dependencies {
     implementation 'io.awspring.cloud:spring-cloud-aws-starter-s3:3.2.1'
 
     implementation 'io.openvidu:openvidu-java-client:2.29.0'
+    implementation 'org.openkoreantext:open-korean-text:2.1.0'
+
 }
 
 tasks.named('test') {
