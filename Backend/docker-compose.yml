@@ -19,31 +19,31 @@ services:
     networks:
       - muinus-network
 
-#  nginx:
-#    build: ./nginx/
-#    container_name: muinus-nginx
-#    restart: always
-#    ports:
-#      - "80:80"
-#      - "443:443"
-#    volumes:
-#      #      - ./nginx/nginx.conf:/etc/nginx/conf.d/nginx.conf:ro
-#      - ./nginx/certbot/conf:/etc/letsencrypt
-#      - ./nginx/certbot/www:/var/www/certbot
-#    #    depends_on:
-#    #      - certbot
-#    networks:
-#      - muinus-network
-#
-#  certbot:
-#    image: certbot/certbot
-#    volumes:
-#      - ./nginx/certbot/conf:/etc/letsencrypt
-#      - ./nginx/certbot/www:/var/www/certbot
-#    depends_on:
-#      - nginx
-#    networks:
-#      - muinus-network
+  nginx:
+    build: ./nginx/
+    container_name: muinus-nginx
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      #      - ./nginx/nginx.conf:/etc/nginx/conf.d/nginx.conf:ro
+      - ./nginx/certbot/conf:/etc/letsencrypt
+      - ./nginx/certbot/www:/var/www/certbot
+    #    depends_on:
+    #      - certbot
+    networks:
+      - muinus-network
+
+  certbot:
+    image: certbot/certbot
+    volumes:
+      - ./nginx/certbot/conf:/etc/letsencrypt
+      - ./nginx/certbot/www:/var/www/certbot
+    depends_on:
+      - nginx
+    networks:
+      - muinus-network
 
 networks:
   muinus-network:
