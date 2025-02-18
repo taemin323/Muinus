@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 public class PreferTrends {
     int itemId;
     String itemName;
-    Double trendRating;
+    float trendRating;
     int purchaseCount;
 
     public PreferTrends(PreferTrendsProjection projection) {
