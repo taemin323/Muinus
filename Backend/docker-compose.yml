@@ -16,9 +16,8 @@ services:
       SPRING_DATASOURCE_PASSWORD: ssafy
       SPRING_ELASTICSEARCH_REST_URIS: http://3.39.235.66:9200
       SPRING_ELASTICSEARCH_DATA_ELASTICSEARCH_REPOSITORIES_ENABLE: true
-    network_mode: host
-#    networks:
-#      - host
+    networks:
+      - muinus-network
 
 #  nginx:
 #    build: ./nginx/
@@ -46,6 +45,6 @@ services:
 #    networks:
 #      - muinus-network
 
-#networks:
-#  host:
-#    external: true
+networks:
+  muinus-network:
+    external: true
