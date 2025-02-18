@@ -47,7 +47,7 @@ public class PreferenceItemReader extends JdbcCursorItemReader<Preference> {
     public PreferenceItemReader(DataSource dataSource, RedisTemplate<String, Object> redisTemplate) {
         LocalDate today = LocalDate.now();
         LocalDate yesterday = today.minusDays(1);
-        LocalDate monthAgo = today.minusDays(29);
+        LocalDate monthAgo = today.minusDays(30);
 
         HashOperations<String, String, Integer> hashOps = redisTemplate.opsForHash();
         String redisKey = "preference:search:count";
