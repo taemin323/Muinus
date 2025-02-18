@@ -49,7 +49,7 @@ public class ItemSearchEngine {
     public List<ESItem> searchByQuery(SearchNativeDTO dto) {
         String query = dto.getQuery();
 
-        List<String> tokens = esAnalyzer.getAnalyzedTokens(query, "items", "custom_search_analyzer");
+        List<String> tokens = esAnalyzer.getAnalyzedTokens(query, "items", "custom_analyzer");
         log.debug("tokens: {}", tokens);
 
         if(tokens.isEmpty()){

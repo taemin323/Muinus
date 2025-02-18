@@ -21,33 +21,43 @@ public class SimpleRecommandService {
     private ItemAnalyzer itemAnalyzer;
     private PreferenceRepository preferenceRepository;
 
+    private static final String INDEX = "items";
+    private static final String ANALYZER = "custom_analyzer";
 
     public List<PreferTrends> getRecommendedItems(String userEmail) {
         log.info("getRecommendedItems userEmail:{}", userEmail);
-        return  preferenceRepository.findItemsByScore(userEmail, LocalDate.now()).stream()
+
+        List<PreferTrends> preferTrends =  preferenceRepository.findItemsByScore(userEmail, LocalDate.now())
+                                    .stream()
                                     .map(PreferTrends::new)
                                     .toList();
 
-        // 토큰(키워드) 별 등장 횟수
-//        Map<String, Integer> tokenCount = extractFrequency(eatenItemsforMonth);
-//        itemAnalyzer.getAnalyzedTokens("item_name.nori", "items", "");
-//        return null;
+
+
+
+
+        return null;
     }
 
+
+
     /**
-     * 각 아이템마다 키워드(토큰) 추출 -> 전체 아이템에서 각 키워드가 얼마나 등장하는지 카운팅
-     * @param queryList
-     * @return
+     * 각 아이템마다 키워드(토큰) 추출 -> 전체 아이템에서 각 키워드가 얼마나 등장하는지 카운팅 * 점수
+     * @param preferItems
+     * @return HashMap<String, Double> 키워드(토큰)별 점수
      */
-    public Map<String, Integer> extractFrequency(List<String> queryList) {
-//        Map<String, Integer> tokenCount = new HashMap<>();
-//        LocalDate today = LocalDate.now();
-//        return queryList.stream()
-//                .flatMap(query -> preferenceRepository.findItemsByScore(query, today).stream())
-//                .collect(Collectors.groupingBy(
-//                        Function.identity(),
-//                        Collectors.summingInt(token -> 1)
-//                ));
-        return null;
+    public HashMap<String, Double> extractKeywordScores(List<PreferTrends> preferItems) {
+        HashMap<String, Double> tokenScore = new HashMap<>();
+
+        for (PreferTrends item : preferItems) {
+            List<String> tokens = itemAnalyzer.getAnalyzedTokens(
+                    item.getItemName(), "items", "custom_analyzer");
+
+            double itemScore = item.getTrendRating() * item.getPurchaseCount();
+            for (String token : tokens) {
+                tokenScore.merge(token, itemScore, Double::sum);
+            }
+        }
+        return tokenScore;
     }
 }

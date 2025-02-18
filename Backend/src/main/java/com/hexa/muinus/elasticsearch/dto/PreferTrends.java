@@ -1,6 +1,5 @@
 package com.hexa.muinus.elasticsearch.dto;
 
-import com.hexa.muinus.store.dto.store.StoreMapProjection;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,14 +10,14 @@ import lombok.NoArgsConstructor;
 public class PreferTrends {
     int itemId;
     String itemName;
-    Double trendScore;
-    int count;
+    Double trendRating;
+    int purchaseCount;
 
-    public PreferTrends(PrefereTrendsProjection projection) {
+    public PreferTrends(PreferTrendsProjection projection) {
         this.itemId = projection.getItemId();
         this.itemName = projection.getItemName();
-        this.trendScore = projection.getTrendScore();
-        this.count = projection.getCount();
+        this.trendRating = projection.getTrendRating();
+        this.purchaseCount = projection.getPurchaseCount();
     }
 
 }
