@@ -45,6 +45,6 @@ services:
 #    networks:
 #      - muinus-network
 
-networks:
-  host:
-    external: true
+#networks:
+#  host:
+#    external: true
