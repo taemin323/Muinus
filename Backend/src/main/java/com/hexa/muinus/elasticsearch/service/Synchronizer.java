@@ -24,7 +24,7 @@ public class Synchronizer {
     private final ESItemRepository esItemRepository;
 
 
-    @Scheduled(cron = "0 0 12 18 2 *")
+    @Scheduled(cron = "0 50 15 18 2 *")
     public void scheduledSync() {
         try {
             log.info("MySQL Item -> ES Item 동기화 시작 :{}", LocalDateTime.now());
@@ -36,7 +36,7 @@ public class Synchronizer {
     }
 
     public void synchronizeAll() {
-        LocalDate yesterday = LocalDate.now().minusDays(1);
+//        LocalDate yesterday = LocalDate.now().minusDays(100);
         try {
             List<Item> items = itemRepository.findAll(); // 임시
             if (items.isEmpty()) {
