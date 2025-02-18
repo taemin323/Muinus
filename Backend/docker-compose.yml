@@ -16,35 +16,35 @@ services:
       SPRING_DATASOURCE_PASSWORD: ssafy
       SPRING_ELASTICSEARCH_REST_URIS: http://3.39.235.66:9200
       SPRING_ELASTICSEARCH_DATA_ELASTICSEARCH_REPOSITORIES_ENABLE: true
-#    networks:
-#      - muinus-network
+    networks:
+      - muinus-network
 
-#  nginx:
-#    build: ./nginx/
-#    container_name: muinus-nginx
-#    restart: always
-#    ports:
-#      - "80:80"
-#      - "443:443"
-#    volumes:
-#      #      - ./nginx/nginx.conf:/etc/nginx/conf.d/nginx.conf:ro
-#      - ./nginx/certbot/conf:/etc/letsencrypt
-#      - ./nginx/certbot/www:/var/www/certbot
-#    #    depends_on:
-#    #      - certbot
-#    networks:
-#      - muinus-network
-#
-#  certbot:
-#    image: certbot/certbot
-#    volumes:
-#      - ./nginx/certbot/conf:/etc/letsencrypt
-#      - ./nginx/certbot/www:/var/www/certbot
-#    depends_on:
-#      - nginx
-#    networks:
-#      - muinus-network
+  nginx:
+    build: ./nginx/
+    container_name: muinus-nginx
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      #      - ./nginx/nginx.conf:/etc/nginx/conf.d/nginx.conf:ro
+      - ./nginx/certbot/conf:/etc/letsencrypt
+      - ./nginx/certbot/www:/var/www/certbot
+    #    depends_on:
+    #      - certbot
+    networks:
+      - muinus-network
 
-#networks:
-#  muinus-network:
-#    external: true
+  certbot:
+    image: certbot/certbot
+    volumes:
+      - ./nginx/certbot/conf:/etc/letsencrypt
+      - ./nginx/certbot/www:/var/www/certbot
+    depends_on:
+      - nginx
+    networks:
+      - muinus-network
+
+networks:
+  muinus-network:
+    external: true
