@@ -112,7 +112,8 @@ public class ItemSearchEngine {
             finalItemList.addAll(sameScoreItemList);
         }
 
-        return finalItemList.subList(0, Math.min(finalItemList.size(), 6));
+        //return finalItemList.subList(0, Math.min(finalItemList.size(), 6));
+        return finalItemList;
     }
 
     public List<ESItem> searchNoriOperation(List<String> tokens, String field, SearchNativeDTO condition, int page, int pageSize) throws IOException {
