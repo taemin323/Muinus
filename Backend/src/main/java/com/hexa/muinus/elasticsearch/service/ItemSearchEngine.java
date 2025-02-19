@@ -1,14 +1,11 @@
 package com.hexa.muinus.elasticsearch.service;
 
-import co.elastic.clients.elasticsearch._types.query_dsl.RangeQuery;
-import co.elastic.clients.util.ObjectBuilder;
 import com.hexa.muinus.common.exception.ESErrorCode;
 import com.hexa.muinus.common.exception.MuinusException;
 import com.hexa.muinus.elasticsearch.config.KeywordDataLoader;
 import com.hexa.muinus.elasticsearch.domain.ESItem;
 import com.hexa.muinus.elasticsearch.dto.SearchNativeDTO;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.elasticsearch.client.elc.NativeQueryBuilder;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.data.elasticsearch.client.elc.NativeQuery;
@@ -22,7 +19,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-import java.util.function.Function;
 
 @Slf4j
 @Service
