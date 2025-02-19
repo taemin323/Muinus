@@ -19,28 +19,28 @@ public interface ItemRepository extends JpaRepository<Item, Integer> {
 
     @Query(value = """
         SELECT i.* 
-        FROM item i
-        JOIN (
-        	SELECT p.item_id, SUM(p.monthly_score * s.similarity) AS item_score FROM preference p
-        	JOIN
-        	(
-        		SELECT mp.updated_at, mp.user_no AS my_no, yp.user_no AS your_no, (SUM(mp.monthly_score * yp.monthly_score)) / ((SQRT(SUM(POW(mp.monthly_score, 2)))) * (SQRT(SUM(POW(yp.monthly_score, 2))))) AS similarity
-        		FROM preference mp
-        		INNER JOIN preference yp ON mp.item_id = yp.item_id
-        		JOIN users u ON u.user_no = mp.user_no
+        FROM item i 
+        JOIN ( 
+        	SELECT p.item_id, SUM(p.monthly_score * s.similarity) AS item_score FROM preference p 
+        	JOIN 
+        	( 
+        		SELECT mp.updated_at, mp.user_no AS my_no, yp.user_no AS your_no, (SUM(mp.monthly_score * yp.monthly_score)) / ((SQRT(SUM(POW(mp.monthly_score, 2)))) * (SQRT(SUM(POW(yp.monthly_score, 2))))) AS similarity 
+        		FROM preference mp 
+        		INNER JOIN preference yp ON mp.item_id = yp.item_id 
+        		JOIN users u ON u.user_no = mp.user_no 
         		WHERE mp.updated_at = :yesterday 
         		AND u.email = :userEmail 
-        		AND mp.user_no != yp.user_no
-        		GROUP BY mp.user_no, yp.user_no
-        		HAVING similarity >= :minSimilarity
+        		AND mp.user_no != yp.user_no 
+        		GROUP BY mp.user_no, yp.user_no 
+        		HAVING similarity >= :minSimilarity 
         	) s
-        	ON p.user_no = s.your_no
-        	WHERE p.item_id NOT IN (SELECT sp.item_id FROM preference sp
-                                    WHERE sp.updated_at >= :recentDate AND sp.user_no = s.my_no AND daily_score > 0)
-        	GROUP BY item_id
-        	) si
-        ON si.item_id = i.item_id
-        ORDER BY item_score DESC
+        	ON p.user_no = s.your_no 
+        	WHERE p.item_id NOT IN (SELECT sp.item_id FROM preference sp 
+                                    WHERE sp.updated_at >= :recentDate AND sp.user_no = s.my_no AND daily_score > 0) 
+        	GROUP BY item_id 
+        	) si 
+        ON si.item_id = i.item_id 
+        ORDER BY item_score DESC 
     """, nativeQuery = true)
     List<Item> findItemsByUserSimilarity(String userEmail, LocalDate yesterday, float minSimilarity,  LocalDate recentDate);
 }
