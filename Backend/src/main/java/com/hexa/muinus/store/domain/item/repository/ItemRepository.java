@@ -21,7 +21,7 @@ public interface ItemRepository extends JpaRepository<Item, Integer> {
         SELECT i.* FROM item i
         JOIN (
         	SELECT p.item_id, SUM(p.monthly_score * s.similarity) AS item_score FROM preference p
-        	JOIN\s
+        	JOIN
         	(
         		SELECT mp.updated_at, mp.user_no AS my_no, yp.user_no AS your_no, (SUM(mp.monthly_score * yp.monthly_score)) / ((SQRT(SUM(POW(mp.monthly_score, 2)))) * (SQRT(SUM(POW(yp.monthly_score, 2))))) AS similarity
         		FROM preference mp
