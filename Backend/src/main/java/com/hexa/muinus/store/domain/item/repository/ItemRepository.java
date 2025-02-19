@@ -28,8 +28,8 @@ public interface ItemRepository extends JpaRepository<Item, Integer> {
         		FROM preference mp
         		INNER JOIN preference yp ON mp.item_id = yp.item_id
         		JOIN users u ON u.user_no = mp.user_no
-        		WHERE mp.updated_at = :yesterday
-        		AND u.email = :userEmail   
+        		WHERE mp.updated_at = :yesterday 
+        		AND u.email = :userEmail 
         		AND mp.user_no != yp.user_no
         		GROUP BY mp.user_no, yp.user_no
         		HAVING similarity >= :minSimilarity
