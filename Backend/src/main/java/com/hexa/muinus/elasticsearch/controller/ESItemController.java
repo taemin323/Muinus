@@ -75,17 +75,6 @@ public class ESItemController {
     }
 
     /**
-     * 검색
-     * @param searchNativeDTO
-     * @return
-     */
-    @GetMapping("/search-test")
-    public SearchHits<ESItem> searchScoreTest(@Valid @ModelAttribute SearchNativeDTO searchNativeDTO) {
-        log.info("Search Item: {}", searchNativeDTO);
-        return searchEngine.searchTest(searchNativeDTO);
-    }
-
-    /**
      * 추천
      * @param userEmail
      * @return
@@ -100,14 +89,14 @@ public class ESItemController {
     private final ItemRepository itemRepository;
 
     @GetMapping("/recommand-test")
-    public ResponseEntity<List<Item>> getRecommandTest(/*@Authorization String userEmail*/) {
+    public ResponseEntity<List<Item>> getRecommandTest(@RequestParam("email")String email) {
 //        List<Optional<Item>> list = new ArrayList<>();
 //        list.add(itemRepository.findById((int)(Math.random()*100 + 10)));
 //        list.add(itemRepository.findById((int)(Math.random()*100 + 10)));
 //        list.add(itemRepository.findById((int)(Math.random()*100 + 10)));
 //        list.add(itemRepository.findById((int)(Math.random()*100 + 10)));
 //        list.add(itemRepository.findById((int)(Math.random()*100 + 10)));
-        return ResponseEntity.ok(userRecommander.getRecommendedItems("chaehee13@naver.com"));
+        return ResponseEntity.ok(userRecommander.getRecommendedItems(email));
     }
 
 
