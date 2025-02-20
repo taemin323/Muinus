@@ -345,7 +345,7 @@ public class CouponService {
         Store store = storeService.findStoreByEmail(email);
 
         // 이 키오스크(판매점)이랑 쿠폰의 storeNo가 일치하는지
-        if(store.getStoreNo().equals(storeNo)){
+        if(!store.getStoreNo().equals(storeNo)){
             throw new CouponNotFoundException();
         }
 
