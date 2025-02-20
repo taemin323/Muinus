@@ -52,7 +52,7 @@ public class ItemSearchEngine {
         log.debug("tokens: {}", tokens);
 
         if(tokens.isEmpty()){
-            return ;
+            return null;
         }
 
         NativeQuery nquery = createNativeQueryForSearch(tokens, "item_name.nori", dto, 0, 100);
