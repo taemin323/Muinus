@@ -24,8 +24,11 @@ public class Preference {
     })
     private PreferenceId id;
 
-    @Column(name = "score", nullable = false, precision = 4, scale = 1)
-    private BigDecimal score;
+    @Column(name = "daily_score", nullable = false, precision = 4, scale = 1)
+    private BigDecimal dailyScore;
+
+    @Column(name = "monthly_score", nullable = false, precision = 4, scale = 1)
+    private BigDecimal monthlyScore;
 
     @Column(name = "updated_at", nullable = false)
     private LocalDate updatedAt;

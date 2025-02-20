@@ -228,7 +228,8 @@ public class CouponService {
         Users user = userRepository.findByEmail(email);
 
         // UserCouponHistory 조회
-        List<UserCouponHistory> userCouponHistories = userCouponHistoryRepository.findByUser_userNo(user.getUserNo());
+        int userNo = user.getUserNo();
+        List<UserCouponHistory> userCouponHistories = userCouponHistoryRepository.findUnusedCouponsByUser(userNo);
 
         // 변환(ReceiveCouponResponseDto)
         return userCouponHistories.stream()
@@ -304,10 +305,10 @@ public class CouponService {
     @Transactional
     public CouponQRCodeCheckResponseDto checkCouponQR(HttpServletRequest request, CouponQRCodeCheckRequestDto couponQRCodeCheckRequestDto){
 
-        String QRData = couponQRCodeCheckRequestDto.getQRData();
+        String qrData = couponQRCodeCheckRequestDto.getQrData();
 
         // QR 데이터 파싱
-        String[] dataParts = QRData.split(",");
+        String[] dataParts = qrData.split(",");
         Integer couponId = null;
         Integer storeNo = null;
         Integer userNo = null;
@@ -344,7 +345,7 @@ public class CouponService {
         Store store = storeService.findStoreByEmail(email);
 
         // 이 키오스크(판매점)이랑 쿠폰의 storeNo가 일치하는지
-        if(store.getStoreNo().equals(storeNo)){
+        if(!store.getStoreNo().equals(storeNo)){
             throw new CouponNotFoundException();
         }
 

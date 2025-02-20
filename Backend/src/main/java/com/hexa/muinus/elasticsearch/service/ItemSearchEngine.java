@@ -52,10 +52,10 @@ public class ItemSearchEngine {
         }
 
         try {
-            List<ESItem> items = searchNoriOperation(tokens, "item_name.nori", dto, 0, 7);
+            List<ESItem> items = searchNoriOperation(tokens, "item_name.nori", dto);
             log.debug("nori - items: {}", items);
             if(items.isEmpty()){
-                items = searchNoriOperation(tokens, "item_name.nori_shingle", dto, 0, 7);
+                items = searchNoriOperation(tokens, "item_name.nori_shingle", dto);
                 log.debug("shingle - items: {}", items);
             }
             return items;
@@ -112,15 +112,15 @@ public class ItemSearchEngine {
         return finalItemList;
     }
 
-    public List<ESItem> searchNoriOperation(List<String> tokens, String field, SearchNativeDTO condition, int page, int pageSize) throws IOException {
-        NativeQuery query = createNativeQueryForSearch(tokens, field, condition, page, pageSize);
+    public List<ESItem> searchNoriOperation(List<String> tokens, String field, SearchNativeDTO condition) throws IOException {
+        NativeQuery query = createNativeQueryForSearch(tokens, field, condition);
         log.info("query: {}", query.getQuery());
         SearchHits<ESItem> hits = elasticsearchOperations.search(query, ESItem.class, IndexCoordinates.of("items"));
 
         return shuffleSameScore(hits.getSearchHits());
     }
 
-    public NativeQuery createNativeQueryForSearch(List<String> tokens,  String field, SearchNativeDTO condition, int page, int pageSize){
+    public NativeQuery createNativeQueryForSearch(List<String> tokens,  String field, SearchNativeDTO condition){
         return new NativeQueryBuilder()
                 .withQuery(q -> q.bool(b -> {
                     tokens.forEach(token -> {
@@ -132,6 +132,8 @@ public class ItemSearchEngine {
                         b.should(s -> s.constantScore(QueryCreator.buildConstantScoreQuery(field, token, boost)));
                     });
 
+                    b.filter(f -> f.range(QueryCreator.buildRangeFilter("sugars", condition.getMinSugar(), condition.getMaxSugar())));
+                    b.filter(f -> f.range(QueryCreator.buildRangeFilter("calories", condition.getMinCal(), condition.getMaxCal())));
 
                     // 최소 매치 수
                     b.minimumShouldMatch("1");

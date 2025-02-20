@@ -13,6 +13,7 @@ import com.hexa.muinus.store.domain.item.repository.ItemRepository;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.elasticsearch.core.SearchHits;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -88,14 +89,14 @@ public class ESItemController {
     private final ItemRepository itemRepository;
 
     @GetMapping("/recommand-test")
-    public ResponseEntity<List<Item>> getRecommandTest(/*@Authorization String userEmail*/) {
+    public ResponseEntity<List<Item>> getRecommandTest(@RequestParam("email")String email) {
 //        List<Optional<Item>> list = new ArrayList<>();
 //        list.add(itemRepository.findById((int)(Math.random()*100 + 10)));
 //        list.add(itemRepository.findById((int)(Math.random()*100 + 10)));
 //        list.add(itemRepository.findById((int)(Math.random()*100 + 10)));
 //        list.add(itemRepository.findById((int)(Math.random()*100 + 10)));
 //        list.add(itemRepository.findById((int)(Math.random()*100 + 10)));
-        return ResponseEntity.ok(userRecommander.getRecommendedItems("chaehee13@naver.com"));
+        return ResponseEntity.ok(userRecommander.getRecommendedItems(email));
     }
 
 
