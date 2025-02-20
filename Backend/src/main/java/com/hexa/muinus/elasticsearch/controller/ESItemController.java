@@ -13,6 +13,7 @@ import com.hexa.muinus.store.domain.item.repository.ItemRepository;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.elasticsearch.core.SearchHits;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -71,6 +72,17 @@ public class ESItemController {
     public ResponseEntity<List<ESItem>> searchByQuery(@Valid @ModelAttribute SearchNativeDTO searchNativeDTO) {
         log.info("Search Item: {}", searchNativeDTO);
         return ResponseEntity.ok(searchEngine.searchByQuery(searchNativeDTO));
+    }
+
+    /**
+     * 검색
+     * @param searchNativeDTO
+     * @return
+     */
+    @GetMapping("/search-test")
+    public SearchHits<ESItem> searchScoreTest(@Valid @ModelAttribute SearchNativeDTO searchNativeDTO) {
+        log.info("Search Item: {}", searchNativeDTO);
+        return searchEngine.searchTest(searchNativeDTO);
     }
 
     /**

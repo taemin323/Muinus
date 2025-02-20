@@ -45,6 +45,22 @@ public class ItemSearchEngine {
         BRAND_KEYWORDS = KeywordDataLoader.getBrandKeywords();
     }
 
+    public SearchHits<ESItem> searchTest(SearchNativeDTO dto){
+        String query = dto.getQuery();
+
+        List<String> tokens = esAnalyzer.getAnalyzedTokens(query, "items", "custom_analyzer");
+        log.debug("tokens: {}", tokens);
+
+        if(tokens.isEmpty()){
+            return ;
+        }
+
+        NativeQuery nquery = createNativeQueryForSearch(tokens, "item_name.nori", dto, 0, 100);
+        log.debug("query: {}", nquery.getQuery());
+        SearchHits<ESItem> hits = elasticsearchOperations.search(nquery, ESItem.class, IndexCoordinates.of("items"));
+        return hits;
+    }
+
     public List<ESItem> searchByQuery(SearchNativeDTO dto) {
         String query = dto.getQuery();
 
@@ -56,10 +72,10 @@ public class ItemSearchEngine {
         }
 
         try {
-            List<ESItem> items = searchNoriOperation(tokens, "item_name.nori", dto, 0, 7);
+            List<ESItem> items = searchNoriOperation(tokens, "item_name.nori", dto);
             log.debug("nori - items: {}", items);
             if(items.isEmpty()){
-                items = searchNoriOperation(tokens, "item_name.nori_shingle", dto, 0, 7);
+                items = searchNoriOperation(tokens, "item_name.nori_shingle", dto);
                 log.debug("shingle - items: {}", items);
             }
             return items;
