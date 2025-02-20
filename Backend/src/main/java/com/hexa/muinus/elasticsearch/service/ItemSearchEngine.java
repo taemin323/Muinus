@@ -72,10 +72,10 @@ public class ItemSearchEngine {
         }
 
         try {
-            List<ESItem> items = searchNoriOperation(tokens, "item_name.nori", dto);
+            List<ESItem> items = searchNoriOperation(tokens, "item_name.nori", dto, 0, 10);
             log.debug("nori - items: {}", items);
             if(items.isEmpty()){
-                items = searchNoriOperation(tokens, "item_name.nori_shingle", dto);
+                items = searchNoriOperation(tokens, "item_name.nori_shingle", dto, 0, 10);
                 log.debug("shingle - items: {}", items);
             }
             return items;
