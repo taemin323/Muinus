@@ -2,8 +2,6 @@
 FROM openjdk:17-jdk-slim
 
 # Gradle 빌드 후 생성된 JAR 파일을 복사
-#COPY build/libs/muinus-0.0.1-SNAPSHOT.jar /project/muinus-batch-0.0.1-SNAPSHOT.jar
-#WORKDIR /var/jenkins_home/workspace/muinus-batch-pipeline/Batch
 COPY build/libs/muinus-0.0.1-SNAPSHOT.jar /project/muinus-batch-0.0.1-SNAPSHOT.jar
 
 
