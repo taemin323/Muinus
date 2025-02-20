@@ -20,8 +20,8 @@ public class StoreMapDTO {
     public StoreMapDTO(StoreRepository.StoreMapProjection projection) {
         this.storeNo = projection.getStoreNo();
         this.storeName = projection.getName();
-        this.lon = projection.getLocationX();
-        this.lat = projection.getLocationY();
+        this.lat = projection.getLocationX();
+        this.lon = projection.getLocationY();
         this.distance = projection.getDistance();
     }
 }
