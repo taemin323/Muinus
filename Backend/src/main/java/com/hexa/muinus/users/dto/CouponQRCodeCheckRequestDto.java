@@ -6,5 +6,5 @@ import lombok.Setter;
 @Getter
 @Setter
 public class CouponQRCodeCheckRequestDto {
-    private String QRData;// 바코드에 포함된 데이터
+    private String qrData;// 바코드에 포함된 데이터
 }
