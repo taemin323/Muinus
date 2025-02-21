@@ -6,9 +6,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
-
+import com.hexa.muinus.store.domain.item.repository.ItemRepository;
+import com.hexa.muinus.store.domain.item.Item;
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -16,6 +16,8 @@ public class FixItems {
 
     private static final Set<String> MANDARINE;
     private static final Set<String> ANYITEMS;
+
+    private static ItemRepository itemRepository;
 
     static {
         Set<String> keywords = new HashSet<>();
@@ -36,13 +38,20 @@ public class FixItems {
     }
 
     // 토큰으로
-    public static int getEggKeywords(String text) {
+    public static String getItemByEggKeywords(String text) {
         log.debug("getEggKeywords text: {}", text);
 
+        int itemId = 0;
         // 생귤탱귤 귀신
-        if(containsMandarine(text)) return 96;
-        if(containsAny(text)) return (int)(Math.random() * 205 + 1);
-        return 0;
+        if(containsMandarine(text)) return "생귤탱귤"; //생귤탱귤 고정
+        
+        if(containsAny(text)) itemId = (int)(Math.random() * 205 + 1);
+        else return null;
+
+        Item item = itemRepository.findItemByItemId(itemId);
+        log.debug("item: {}", item);
+
+        return item.getItemName();
     }
 
     public static boolean containsMandarine(String text) {
@@ -55,7 +64,7 @@ public class FixItems {
     }
 
     public static boolean containsAny(String text) {
-       if(text.contains("아무거나")){
+       if(ANYITEMS.contains(text)){
            return true;
        } else {
            return false;

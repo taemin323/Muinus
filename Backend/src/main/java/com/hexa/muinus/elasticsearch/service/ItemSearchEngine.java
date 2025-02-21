@@ -45,13 +45,18 @@ public class ItemSearchEngine {
     }
 
     public List<ESItem> searchByQuery(SearchNativeDTO dto) {
-        String query = dto.getQuery();
+        String text = dto.getQuery();
 
-        List<String> tokens = esAnalyzer.getAnalyzedTokens(query, "items", "custom_analyzer");
+        List<String> tokens = esAnalyzer.getAnalyzedTokens(text, "items", "custom_analyzer");
         log.debug("tokens: {}", tokens);
 
         if(tokens.isEmpty()){
-            return List.of();
+            String specialKeyword = FixItems.getItemByEggKeywords(text);
+            if(specialKeyword != null){
+                esAnalyzer.getAnalyzedTokens(specialKeyword, "items", "custom_analyzer");
+            }else{
+                return List.of();
+            }
         }
 
         try {

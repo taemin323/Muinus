@@ -15,6 +15,7 @@ public interface ItemRepository extends JpaRepository<Item, Integer> {
     Optional<Item> findItemByBarcode(String barcode);
     List<Item> findItemByUpdatedAtAfter(LocalDateTime yesterday);
 
+    Item findItemByItemId(int itemId);
     List<Item> findTopByItemIdIsIn(Collection<Integer> itemIds);
 
     @Query(value = """
