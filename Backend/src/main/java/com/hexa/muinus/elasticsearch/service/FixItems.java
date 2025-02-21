@@ -56,7 +56,7 @@ public class FixItems {
     }
 
     public boolean containsMandarine(String text) {
-        for (String keyword : ANYITEMS) {
+        for (String keyword : MANDARINE) {
             if (text.contains(keyword)) {
                 return true;
             }
@@ -65,7 +65,7 @@ public class FixItems {
     }
 
     public boolean containsAny(String text) {
-        for (String keyword : MANDARINE) {
+        for (String keyword : ANYITEMS) {
             if (text.contains(keyword)) {
                 return true;
             }
