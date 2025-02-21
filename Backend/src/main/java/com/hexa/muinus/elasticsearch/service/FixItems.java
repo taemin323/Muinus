@@ -1,5 +1,6 @@
 package com.hexa.muinus.elasticsearch.service;
 
+import com.hexa.muinus.elasticsearch.domain.ESItem;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -39,20 +40,19 @@ public class FixItems {
     }
 
     // 토큰으로
-    public String getItemByEggKeywords(String text) {
+    public ESItem getItemByEggKeywords(String text) {
         log.debug("getEggKeywords text: {}", text);
 
         int itemId = 0;
         // 생귤탱귤 귀신
-        if(containsMandarine(text)) return "생귤탱귤"; //생귤탱귤 고정
-        
-        if(containsAny(text)) itemId = (int)(Math.random() * 205 + 1);
+        if(containsMandarine(text)) itemId = 96;
+        else if(containsAny(text)) itemId = (int)(Math.random() * 205 + 1);
         else return null;
 
         Item item = itemRepository.findItemByItemId(itemId);
-        log.debug("item: {}", item);
+        log.info("item: {}", item);
 
-        return item.getItemName();
+        return convertToESItem(item);
     }
 
     public boolean containsMandarine(String text) {
@@ -70,6 +70,23 @@ public class FixItems {
        } else {
            return false;
        }
+    }
+
+    private ESItem convertToESItem(Item item) {
+        ESItem esItem = new ESItem();
+        esItem.setItemId(item.getItemId());
+        esItem.setBarcode(item.getBarcode());
+        esItem.setItemName(item.getItemName());
+        esItem.setBrand(item.getBrand());
+        esItem.setCalories(item.getCalories());
+        esItem.setProtein(item.getProtein());
+        esItem.setFat(item.getFat());
+        esItem.setCarbohydrate(item.getCarbohydrate());
+        esItem.setSugars(item.getSugars());
+        esItem.setWeight(item.getWeight());
+        esItem.setItemImageUrl(item.getItemImageUrl());
+        esItem.setUpdatedAt(item.getUpdatedAt());
+        return esItem;
     }
 
 

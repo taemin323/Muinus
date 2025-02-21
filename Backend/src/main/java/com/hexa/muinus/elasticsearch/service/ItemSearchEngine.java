@@ -8,6 +8,7 @@ import com.hexa.muinus.common.exception.MuinusException;
 import com.hexa.muinus.elasticsearch.config.KeywordDataLoader;
 import com.hexa.muinus.elasticsearch.domain.ESItem;
 import com.hexa.muinus.elasticsearch.dto.SearchNativeDTO;
+import com.hexa.muinus.store.domain.item.Item;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.elasticsearch.client.elc.NativeQueryBuilder;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
@@ -56,15 +57,6 @@ public class ItemSearchEngine {
         List<String> tokens = esAnalyzer.getAnalyzedTokens(text, "items", "custom_analyzer");
         log.debug("tokens: {}", tokens);
 
-        if(tokens.isEmpty()){
-            String specialKeyword = fixItems.getItemByEggKeywords(text);
-            if(specialKeyword != null){
-                esAnalyzer.getAnalyzedTokens(specialKeyword, "items", "custom_analyzer");
-            }else{
-                return List.of();
-            }
-        }
-
         try {
             List<ESItem> items = searchNoriOperation(tokens, "item_name.nori", dto);
             log.debug("nori - items: {}", items);
@@ -72,6 +64,15 @@ public class ItemSearchEngine {
                 items = searchNoriOperation(tokens, "item_name.nori_shingle", dto);
                 log.debug("shingle - items: {}", items);
             }
+
+            if(items.isEmpty()){
+                items = new ArrayList<>();
+                ESItem specialItem = fixItems.getItemByEggKeywords(text);
+                if(specialItem != null){
+                    items.add(fixItems.getItemByEggKeywords(text));
+                }
+            }
+
             return items;
 
         } catch (Exception e) {
