@@ -30,6 +30,8 @@ public class ItemSearchEngine {
     private final ElasticsearchOperations elasticsearchOperations;
     private final ItemAnalyzer esAnalyzer;
 
+    private final FixItems fixItems;
+
     private static Set<String> TYPE_KEYWORDS;
     private static Set<String> BRAND_KEYWORDS;
 
@@ -37,9 +39,13 @@ public class ItemSearchEngine {
     private final static Float TYPE_SCORE = 2.0F;
     private final static Float BRAND_SCORE = 1.0F;
 
-    public ItemSearchEngine(ElasticsearchOperations elasticsearchOperations, ItemAnalyzer esAnalyzer) {
+    public ItemSearchEngine(ElasticsearchOperations elasticsearchOperations,
+                            ItemAnalyzer esAnalyzer,
+                            FixItems fixItems) {
         this.elasticsearchOperations = elasticsearchOperations;
         this.esAnalyzer = esAnalyzer;
+        this.fixItems = fixItems;
+        
         TYPE_KEYWORDS = KeywordDataLoader.getTypeKeywords();
         BRAND_KEYWORDS = KeywordDataLoader.getBrandKeywords();
     }
@@ -51,7 +57,7 @@ public class ItemSearchEngine {
         log.debug("tokens: {}", tokens);
 
         if(tokens.isEmpty()){
-            String specialKeyword = FixItems.getItemByEggKeywords(text);
+            String specialKeyword = fixItems.getItemByEggKeywords(text);
             if(specialKeyword != null){
                 esAnalyzer.getAnalyzedTokens(specialKeyword, "items", "custom_analyzer");
             }else{

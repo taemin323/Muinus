@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.Set;
 import com.hexa.muinus.store.domain.item.repository.ItemRepository;
 import com.hexa.muinus.store.domain.item.Item;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -17,7 +18,7 @@ public class FixItems {
     private static final Set<String> MANDARINE;
     private static final Set<String> ANYITEMS;
 
-    private static ItemRepository itemRepository;
+    private final ItemRepository itemRepository;
 
     static {
         Set<String> keywords = new HashSet<>();
@@ -38,7 +39,7 @@ public class FixItems {
     }
 
     // 토큰으로
-    public static String getItemByEggKeywords(String text) {
+    public String getItemByEggKeywords(String text) {
         log.debug("getEggKeywords text: {}", text);
 
         int itemId = 0;
@@ -54,7 +55,7 @@ public class FixItems {
         return item.getItemName();
     }
 
-    public static boolean containsMandarine(String text) {
+    public boolean containsMandarine(String text) {
         for (String keyword : MANDARINE) {
             if (text.contains(keyword)) {
                 return true;
@@ -63,7 +64,7 @@ public class FixItems {
         return false;
     }
 
-    public static boolean containsAny(String text) {
+    public boolean containsAny(String text) {
        if(ANYITEMS.contains(text)){
            return true;
        } else {
