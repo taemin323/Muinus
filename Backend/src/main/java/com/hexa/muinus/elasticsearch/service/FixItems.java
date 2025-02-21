@@ -56,7 +56,7 @@ public class FixItems {
     }
 
     public boolean containsMandarine(String text) {
-        for (String keyword : MANDARINE) {
+        for (String keyword : ANYITEMS) {
             if (text.contains(keyword)) {
                 return true;
             }
@@ -65,11 +65,12 @@ public class FixItems {
     }
 
     public boolean containsAny(String text) {
-       if(ANYITEMS.contains(text)){
-           return true;
-       } else {
-           return false;
-       }
+        for (String keyword : MANDARINE) {
+            if (text.contains(keyword)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private ESItem convertToESItem(Item item) {
